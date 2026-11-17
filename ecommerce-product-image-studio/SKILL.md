@@ -1,6 +1,6 @@
 ---
 name: ecommerce-product-image-studio
-description: Orchestrate a fidelity-first e-commerce product visual workflow from real SKU references, verified dimensions, source-pixel compositing, lifestyle/person scenes, detail graphics, QA, and marketplace export preflight.
+description: Orchestrate a fidelity-first e-commerce product visual workflow from real SKU references, explicit task intake, verified dimensions, deterministic prompt rendering, source-pixel compositing, QA, delivery accounting, and marketplace export preflight.
 ---
 
 # Ecommerce Product Image Studio
@@ -13,9 +13,10 @@ Priority order:
 
 1. product identity and source-pixel fidelity;
 2. verified product facts and dimensions;
-3. scene/person scale and perspective;
-4. current marketplace constraints;
-5. brand styling and creative presentation.
+3. explicit user intent;
+4. scene/person scale and perspective;
+5. current marketplace constraints;
+6. brand styling and creative presentation.
 
 Creative quality MUST NOT override product truth.
 
@@ -38,10 +39,15 @@ If the user supplies an authoritative product photo, that photo is the default s
 
 A generated lookalike product is an identity \`FAIL\`.
 
-## Required sub-skills
+## Required contracts and sub-skills
 
-Use applicable modules instead of replacing them with one generic prompt:
+Read:
+- \`references/task-input-schema.json\`
+- \`references/intake-contract.md\`
+- \`references/prompt-rendering.md\`
+- \`references/delivery-gate.md\`
 
+Use applicable modules:
 - \`product-reference-audit\`
 - \`product-identity-lock\`
 - \`product-dimension-lock\`
@@ -57,47 +63,44 @@ Use applicable modules instead of replacing them with one generic prompt:
 - \`marketplace-export-preflight\`
 - \`wood-product-fidelity\` when wood products are involved.
 
-## Inputs
+## Stage -1 — Intake contract
 
-Read existing project files before asking the user again.
+Create \`task-input.json\` from the machine-readable input schema.
 
-Expected inputs may include:
-- authoritative SKU photos;
-- product / variant identifiers;
-- confirmed specifications;
-- dimension drawings, measurement photos, CAD / 3D;
-- packaging references;
-- brand guide;
-- target marketplace and slot;
-- copy claims with evidence.
+### Intent fields
 
-## Status enums
+Marketplace, market, ratio, language, requested deliverables, style, and extra requirements MUST come from explicit user intent. Do not infer them from attachment appearance, filenames, product category, or marketplace habits.
 
-Evidence:
-- \`visible_in_reference\`
-- \`user_confirmed\`
-- \`document_verified\`
-- \`estimated\`
-- \`unknown\`
-- \`conflicting\`
+### Evidence fields
 
-Scale:
-- \`METRICALLY_GROUNDED\`
-- \`VISUALLY_APPROXIMATED\`
-- \`SCALE_UNVERIFIED\`
+Authoritative product images MUST be inspected for product evidence:
+- visible geometry;
+- components;
+- hardware;
+- texture / color;
+- supported view;
+- visible markings.
 
-QA:
-- \`PASS\`
-- \`REVIEW\`
-- \`FAIL\`
-- \`NOT_CHECKED\`
+This is intentionally different from form-only pass-through skills. Product-image inspection is required because identity locking depends on it.
+
+Do not promote visual evidence into unsupported business claims.
+
+### Missing-field policy
+
+Ask only for missing fields that block the next requested deliverable.
+
+Examples:
+- no platform → generic master is still possible;
+- no dimensions → metric dimension graphics / metric scale claims are blocked;
+- no sale quantity → package / included-item claims are blocked;
+- no rear view → factual rear-view image is blocked.
 
 ## Stage 0 — Scope
 
 MUST identify:
-- SKU / variant;
+- SKU / variant when available;
 - requested asset roles;
-- target marketplace if known;
+- target marketplace if explicitly provided;
 - authoritative product references.
 
 If marketplace rules are not verified, plan a generic master and do not claim platform compliance.
@@ -170,7 +173,21 @@ Each planned asset MUST have:
 
 Do not fill image slots by inventing views or facts.
 
-## Stage 6 — Production
+## Stage 6 — Deterministic prompt rendering
+
+Do not improvise generation prompts from scratch when a repository template exists.
+
+Use:
+- \`templates/empty-scene-prompt.md\`
+- \`templates/person-layer-prompt.md\`
+
+Rendering MUST follow \`references/prompt-rendering.md\`.
+
+Required unresolved placeholders block the asset. Missing optional fields are omitted rather than guessed.
+
+Fixed product-fidelity clauses MUST remain present.
+
+## Stage 7 — Production
 
 ### Product body
 
@@ -207,7 +224,7 @@ Create contact and cast shadows as independent layers. Shadows MUST NOT overwrit
 
 Final Chinese copy, numbers, dimensions, arrows, logos, and tables SHOULD be added with layout/design tools, not trusted to an image model.
 
-## Stage 7 — Product + person + scene
+## Stage 8 — Product + person + scene
 
 Run \`product-human-scene-integration\`.
 
@@ -220,7 +237,7 @@ MUST validate:
 
 If realistic interaction cannot be achieved without redrawing product geometry, the asset is \`BLOCKED\`.
 
-## Stage 8 — Infographic and detail modules
+## Stage 9 — Infographic and detail modules
 
 Run \`ecommerce-infographic-detail-builder\`.
 
@@ -228,7 +245,7 @@ Use only verified dimensions and claims. Do not infer dimensions from the compos
 
 For Chinese e-commerce detail pages, independent vertical modules are preferred unless the user specifically requests a stitched long image.
 
-## Stage 9 — QA
+## Stage 10 — QA
 
 Run \`ecommerce-visual-qa\`.
 
@@ -239,11 +256,24 @@ The following are separate gates:
 - scale grounding;
 - person interaction;
 - copy truth;
+- cross-image consistency;
 - export compliance.
 
 A pretty image can still be \`FAIL\`.
 
-## Stage 10 — Marketplace export
+## Stage 11 — Delivery gate
+
+Create \`delivery-manifest.json\` using \`references/delivery-gate.md\`.
+
+A run is not \`COMPLETE\` until:
+- every non-blocked planned final asset exists;
+- each final asset has QA status;
+- each final asset has an accessible delivery reference;
+- delivered asset count equals expected deliverable count.
+
+Never claim “all images complete” when only some files were surfaced to the user.
+
+## Stage 12 — Marketplace export
 
 Run \`marketplace-export-preflight\`.
 
@@ -258,23 +288,28 @@ Set \`FAIL\` or \`BLOCKED\` when:
 - a dimension is published without evidence;
 - product scale is presented as accurate without grounding;
 - a person interaction requires impossible product deformation;
-- package contents or claims are invented.
+- package contents or claims are invented;
+- required prompt-template fields are unresolved;
+- final delivery is claimed complete while the delivery manifest is incomplete.
 
 ## Outputs
 
 A complete run SHOULD produce:
+- \`task-input.json\`
 - \`asset-audit.md\`
 - \`evidence-matrix.json\`
 - \`product-identity.json\`
 - \`product-dimensions.json\`
 - \`scale-calibration.json\` where applicable
 - \`image-plan.json\`
+- rendered prompt records
 - product cutouts and masks
 - generated empty backgrounds / person layers
 - layered composites
 - copy deck and dimension source map
 - master exports
 - per-image QA and cross-image QA
+- \`delivery-manifest.json\`
 - marketplace preflight records
 
-Generated files are not complete until QA provenance and identity gates are satisfied.
+Generated files are not complete until QA provenance, identity, and delivery gates are satisfied.

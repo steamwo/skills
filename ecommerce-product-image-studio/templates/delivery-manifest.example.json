@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "project_id": "example-project",
+  "planned_assets_total": 0,
+  "blocked_assets_total": 0,
+  "expected_deliverables_total": 0,
+  "produced_assets_total": 0,
+  "qa_completed_assets_total": 0,
+  "delivered_assets_total": 0,
+  "overall_status": "IN_PROGRESS",
+  "assets": []
+}

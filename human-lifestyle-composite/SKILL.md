@@ -1,6 +1,6 @@
 ---
 name: human-lifestyle-composite
-description: Plan and create independent person assets for e-commerce scenes, including pose, action, wardrobe, body scale assumptions, contact points, occlusion plan, and cross-image person consistency.
+description: Plan and create independent person assets for e-commerce scenes using explicit user intent, deterministic prompt rendering, pose/contact plans, body-scale assumptions, occlusion plans, and cross-image consistency.
 ---
 
 # Human Lifestyle Composite
@@ -9,16 +9,30 @@ description: Plan and create independent person assets for e-commerce scenes, in
 
 Create the person layer independently from the product so product identity can remain locked.
 
-This skill produces people / pose assets. Final product interaction is handled by \`product-human-scene-integration\`.
-
 ## Inputs
 
-- image plan;
-- product dimensions / scale state;
-- product use logic;
-- brand direction;
-- optional person reference;
-- scene camera / contact plane.
+- \`task-input.json\`
+- image plan
+- product dimensions / scale state
+- verified product use logic
+- explicit brand / style direction
+- optional person reference
+- scene camera / contact plane
+- \`ecommerce-product-image-studio/templates/person-layer-prompt.md\`
+
+## Intent rule
+
+Do not invent person attributes the user did not request when they materially affect the brief.
+
+The product image MUST NOT be used to infer:
+- target person gender;
+- age;
+- ethnicity;
+- wardrobe style;
+- market;
+- desired lifestyle tone.
+
+If the user only requests “a person using the product”, choose a neutral adult-use concept that does not add unsupported product claims and record it as a planning assumption.
 
 ## Person brief
 
@@ -34,6 +48,15 @@ Define:
 - product contact points;
 - occlusion plan;
 - consistency reference.
+
+## Prompt rendering
+
+Use the person-layer template.
+
+Fixed product-fidelity clauses MUST remain intact:
+- do not generate target product;
+- do not redraw product;
+- do not invent product capability.
 
 ## MUST
 
@@ -56,6 +79,7 @@ Define:
 
 Create:
 - \`person-brief.md\`
+- rendered person prompt
 - \`pose-plan.json\`
 - person reference assets
 - person layers / masks

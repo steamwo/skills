@@ -1,6 +1,6 @@
 ---
 name: lifestyle-scene-composite
-description: Build product lifestyle scenes by generating or sourcing an empty environment, calibrating scale and perspective, then compositing the authoritative product pixels without generative redraw.
+description: Build product lifestyle scenes by deterministically rendering an empty-environment prompt, calibrating scale and perspective, then compositing authoritative product pixels without generative redraw.
 ---
 
 # Lifestyle Scene Composite
@@ -11,23 +11,37 @@ Place a real SKU into a believable lifestyle environment without changing the pr
 
 ## Required inputs
 
+- \`task-input.json\`
 - \`product-identity.json\`
 - \`product-dimensions.json\`
 - \`scale-calibration.json\`
 - authoritative product view or verified CAD/3D
 - source audit
+- \`ecommerce-product-image-studio/templates/empty-scene-prompt.md\`
 
 ## Correct pipeline
 
 \`\`\`text
-1. select a supported product view
+1. select supported product view
 2. plan contact plane + scale + camera
-3. generate EMPTY scene
-4. create product alpha mask
-5. composite ORIGINAL PRODUCT RGB
-6. add independent contact / cast shadows
-7. run identity + scale + composite QA
+3. render empty-scene prompt from template
+4. generate EMPTY scene
+5. create product alpha mask
+6. composite ORIGINAL PRODUCT RGB
+7. add independent contact / cast shadows
+8. run identity + scale + composite QA
 \`\`\`
+
+## Prompt rendering
+
+MUST use the repository prompt template when available.
+
+- unresolved required fields → \`BLOCKED\`;
+- missing optional fields → omit;
+- user style text → preserve intent without generic embellishment;
+- fixed “do not generate target product” clause → never remove.
+
+Save the rendered prompt with provenance metadata.
 
 ## Empty scene generation
 
@@ -37,15 +51,6 @@ Background generation MAY create:
 - non-product props;
 - lighting;
 - negative space.
-
-Prompt SHOULD include:
-- camera direction;
-- perspective;
-- contact plane;
-- expected product placement area;
-- lighting direction;
-- negative constraints such as:
-  \`no target product, no product duplicate, no similar product, no text, no logo\`.
 
 ## MUST
 
@@ -62,7 +67,8 @@ Prompt SHOULD include:
 - distort product perspective to fit the background;
 - use AI furniture as an undocumented metric reference;
 - redraw product texture / hardware / supports;
-- claim accurate real-world scale when \`SCALE_UNVERIFIED\`.
+- claim accurate real-world scale when \`SCALE_UNVERIFIED\`;
+- infer scene style from the product image unless the user explicitly requested matching.
 
 ## View mismatch
 
@@ -77,6 +83,7 @@ Do not warp the product to fake a new camera view.
 
 Save:
 - scene brief;
+- rendered prompt;
 - empty background;
 - source product;
 - mask;
@@ -92,4 +99,4 @@ Save:
 A scene can be visually attractive and still fail.
 
 Set \`FAIL\` when product identity changes.
-Set \`REVIEW\` when visual placement is plausible but metric scale is not grounded.
+Set \`REVIEW\` when placement is plausible but metric scale is not grounded.

@@ -2,39 +2,72 @@
 
 This repository is **English-first for machine-executable technical rules** and **Chinese-friendly for China-commerce localization**.
 
-The goal is not to translate everything into English. The goal is to make the rules easier for Claude Code, Codex, Cursor, and other agents to execute consistently while keeping Chinese marketplace terminology and user-facing copy practical.
+The goal is not to translate everything into English. The goal is to make rules easier for Claude Code, Codex, Cursor, and similar agents to execute consistently.
 
 ## Language policy
 
 Use **English** for:
-- YAML front matter: \`name\`, \`description\`.
-- Section names that define execution logic.
-- Status enums, field names, JSON keys, file names, directory names.
-- \`MUST\`, \`MUST NOT\`, \`SHOULD\`, \`MAY\` rules.
-- Inputs, outputs, gates, failure conditions, and pipeline steps.
-- Cross-skill contracts.
+- YAML front matter;
+- execution logic;
+- status enums;
+- field names / JSON keys;
+- MUST / MUST NOT / SHOULD / MAY rules;
+- inputs, outputs, gates, failure conditions;
+- cross-skill contracts.
 
 Use **Chinese or bilingual text** for:
-- Taobao / Tmall / JD / PDD operational notes.
-- Chinese typography and copywriting guidance.
-- Seller-facing examples.
-- User-facing Chinese e-commerce text templates.
-- Marketplace-specific terminology that would be less clear if translated.
+- China marketplace notes;
+- Chinese typography / copy guidance;
+- seller-facing examples;
+- marketplace terminology where Chinese is clearer.
 
 ## Normative keywords
 
-- **MUST**: required for a valid execution.
+- **MUST**: required.
 - **MUST NOT**: prohibited.
-- **SHOULD**: default behavior unless there is a documented reason to differ.
+- **SHOULD**: default unless documented otherwise.
 - **MAY**: optional.
-- **BLOCKED**: execution cannot safely continue.
-- **REVIEW**: execution may continue only with explicit uncertainty recorded.
+- **BLOCKED**: cannot safely continue.
+- **REVIEW**: uncertainty remains.
 - **PASS / FAIL / NOT_CHECKED**: QA states.
+
+## Input contracts
+
+Skills SHOULD define a machine-readable input contract when inputs are structured or configurable.
+
+Input fields SHOULD state:
+- type;
+- required / optional;
+- legal options;
+- source policy;
+- omission / default behavior.
+
+### Intent vs evidence
+
+**User intent** MUST come from explicit user input:
+- target platform;
+- target market;
+- image ratio;
+- output language;
+- requested style;
+- requested deliverables;
+- additional requirements.
+
+Do not infer these from attachment content, filename, product category, or common practice.
+
+**Product evidence** MAY and often MUST be extracted from authoritative attachments:
+- visible product geometry;
+- component count;
+- hardware;
+- texture / color;
+- supported camera view;
+- verified dimensions shown in source documents.
+
+This repository intentionally distinguishes intent inference from evidence extraction.
 
 ## Evidence states
 
-Use these normalized evidence states whenever product facts are recorded:
-
+Use:
 - \`visible_in_reference\`
 - \`user_confirmed\`
 - \`document_verified\`
@@ -42,7 +75,18 @@ Use these normalized evidence states whenever product facts are recorded:
 - \`unknown\`
 - \`conflicting\`
 
-Never silently promote \`estimated\` or \`unknown\` to a verified state.
+Never silently promote \`estimated\` or \`unknown\` to verified.
+
+## Deterministic prompt rendering
+
+When a stable prompt template exists:
+- render from verified structured inputs;
+- remove missing optional blocks;
+- block unresolved required placeholders;
+- preserve fixed fidelity constraints;
+- do not enrich user requirements with generic goals the user did not state.
+
+Prompt traceability SHOULD be saved with the resulting asset.
 
 ## Product identity rule
 
@@ -68,6 +112,8 @@ compositing
 typography / dimensions
         ↓
 QA
+        ↓
+delivery gate
 \`\`\`
 
 A visually similar AI-generated product is **not** the same SKU.
@@ -82,7 +128,7 @@ When a source photo is authoritative:
 - preserve component count and support shape;
 - preserve visible texture, grain, color, logos, seams, holes, and edge profiles;
 - preserve the source camera view unless another verified view is available;
-- keep the product RGB traceable to a source photo or verified CAD/3D render.
+- keep product RGB traceable to a source photo or verified CAD/3D render.
 
 **MUST NOT**
 - regenerate the product from text;
@@ -95,7 +141,6 @@ When a source photo is authoritative:
 ## Asset provenance classes
 
 Every visual asset SHOULD be tagged as one of:
-
 - \`SOURCE_PRODUCT_PIXEL\`
 - \`VERIFIED_CAD_3D\`
 - \`GENERATED_BACKGROUND\`
@@ -105,6 +150,19 @@ Every visual asset SHOULD be tagged as one of:
 - \`CONCEPT_ONLY\`
 
 The final QA report MUST make product pixel provenance explicit.
+
+## Delivery contracts
+
+A skill that creates artifacts SHOULD define completion in terms of delivered outputs, not only successful generation.
+
+Track:
+- planned;
+- blocked;
+- produced;
+- QA-completed;
+- delivered.
+
+Do not claim complete delivery unless every expected final asset has a user-accessible reference.
 
 ## China marketplace notes / 中国电商平台说明
 

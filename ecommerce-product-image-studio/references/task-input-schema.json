@@ -1,0 +1,316 @@
+{
+  "schema_version": 1,
+  "skill": "ecommerce-product-image-studio",
+  "purpose": "Machine-readable intake contract for e-commerce product visual production.",
+  "principles": {
+    "intent_fields": "user_explicit_only",
+    "product_evidence": "inspect_authoritative_assets",
+    "unknowns": "preserve_unknown",
+    "optional_fields": "omit_when_unspecified",
+    "attachment_rule": "product images must be inspected for product evidence, but must not be used to infer user intent such as platform, language, ratio, market, style, or requested deliverables"
+  },
+  "fields": [
+    {
+      "key": "product_images",
+      "label_en": "Product images",
+      "label_zh": "商品图片",
+      "type": "file_upload",
+      "file_types": [
+        "image"
+      ],
+      "required": true,
+      "maxCount": 10,
+      "source_policy": "uploaded_attachment",
+      "content_policy": "MUST inspect after intake for product evidence and identity lock"
+    },
+    {
+      "key": "sku",
+      "label_en": "SKU / product identifier",
+      "label_zh": "SKU / 商品标识",
+      "type": "text",
+      "required": false,
+      "source_policy": "user_explicit_or_verified_document"
+    },
+    {
+      "key": "variant",
+      "label_en": "Variant",
+      "label_zh": "规格 / 变体",
+      "type": "text",
+      "required": false,
+      "source_policy": "user_explicit_or_verified_document"
+    },
+    {
+      "key": "platform",
+      "label_en": "Target marketplace",
+      "label_zh": "适配平台",
+      "type": "select",
+      "required": false,
+      "source_policy": "user_explicit_only",
+      "options": [
+        {
+          "key": "generic_master",
+          "label_en": "Generic master",
+          "label_zh": "通用母版"
+        },
+        {
+          "key": "taobao_tmall_1688",
+          "label_en": "Taobao / Tmall / 1688",
+          "label_zh": "淘宝 / 天猫 / 1688"
+        },
+        {
+          "key": "jd",
+          "label_en": "JD",
+          "label_zh": "京东"
+        },
+        {
+          "key": "pinduoduo",
+          "label_en": "Pinduoduo",
+          "label_zh": "拼多多"
+        },
+        {
+          "key": "douyin",
+          "label_en": "Douyin",
+          "label_zh": "抖音"
+        },
+        {
+          "key": "amazon",
+          "label_en": "Amazon",
+          "label_zh": "亚马逊"
+        },
+        {
+          "key": "temu",
+          "label_en": "Temu",
+          "label_zh": "Temu"
+        },
+        {
+          "key": "tiktok_shop",
+          "label_en": "TikTok Shop",
+          "label_zh": "TikTok Shop"
+        },
+        {
+          "key": "shopee",
+          "label_en": "Shopee",
+          "label_zh": "Shopee"
+        },
+        {
+          "key": "aliexpress",
+          "label_en": "AliExpress",
+          "label_zh": "速卖通"
+        },
+        {
+          "key": "alibaba_intl",
+          "label_en": "Alibaba.com",
+          "label_zh": "阿里国际站"
+        },
+        {
+          "key": "independent_site",
+          "label_en": "Independent site",
+          "label_zh": "独立站"
+        }
+      ]
+    },
+    {
+      "key": "ratio",
+      "label_en": "Image ratio",
+      "label_zh": "图片比例",
+      "type": "radio_tags",
+      "required": false,
+      "source_policy": "user_explicit_only",
+      "options": [
+        {
+          "key": "auto",
+          "label_en": "Auto",
+          "label_zh": "自动匹配"
+        },
+        {
+          "key": "1:1",
+          "label_en": "1:1",
+          "label_zh": "1:1"
+        },
+        {
+          "key": "3:4",
+          "label_en": "3:4",
+          "label_zh": "3:4"
+        },
+        {
+          "key": "4:5",
+          "label_en": "4:5",
+          "label_zh": "4:5"
+        },
+        {
+          "key": "4:9",
+          "label_en": "4:9",
+          "label_zh": "4:9"
+        },
+        {
+          "key": "9:16",
+          "label_en": "9:16",
+          "label_zh": "9:16"
+        },
+        {
+          "key": "16:9",
+          "label_en": "16:9",
+          "label_zh": "16:9"
+        }
+      ]
+    },
+    {
+      "key": "language",
+      "label_en": "In-image text language",
+      "label_zh": "图内文字语言",
+      "type": "select",
+      "required": false,
+      "source_policy": "user_explicit_only",
+      "options": [
+        {
+          "key": "auto",
+          "label_en": "Auto",
+          "label_zh": "自动匹配"
+        },
+        {
+          "key": "zh-CN",
+          "label_en": "Chinese",
+          "label_zh": "中文"
+        },
+        {
+          "key": "en",
+          "label_en": "English",
+          "label_zh": "英语"
+        },
+        {
+          "key": "no_text",
+          "label_en": "No text",
+          "label_zh": "无文字"
+        }
+      ]
+    },
+    {
+      "key": "target_market",
+      "label_en": "Target market",
+      "label_zh": "目标市场",
+      "type": "select",
+      "required": false,
+      "source_policy": "user_explicit_only",
+      "options": [
+        {
+          "key": "auto",
+          "label_en": "Auto",
+          "label_zh": "自动匹配"
+        },
+        {
+          "key": "china",
+          "label_en": "China",
+          "label_zh": "中国"
+        },
+        {
+          "key": "north_america",
+          "label_en": "North America",
+          "label_zh": "北美"
+        },
+        {
+          "key": "europe",
+          "label_en": "Europe",
+          "label_zh": "欧洲"
+        },
+        {
+          "key": "southeast_asia",
+          "label_en": "Southeast Asia",
+          "label_zh": "东南亚"
+        },
+        {
+          "key": "japan",
+          "label_en": "Japan",
+          "label_zh": "日本"
+        },
+        {
+          "key": "russia",
+          "label_en": "Russia",
+          "label_zh": "俄罗斯"
+        }
+      ]
+    },
+    {
+      "key": "deliverables",
+      "label_en": "Requested deliverables",
+      "label_zh": "交付内容",
+      "type": "checkbox_tags",
+      "required": false,
+      "source_policy": "user_explicit_only",
+      "options": [
+        {
+          "key": "complete_set",
+          "label_en": "Complete image set",
+          "label_zh": "完整套图"
+        },
+        {
+          "key": "hero",
+          "label_en": "Hero / product images",
+          "label_zh": "主图 / 产品图"
+        },
+        {
+          "key": "lifestyle",
+          "label_en": "Lifestyle scenes",
+          "label_zh": "生活场景图"
+        },
+        {
+          "key": "person_use",
+          "label_en": "Person-use scenes",
+          "label_zh": "人物使用图"
+        },
+        {
+          "key": "dimensions",
+          "label_en": "Dimension graphics",
+          "label_zh": "尺寸规格图"
+        },
+        {
+          "key": "details",
+          "label_en": "Material / structure details",
+          "label_zh": "材质 / 结构细节图"
+        },
+        {
+          "key": "packaging",
+          "label_en": "Packaging / included items",
+          "label_zh": "包装 / 清单图"
+        },
+        {
+          "key": "detail_modules",
+          "label_en": "Detail-page modules",
+          "label_zh": "详情页分屏"
+        }
+      ]
+    },
+    {
+      "key": "selling_points",
+      "label_en": "Selling points / approved claims",
+      "label_zh": "商品卖点 / 已确认文案",
+      "type": "textarea",
+      "required": false,
+      "maxLength": 3000,
+      "source_policy": "user_explicit_or_verified_document",
+      "note": "Do not infer marketing claims from image appearance."
+    },
+    {
+      "key": "brand_assets",
+      "label_en": "Brand assets",
+      "label_zh": "品牌素材",
+      "type": "file_upload",
+      "file_types": [
+        "image",
+        "document"
+      ],
+      "required": false,
+      "maxCount": 10,
+      "source_policy": "uploaded_attachment"
+    },
+    {
+      "key": "extra_requirements",
+      "label_en": "Additional requirements",
+      "label_zh": "补充要求",
+      "type": "textarea",
+      "required": false,
+      "maxLength": 2000,
+      "source_policy": "user_explicit_only",
+      "note": "Only preserve constraints explicitly stated by the user; do not synthesize generic goals such as premium, professional, clean, or conversion-focused."
+    }
+  ]
+}

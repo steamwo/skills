@@ -1,13 +1,13 @@
 ---
 name: ecommerce-visual-qa
-description: Run evidence-backed QA for product identity, source-pixel provenance, dimensions, scale, perspective, person interaction, material fidelity, copy truth, cross-image consistency, and marketplace export readiness.
+description: Run evidence-backed QA for product identity, source-pixel provenance, dimensions, scale, perspective, person interaction, material fidelity, copy truth, cross-image consistency, marketplace readiness, and final delivery accounting.
 ---
 
 # Ecommerce Visual QA
 
 ## Objective
 
-Evaluate each asset and the complete image set. Do not collapse visual quality, product truth, and scale accuracy into one score.
+Evaluate each asset and the complete image set. Do not collapse visual quality, product truth, scale accuracy, and delivery completeness into one score.
 
 ## QA states
 
@@ -40,9 +40,15 @@ Record:
 
 If an authoritative source photo existed but the product was regenerated as a lookalike without explicit creative-preview authorization, set \`FAIL\`.
 
-Prompt similarity does not pass provenance.
+## Gate C — Input-source integrity
 
-## Gate C — Dimensions and specifications
+Check:
+- user-intent fields came from explicit user input;
+- attachment content was not used to invent platform, language, ratio, market, style, or extra requirements;
+- product-evidence fields derived from attachments are labeled as evidence rather than user intent;
+- optional unspecified fields were omitted or handled by an explicit legal \`auto\` option.
+
+## Gate D — Dimensions and specifications
 
 Check:
 - values;
@@ -56,7 +62,7 @@ Check:
 
 Unknown / estimated values MUST NOT appear as verified customer-facing specifications.
 
-## Gate D — Scale and perspective
+## Gate E — Scale and perspective
 
 Check:
 - \`scale-calibration.json\`;
@@ -68,9 +74,7 @@ Check:
 - uniform product scaling;
 - absence of geometry warping.
 
-Do not mark metric scale \`PASS\` when the scene is only visually plausible.
-
-## Gate E — Person interaction
+## Gate F — Person interaction
 
 Check:
 - hand / finger anatomy;
@@ -82,28 +86,21 @@ Check:
 - product geometry unchanged;
 - no implied unverified performance.
 
-## Gate F — Material / color
+## Gate G — Material / color
 
-Check:
-- visible texture direction;
-- wood grain / knots where applicable;
-- finish appearance;
-- real color;
-- metal / fabric / surface characteristics.
+Check source-aligned material appearance and ensure brand grading does not recolor the product body.
 
-Brand color grading MUST NOT recolor the product body.
-
-## Gate G — Cutout and composite
+## Gate H — Cutout and composite
 
 Check:
 - holes / gaps preserved;
-- no white / dark fringe;
+- no fringe;
 - no mask-eaten structure;
 - contact / cast shadow direction;
 - shadow does not overwrite product RGB;
 - no confusing duplicate target product in background.
 
-## Gate H — Copy and graphics
+## Gate I — Copy and graphics
 
 Check:
 - Chinese spelling;
@@ -116,26 +113,37 @@ Check:
 - logos;
 - readability.
 
-## Gate I — Cross-image consistency
+## Gate J — Prompt traceability
+
+For generated backgrounds / people, verify:
+- template version recorded;
+- rendered prompt saved;
+- required placeholders resolved;
+- fixed product-exclusion clause present;
+- no unsupported facts added.
+
+## Gate K — Cross-image consistency
+
+Check same SKU / variant, structure, verified dimensions, appearance, copy, and person consistency when required.
+
+## Gate L — Marketplace export
+
+Check marketplace, category, slot, rule source, verification date, dimensions / format / file size / naming.
+
+## Gate M — Delivery completeness
+
+Read \`delivery-manifest.json\`.
 
 Check:
-- same SKU / variant;
-- same product structure;
-- consistent dimensions;
-- consistent color / material;
-- consistent copy;
-- person consistency when required;
-- no contradictory packaging / quantity.
+- planned count;
+- blocked count;
+- expected deliverable count;
+- produced count;
+- QA-completed count;
+- delivered count;
+- accessible delivery references.
 
-## Gate J — Marketplace export
-
-Check:
-- marketplace;
-- category;
-- slot;
-- rule source;
-- verification date;
-- dimensions / format / file size / naming.
+Do not set project completion to \`COMPLETE\` unless the Delivery Gate passes.
 
 ## Report schema
 
@@ -150,6 +158,7 @@ Each image SHOULD include:
 - \`scale_status\`
 - \`interaction_status\`
 - \`copy_status\`
+- \`prompt_trace_status\`
 - \`overall_status\`
 - \`evidence\`
 - \`issues\`
@@ -159,9 +168,10 @@ Each image SHOULD include:
 
 ## Critical distinction
 
-These three are independent:
+These are independent:
 - \`visual_plausibility\`
 - \`metric_grounding\`
 - \`product_pixel_provenance\`
+- \`delivery_completeness\`
 
 One cannot substitute for another.

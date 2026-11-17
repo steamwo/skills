@@ -1,47 +1,87 @@
 # E-commerce AI Product Visual Production Suite
 
-总控 Skill：把真实 SKU 素材、规格、尺寸和品牌资料组织成可审查的电商视觉资产。
+This is the orchestrator package for the e-commerce visual workflow.
 
-## What this suite is for
+## Key architecture
 
-The suite can orchestrate:
-- source reference audit;
-- product identity and dimension records;
-- scale / perspective calibration;
-- multiple hero and supporting images;
-- lifestyle and person-use scenes;
-- dimension / specification graphics;
-- detail-page modules;
-- per-image and cross-image QA;
-- marketplace export preflight.
+The workflow now has four explicit contracts before and after generation:
 
-## Critical production rule / 商品像素保真
+1. **Task input contract** — what the user actually requested.
+2. **Product evidence contract** — what authoritative product assets actually prove.
+3. **Prompt rendering contract** — how generation prompts are built deterministically.
+4. **Delivery contract** — what must exist, pass QA, and be surfaced before the task is called complete.
 
-If the user supplies an authoritative product photo:
+This separation prevents two common failures:
+- inferring user intent from the product image;
+- generating files but not actually delivering / accounting for them.
 
-**MUST use original product RGB as the default product body.**
+## Intake
 
-The preferred pipeline is:
+Read:
+- \`references/task-input-schema.json\`
+- \`references/intake-contract.md\`
+
+Create \`task-input.json\`.
+
+Important distinction:
+
+- **User intent** such as marketplace, ratio, language, market, requested style, deliverables, and extra requirements comes from explicit user input.
+- **Product evidence** such as visible geometry, hardware, texture, and supported view MUST be extracted from authoritative product images.
+
+商品图片必须读取用于商品身份锁定；但不能从图片去猜用户要淘宝还是 Amazon、中文还是英文、4:9 还是 1:1。
+
+Validate intake:
+
+\`\`\`bash
+python ecommerce-product-image-studio/scripts/validate_task_input.py \
+  --input sku-001/task-input.json
+\`\`\`
+
+## Product fidelity
+
+If the user supplies a real SKU photo:
 
 \`\`\`text
 real SKU photo
 → alpha mask
-→ original RGB cutout
-→ generated EMPTY scene
-→ independent generated person layer if needed
-→ scale / perspective calibration
-→ compositing
-→ programmatic Chinese copy / dimensions
+→ ORIGINAL PRODUCT RGB
+→ generated EMPTY background / independent person
+→ scale-aware compositing
+→ programmatic typography
 → QA
 \`\`\`
 
-Do not send the whole product image through a generative model and then call the result “the same SKU”. A visually similar generated product is a fidelity failure.
+A generated lookalike is not the same SKU.
+
+## Deterministic prompts
+
+Read:
+- \`references/prompt-rendering.md\`
+- \`templates/empty-scene-prompt.md\`
+- \`templates/person-layer-prompt.md\`
+
+Required unresolved placeholders block the asset. Optional absent fields are omitted. Fixed product-exclusion clauses are never removed.
+
+## Delivery gate
+
+Read \`references/delivery-gate.md\`.
+
+Create \`delivery-manifest.json\` and track:
+- planned;
+- blocked;
+- expected;
+- produced;
+- QA-completed;
+- delivered.
+
+Do not claim “complete” unless every expected final asset has QA status and an accessible delivery reference.
 
 ## Project structure
 
 \`\`\`text
 sku-001/
   input/
+  task-input.json
   product.json
   product-identity.json
   product-dimensions.json
@@ -54,6 +94,7 @@ sku-001/
     scale-calibration.json
     copy-deck.md
   work/
+    prompts/
     masks/
     cutouts/
     backgrounds/
@@ -66,35 +107,15 @@ sku-001/
     platform/
     detail-modules/
   qa/
-    contact-sheet.png
     per-image/
     qa-report.md
+  delivery-manifest.json
 \`\`\`
-
-## Recommended execution
-
-1. Put real SKU photos, spec sheets, CAD, packaging references, and approved documents in \`input/\`.
-2. Copy \`templates/product.example.json\` to the SKU project and fill only verified facts.
-3. Run the reference audit.
-4. Build product identity and dimension locks.
-5. If a scene is required, build \`scale-calibration.json\` before compositing.
-6. Build the gallery plan.
-7. Generate empty scenes / person layers independently.
-8. Composite the original product RGB.
-9. Add final Chinese copy and numeric dimensions with design/programmatic tools.
-10. Run visual QA and marketplace preflight.
 
 ## China marketplace notes / 中国电商说明
 
-淘宝、天猫、京东、拼多多的主图槽位、详情页宽度、文字限制、文件大小等必须以当前卖家后台或官方资料为准，不在 Skill 中永久写死。
+淘宝、天猫、京东、拼多多的主图槽位、详情页宽度、文字限制和文件大小等必须按当前卖家后台 / 官方资料核验。
 
-中文、数字、尺寸线、Logo、参数表建议使用设计工具或程序排版，避免图像模型生成乱码或错误数字。
+用户指定的 4:9、1:1 等比例可以作为设计要求，但不能自动解释为所有平台的统一官方规则。
 
-## Important limitations
-
-- A single unscaled photo cannot establish complete 3D dimensions.
-- A single camera view cannot prove an unseen side.
-- Pixel preservation does not guarantee that the alpha mask is correct.
-- Visual plausibility does not equal metric accuracy.
-- If no image/compositing tool is available, output the plan and executable steps; do not pretend files were generated.
-- Do not automatically upload or publish product assets.
+中文、数字、尺寸线、Logo 和参数表使用可控排版工具，不依赖图像模型生成最终文字。

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "skill": "ecommerce-product-image-studio",
+  "values": {
+    "product_images": {
+      "value": [
+        "input/product-front.png"
+      ],
+      "source": "uploaded_attachment"
+    },
+    "deliverables": {
+      "value": [
+        "complete_set"
+      ],
+      "source": "user_explicit"
+    }
+  },
+  "unresolved_fields": [],
+  "omitted_fields": [
+    "sku",
+    "variant",
+    "platform",
+    "ratio",
+    "language",
+    "target_market",
+    "selling_points",
+    "brand_assets",
+    "extra_requirements"
+  ],
+  "blockers": []
+}
