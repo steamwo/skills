@@ -23,7 +23,7 @@
 
 **第 2 步：点击运行**
 
-1. 打开 [GitHub Actions：原木商品出图](./actions/workflows/render.yml)。
+1. 打开 [GitHub Actions：原木商品出图](https://github.com/steamwo/skills/actions/workflows/render.yml)。
 2. 点左侧 `原木商品出图`，然后点击 `Run workflow` → 绿色 `Run workflow`。
 3. 点击刚出现的运行记录；绿色对勾代表完成。若失败，展开红色步骤看报错。
 
