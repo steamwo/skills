@@ -28,7 +28,7 @@
     "length_mm": null,
     "width_mm": null,
     "height_mm": null,
-    "weight_g": null,
+    "net_weight_g": null,
     "status": "unknown",
     "measurement_method": "unknown",
     "measurement_state": "assembled",
@@ -46,7 +46,7 @@
     "length_mm": null,
     "width_mm": null,
     "height_mm": null,
-    "weight_g": null,
+    "gross_weight_g": null,
     "status": "unknown",
     "evidence": []
   },

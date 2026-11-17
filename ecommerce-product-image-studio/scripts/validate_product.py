@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+
 DIMENSION_STATUSES = {
     "user_confirmed",
     "document_verified",
@@ -18,12 +19,12 @@ DIMENSION_STATUSES = {
     "conflicting",
 }
 VERIFIED_STATUSES = {"user_confirmed", "document_verified"}
-DIMENSION_FIELDS = (
-    "length_mm",
-    "width_mm",
-    "height_mm",
+DIMENSION_FIELDS = ("length_mm", "width_mm", "height_mm")
+OPTIONAL_MEASUREMENTS = (
+    "net_weight_g",
+    "gross_weight_g",
+    "weight_g",  # accepted for older manifests; prefer explicit net/gross fields
 )
-OPTIONAL_MEASUREMENTS = ("weight_g",)
 
 
 def get_nested(data: dict[str, Any], *keys: str) -> Any:
@@ -40,15 +41,13 @@ def validate_measurement_block(
     label: str,
     errors: list[str],
     warnings: list[str],
-    *,
-    require_all_axes_when_verified: bool = True,
 ) -> None:
     if not isinstance(block, dict):
         errors.append(f"{label} must be a JSON object.")
         return
 
     status = block.get("status", "unknown")
-    if status not in DIMENSION_STATUSES:
+    if not isinstance(status, str) or status not in DIMENSION_STATUSES:
         errors.append(
             f"{label}.status must be one of: {', '.join(sorted(DIMENSION_STATUSES))}."
         )
@@ -74,21 +73,23 @@ def validate_measurement_block(
 
     if status in VERIFIED_STATUSES:
         missing = [field for field in DIMENSION_FIELDS if block.get(field) is None]
-        if require_all_axes_when_verified and missing:
+        if missing:
             errors.append(
                 f"{label} is marked {status} but missing: {', '.join(missing)}."
             )
         if not evidence:
-            errors.append(
-                f"{label} is marked {status} but has no evidence source."
-            )
+            errors.append(f"{label} is marked {status} but has no evidence source.")
     elif status == "partial":
         known_axes = [field for field in DIMENSION_FIELDS if block.get(field) is not None]
         if not known_axes:
             warnings.append(f"{label} is marked partial but no dimension axis has a value.")
         axis_evidence = block.get("axis_evidence", {})
-        if known_axes and not isinstance(axis_evidence, dict):
+        if not isinstance(axis_evidence, dict):
             warnings.append(f"{label}.axis_evidence should map each known axis to its source.")
+        else:
+            for axis in known_axes:
+                if not axis_evidence.get(axis):
+                    warnings.append(f"{label}.{axis} has no per-axis evidence.")
     elif status == "estimated":
         warnings.append(
             f"{label} contains estimated measurements; do not use them as formal specs."
@@ -105,8 +106,13 @@ def validate_measurement_block(
 
     tolerance = block.get("tolerance_mm")
     if tolerance is not None:
-        if isinstance(tolerance, bool) or not isinstance(tolerance, (int, float)) or tolerance < 0:
-            errors.append(f"{label}.tolerance_mm must be a non-negative number or null.")
+        if (
+            isinstance(tolerance, bool)
+            or not isinstance(tolerance, (int, float))
+            or not math.isfinite(float(tolerance))
+            or tolerance < 0
+        ):
+            errors.append(f"{label}.tolerance_mm must be a finite non-negative number or null.")
 
 
 def validate(manifest_path: Path, root: Path) -> tuple[list[str], list[str]]:
@@ -154,7 +160,6 @@ def validate(manifest_path: Path, root: Path) -> tuple[list[str], list[str]]:
             "packaging_dimensions",
             errors,
             warnings,
-            require_all_axes_when_verified=True,
         )
 
     if get_nested(data, "material", "species", "value") in (None, ""):

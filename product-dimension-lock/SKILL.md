@@ -23,12 +23,12 @@ description: 从用户确认资料、制造商规格、工程图或可靠测量�
 
 标准化存储：
 - 产品本体：length_mm、width_mm、height_mm。
-- 重量：weight_g；净重/毛重必须区分。
-- 包装：package_length_mm、package_width_mm、package_height_mm、package_weight_g。
+- 商品净重：net_weight_g；如有毛重，单独记录 gross_weight_g。
+- 包装：package_length_mm、package_width_mm、package_height_mm、gross_weight_g。
 - 可选尺寸：直径、厚度、内径、孔距、展开尺寸、折叠尺寸、最大外廓、有效使用尺寸。
 - 变体：每个 SKU/尺寸/颜色/套装分别记录，不用一个变体的数据覆盖其他变体。
 
-统一使用 mm 和 g 存储；展示时再转换为 cm、m 或 kg。原始值和原始单位应保留在证据记录中。
+统一使用 mm 和 g 存储；展示时再转换为 cm、m 或 kg。原始值和原始单位应保留在证据记录中。净重、毛重、包装尺寸与产品本体尺寸必须明确区分。
 
 ## 轴定义与测量口径
 
@@ -48,8 +48,7 @@ description: 从用户确认资料、制造商规格、工程图或可靠测量�
 - estimated：由照片、模型或间接信息估算；只用于内部草案，不得作为规格承诺或精确尺度基准。
 - unknown：没有足够证据。
 - conflicting：多个可信来源不一致，等待解决。
-
-可使用 partial 表示部分轴已确认；必须逐轴标注证据。禁止把部分确认升级为完整尺寸。
+- partial：部分尺寸轴有证据；必须逐轴记录来源，不得作为完整三维尺度。
 
 ## 建档步骤
 
@@ -72,6 +71,7 @@ description: 从用户确认资料、制造商规格、工程图或可靠测量�
     "length_mm": null,
     "width_mm": null,
     "height_mm": null,
+    "net_weight_g": null,
     "status": "unknown",
     "measurement_method": "unknown",
     "measurement_state": "assembled",
@@ -88,6 +88,7 @@ description: 从用户确认资料、制造商规格、工程图或可靠测量�
     "length_mm": null,
     "width_mm": null,
     "height_mm": null,
+    "gross_weight_g": null,
     "status": "unknown",
     "evidence": []
   }
