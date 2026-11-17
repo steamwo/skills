@@ -106,6 +106,31 @@
           "key": "independent_site",
           "label_en": "Independent site",
           "label_zh": "独立站"
+        },
+        {
+          "key": "ozon",
+          "label_en": "OZON",
+          "label_zh": "OZON"
+        },
+        {
+          "key": "shein",
+          "label_en": "SHEIN",
+          "label_zh": "SHEIN"
+        },
+        {
+          "key": "mercado_libre",
+          "label_en": "Mercado Libre",
+          "label_zh": "美客多"
+        },
+        {
+          "key": "coupang",
+          "label_en": "Coupang",
+          "label_zh": "Coupang"
+        },
+        {
+          "key": "wayfair",
+          "label_en": "Wayfair",
+          "label_zh": "Wayfair"
         }
       ]
     },
@@ -151,6 +176,57 @@
           "key": "16:9",
           "label_en": "16:9",
           "label_zh": "16:9"
+        }
+      ]
+    },
+    {
+      "key": "surface_profile",
+      "label_en": "Surface / output profile",
+      "label_zh": "页面 / 输出档位",
+      "type": "select",
+      "required": false,
+      "source_policy": "user_explicit_only",
+      "note": "A named design preset is not automatically a verified marketplace compliance profile. Verify current platform rules before export.",
+      "options": [
+        {
+          "key": "generic_gallery",
+          "label_en": "Generic gallery image",
+          "label_zh": "通用主图 / 副图"
+        },
+        {
+          "key": "generic_detail_module",
+          "label_en": "Generic detail-page module",
+          "label_zh": "通用详情页分屏"
+        },
+        {
+          "key": "detail_long_image",
+          "label_en": "Detail-page long image",
+          "label_zh": "详情页长图"
+        },
+        {
+          "key": "amazon_aplus_standard",
+          "label_en": "Amazon A+ standard",
+          "label_zh": "Amazon 普通 A+"
+        },
+        {
+          "key": "amazon_aplus_premium_web",
+          "label_en": "Amazon Premium A+ web",
+          "label_zh": "Amazon 高级 A+ Web"
+        },
+        {
+          "key": "amazon_aplus_premium_mobile",
+          "label_en": "Amazon Premium A+ mobile",
+          "label_zh": "Amazon 高级 A+ 移动端"
+        },
+        {
+          "key": "marketplace_slot",
+          "label_en": "Marketplace-specific slot",
+          "label_zh": "平台指定槽位"
+        },
+        {
+          "key": "custom",
+          "label_en": "Custom profile",
+          "label_zh": "自定义档位"
         }
       ]
     },

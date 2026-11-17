@@ -2,11 +2,13 @@
 
 Reusable Agent Skills for Claude Code, Codex, Cursor, and similar agent environments.
 
-This repository is **English-first for technical execution rules** and **Chinese-friendly for China-commerce workflows**. See [AGENT_SPEC_CONVENTIONS.md](./AGENT_SPEC_CONVENTIONS.md).
+This repository is **English-first for technical execution rules** and **Chinese-friendly for China-commerce workflows**.
+
+See [AGENT_SPEC_CONVENTIONS.md](./AGENT_SPEC_CONVENTIONS.md).
 
 ## E-commerce Product Visual Production Suite
 
-The e-commerce suite turns real SKU references and verified product facts into a traceable set of product images, lifestyle scenes, person-use scenes, dimension graphics, detail modules, QA reports, and marketplace exports.
+The e-commerce suite converts real SKU references and verified product facts into traceable product images, lifestyle scenes, person-use scenes, semantic detail modules, responsive/platform renders, QA records, and delivery manifests.
 
 **Orchestrator:** [ecommerce-product-image-studio](./ecommerce-product-image-studio/SKILL.md)
 
@@ -14,117 +16,101 @@ The e-commerce suite turns real SKU references and verified product facts into a
 
 \`\`\`text
 explicit task intake
+→ execution preflight
 → product reference audit
-→ product identity lock
-→ physical dimension lock
+→ identity + dimension lock
 → scale / perspective calibration
-→ gallery planning
+→ semantic asset & detail-module planning
+→ output-profile planning
 → deterministic prompt rendering
 → source-pixel cutout
-→ empty scene / person / graphics generation
+→ empty scene / person generation
 → compositing
-→ typography / dimensions
-→ visual QA
+→ detail-module / responsive rendering
+→ QA
+→ resumable execution checkpoints
 → delivery gate
 → marketplace export preflight
 \`\`\`
 
-### Execution contracts
+### Key contracts
 
-The orchestrator now separates four contracts:
+The suite now separates:
 
-1. **Task input contract** — what the user explicitly requested.
-2. **Product evidence contract** — what authoritative product assets actually prove.
-3. **Prompt rendering contract** — fixed templates + verified inputs, with unresolved required placeholders blocked rather than guessed.
-4. **Delivery contract** — planned, produced, QA-completed, and actually delivered assets must reconcile before the run is called complete.
+1. **Task Input Contract** — what the user explicitly requested.
+2. **Execution Preflight Contract** — whether source files, tools, output paths, and required capabilities are ready.
+3. **Product Evidence Contract** — what authoritative product assets actually prove.
+4. **Output Profile Contract** — marketplace + surface + slot + device + design preset, not merely aspect ratio.
+5. **Detail Module Contract** — semantic content first, then render to desktop/mobile/platform profiles.
+6. **Prompt Rendering Contract** — fixed templates + verified inputs.
+7. **Execution State Contract** — stable asset IDs, checkpoints, resumable/idempotent retries.
+8. **Product Pixel Contract** — authoritative product pixels remain the product.
+9. **QA Contract** — identity, provenance, scale, prompt, profile, execution, delivery.
+10. **Delivery Contract** — completion means the expected files were actually delivered.
 
-This matters because user intent and product evidence are different things.
+### What was learned from form-driven expert skills
 
-For example:
-- product images MUST be inspected to lock geometry and visible details;
-- product images MUST NOT be used to guess marketplace, language, ratio, target market, style, or extra requirements.
+Useful ideas adopted:
+- machine-readable input fields and legal options;
+- explicit source policy for every field;
+- preflight before expensive work;
+- named surface/output profiles;
+- modular detail-page design;
+- responsive web/mobile variants;
+- resumable execution that does not duplicate costly generation;
+- exact delivery accounting.
+
+Deliberate difference:
+- this repository **must inspect product images** for product evidence and identity locking;
+- it **must not** use image content to infer user intent such as platform, language, ratio, market, or style.
 
 ### Non-negotiable product rule
 
 If the user provides an authoritative product photograph, the product MUST NOT be regenerated from text or replaced by a visually similar AI product.
 
 Use:
-- original product RGB + alpha mask, or
-- a verified CAD/3D render for the same SKU.
+- original product RGB + alpha mask; or
+- a verified current-SKU CAD/3D render.
 
-AI generation is primarily for:
-- empty backgrounds;
-- environments;
-- independent people;
-- non-product props;
-- layout concepts.
-
-A prompt that says “preserve the product” is not enough. Product fidelity is established by pixel / asset provenance and QA.
+AI generation is primarily for empty backgrounds, environments, independent people, props, and layout concepts.
 
 ## Skills
 
 | Skill | Responsibility |
 |---|---|
 | [ecommerce-product-image-studio](./ecommerce-product-image-studio/SKILL.md) | End-to-end orchestration |
-| [product-reference-audit](./product-reference-audit/SKILL.md) | Audit source images, specs, CAD, packaging, evidence gaps |
-| [product-identity-lock](./product-identity-lock/SKILL.md) | Lock SKU geometry, structure, appearance, visible details |
-| [product-dimension-lock](./product-dimension-lock/SKILL.md) | Build traceable physical dimension records |
-| [product-scale-calibration](./product-scale-calibration/SKILL.md) | Calibrate product / scene / person scale and perspective |
-| [ecommerce-gallery-planner](./ecommerce-gallery-planner/SKILL.md) | Plan distinct hero, scene, dimension, detail, packaging modules |
-| [product-cutout-composite](./product-cutout-composite/SKILL.md) | Preserve source product RGB and composite with alpha masks |
-| [lifestyle-scene-composite](./lifestyle-scene-composite/SKILL.md) | Build scale-aware product lifestyle scenes |
-| [human-lifestyle-composite](./human-lifestyle-composite/SKILL.md) | Plan people, poses, actions, and person layers |
-| [product-human-scene-integration](./product-human-scene-integration/SKILL.md) | Integrate product + person + scene without product redraw |
-| [ecommerce-infographic-detail-builder](./ecommerce-infographic-detail-builder/SKILL.md) | Build dimension, copy, detail, and long-form modules |
-| [brand-visual-system](./brand-visual-system/SKILL.md) | Keep brand presentation consistent without recoloring product |
-| [ecommerce-visual-qa](./ecommerce-visual-qa/SKILL.md) | Identity, provenance, scale, prompt, delivery, cross-image QA |
-| [marketplace-export-preflight](./marketplace-export-preflight/SKILL.md) | Verify current marketplace export constraints |
-| [wood-product-fidelity](./wood-product-fidelity/SKILL.md) | Wood-product-specific fidelity constraints |
+| [product-reference-audit](./product-reference-audit/SKILL.md) | Source/evidence audit |
+| [product-identity-lock](./product-identity-lock/SKILL.md) | SKU identity lock |
+| [product-dimension-lock](./product-dimension-lock/SKILL.md) | Physical dimension lock |
+| [product-scale-calibration](./product-scale-calibration/SKILL.md) | Scene/person scale calibration |
+| [ecommerce-gallery-planner](./ecommerce-gallery-planner/SKILL.md) | Semantic asset family planning |
+| [product-cutout-composite](./product-cutout-composite/SKILL.md) | Source-pixel cutout/compositing |
+| [lifestyle-scene-composite](./lifestyle-scene-composite/SKILL.md) | Product lifestyle scenes |
+| [human-lifestyle-composite](./human-lifestyle-composite/SKILL.md) | Independent person assets |
+| [product-human-scene-integration](./product-human-scene-integration/SKILL.md) | Product/person/scene integration |
+| [ecommerce-infographic-detail-builder](./ecommerce-infographic-detail-builder/SKILL.md) | Semantic detail modules + responsive renders |
+| [brand-visual-system](./brand-visual-system/SKILL.md) | Brand presentation |
+| [ecommerce-visual-qa](./ecommerce-visual-qa/SKILL.md) | Multi-gate QA |
+| [marketplace-export-preflight](./marketplace-export-preflight/SKILL.md) | Marketplace/surface/slot export verification |
+| [wood-product-fidelity](./wood-product-fidelity/SKILL.md) | Wood-product fidelity |
 
-## Machine-readable intake
+## Important principles
 
-The orchestrator includes:
-- \`references/task-input-schema.json\`
-- \`templates/task-input.example.json\`
-- \`scripts/validate_task_input.py\`
+- Explicit intent before inferred defaults.
+- Preflight before expensive generation.
+- Evidence before creativity.
+- Source product pixels before generative product redraw.
+- Semantic content before canvas size.
+- Output profile ≠ aspect ratio only.
+- Named platform preset ≠ verified compliance.
+- Separate desktop/mobile renders when hierarchy requires it.
+- Stable asset IDs + resumable execution.
+- Retry only invalidated stages.
+- Programmatic typography for final Chinese copy and dimensions.
+- Complete delivery requires delivered artifact accounting.
 
-This keeps configurable inputs explicit and source-traceable instead of letting the agent silently infer them.
+## China marketplace notes / 中国电商
 
-## Default deliverables
+淘宝、天猫、1688、京东、拼多多、抖音等平台应按“平台 + surface + slot + 端侧”处理，而不是记一个固定“平台尺寸”。
 
-A SKU project SHOULD include, where evidence and user intent support them:
-- multiple differentiated product / hero images;
-- lifestyle scenes;
-- person-use scenes when appropriate;
-- verified dimension / specification graphics;
-- material and structural detail images;
-- packaging / included-item graphics when verified;
-- independent detail-page modules;
-- product identity, dimension, scale-calibration, provenance, prompt, QA, and delivery records.
-
-Do not invent assets just to fill image slots.
-
-## Quick start / 快速使用
-
-Provide the SKU photos and your actual business requirements, then ask:
-
-> Use \`ecommerce-product-image-studio\` for this SKU. Build task-input.json from what I explicitly requested. Inspect my product photos for product evidence, but do not infer my marketplace, ratio, language, target market, or style from the images. Treat my product photo as authoritative. Do not redraw or replace the product. Use deterministic scene/person prompt templates, composite original product pixels, run QA, and do not claim completion until the delivery manifest reconciles all expected assets.
-
-中文可以直接说：
-
-> 使用 ecommerce-product-image-studio 处理这个 SKU。先把我明确说过的需求写入 task-input.json；商品图片必须读取用于商品身份锁定，但不要从图片猜平台、比例、语言、市场或风格。商品实拍图是权威参考，禁止重新生成或替换商品本体。背景和人物按模板生成，商品使用原图像素合成，最后做 QA 和 Delivery Gate，实际交付数量对不上就不能说“全部完成”。
-
-## Design principles
-
-- **Explicit intent before inferred defaults.**
-- **Evidence before creativity.**
-- **Source product pixels before generative product redraw.**
-- **Physical dimensions before metric scene claims.**
-- **Deterministic prompt templates before free-form prompt improvisation.**
-- **No perspective repair by distorting product geometry.**
-- **Programmatic typography for final Chinese copy and dimensions.**
-- **Traceable source assets, masks, prompts, layers, tools, QA, and delivery.**
-- **Current marketplace rules must be re-verified.**
-- **Human review before publishing.**
-
-This repository does not include a built-in image model, paid API key, or automatic product publishing.
+用户说“4:9”时，先视为设计比例。只有经过当前平台规则核验后，才能称为对应平台合规输出。

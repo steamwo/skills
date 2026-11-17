@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "profile_id": "amazon-aplus-standard-example",
+  "marketplace": "amazon",
+  "surface": "enhanced_content",
+  "slot": null,
+  "device": "unspecified",
+  "design_preset": "amazon_aplus_standard",
+  "width_px": null,
+  "height_px": null,
+  "aspect_ratio": null,
+  "safe_area": null,
+  "text_density": "medium",
+  "crop_policy": "redesign_per_profile",
+  "module_policy": "independent_modules",
+  "rule_source": null,
+  "verified_at": null,
+  "compliance_status": "DESIGN_ONLY",
+  "note": "Named preset only. Fill current dimensions from a verified marketplace rule source before claiming compliance."
+}

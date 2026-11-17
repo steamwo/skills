@@ -1,23 +1,42 @@
 ---
 name: marketplace-export-preflight
-description: Verify current marketplace- and slot-specific image export requirements before producing platform variants; preserve product geometry while applying only compliant crop, scale, padding, compression, and naming operations.
+description: Verify current marketplace-, surface-, slot-, and device-specific export requirements before producing platform variants; distinguish design presets from verified compliance profiles and preserve product identity during export.
 ---
 
 # Marketplace Export Preflight
 
 ## Objective
 
-Convert approved master assets into marketplace-specific exports without assuming stale platform rules.
+Convert approved masters into marketplace-specific output profiles without assuming stale rules.
+
+Read \`ecommerce-product-image-studio/references/output-profile-contract.md\`.
 
 ## Inputs
 
-MUST identify:
-- marketplace;
-- product category;
-- image slot;
-- current rule source;
-- verification date;
-- target device / surface when relevant.
+MUST identify when platform-specific export is requested:
+- marketplace
+- product category
+- surface / content type
+- slot
+- device / web / mobile when relevant
+- current rule source
+- verification date
+
+## Design preset vs compliance
+
+A design preset such as:
+- 1:1
+- 3:4
+- 4:9
+- Amazon A+ standard
+- Amazon Premium A+ web
+- Amazon Premium A+ mobile
+
+is a layout target.
+
+It is **not automatically a verified marketplace rule**.
+
+Only a profile with current rule source + verification date may use \`VERIFIED\`.
 
 ## Rule source priority
 
@@ -33,15 +52,25 @@ Do not rely on memory for current compliance.
 As applicable:
 - width / height / aspect ratio;
 - minimum resolution;
+- device-specific requirements;
+- safe area;
+- module / slot restrictions;
 - format;
 - file size;
 - transparency;
 - allowed text / logo / watermark;
 - hero-image background requirements;
-- detail-page width / segmentation;
+- detail-page segmentation;
 - color mode;
 - category-specific constraints;
 - naming.
+
+## Responsive output rule
+
+If the same semantic content must serve web and mobile:
+- create separate layout renders when needed;
+- do not mechanically resize when readability, hierarchy, or product visibility degrades;
+- inherit the same verified claims and product provenance.
 
 ## Allowed export operations
 
@@ -51,7 +80,8 @@ MAY:
 - padding;
 - compression;
 - format conversion;
-- naming / directory organization.
+- naming / directory organization;
+- profile-specific layout rendering.
 
 MUST NOT:
 - stretch product geometry;
@@ -61,20 +91,19 @@ MUST NOT:
 
 ## Status
 
+- \`DESIGN_ONLY\`
 - \`VERIFIED\`
 - \`NEEDS_REVIEW\`
 - \`BLOCKED\`
 
 ## China marketplace notes / 中国电商平台
 
-淘宝、天猫、京东、拼多多的规则可能随类目、活动、客户端和卖家后台变化。
+淘宝、天猫、1688、京东、拼多多、抖音等都应按 surface / slot 理解，而不是只有一个“平台尺寸”。
 
-- 必须记录规则来源和核验日期。
-- 不要把历史主图尺寸或详情页宽度写成永久硬编码规则。
-- 如果用户只说“电商图一般 4:9”，应把它当作用户指定的设计比例，而不是所有平台的官方统一要求。
+用户指定 4:9 等比例时，先视为设计要求；对应平台规则经过核验后，才升级为合规 profile。
 
 ## Output
 
-Create a \`platform-profile.json\` per marketplace / slot and an export preflight report.
+Create \`platform-profile.json\` / output-profile records per marketplace + surface + slot + device and an export preflight report.
 
-Passing preflight means the file passed the recorded checks; it does not mean the marketplace guarantees acceptance.
+Passing preflight means the file passed the recorded checks; it does not guarantee marketplace acceptance.

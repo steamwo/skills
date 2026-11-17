@@ -1,13 +1,15 @@
 ---
 name: ecommerce-gallery-planner
-description: Plan a complete evidence-backed e-commerce image set with distinct buyer-decision roles, explicit requested deliverables, source references, product-pixel policy, scale status, copy evidence, production method, and acceptance criteria.
+description: Plan an evidence-backed e-commerce asset family with distinct buyer-decision roles, requested deliverables, semantic detail modules, surface profiles, provenance, scale status, production method, and acceptance criteria.
 ---
 
 # Ecommerce Gallery Planner
 
 ## Objective
 
-Plan a complete image set where each asset answers a distinct buyer question. Do not create near-duplicate images just to fill slots.
+Plan a complete asset family where each image or module answers a distinct buyer question.
+
+Do not create near-duplicate images just to fill slots.
 
 ## Required inputs
 
@@ -16,9 +18,13 @@ Plan a complete image set where each asset answers a distinct buyer question. Do
 - \`product-identity.json\`
 - \`product-dimensions.json\`
 - reference audit outputs
-- \`scale-calibration.json\` for any scale-sensitive scene
+- \`scale-calibration.json\` for scale-sensitive scenes
 - brand system if available
-- current marketplace / slot requirements if known
+- current marketplace / surface requirements if known
+
+Read:
+- \`ecommerce-product-image-studio/references/output-profile-contract.md\`
+- \`ecommerce-product-image-studio/references/detail-module-contract.md\`
 
 ## Requested deliverables rule
 
@@ -32,6 +38,23 @@ Do not infer unrequested deliverables from:
 
 If the user requested a “complete image set”, the planner MAY propose a complete role set, but unsupported roles remain \`BLOCKED\` rather than invented.
 
+## Asset families
+
+Distinguish:
+- semantic asset / module;
+- one or more render profiles.
+
+Example:
+
+\`\`\`text
+module: product dimensions
+  ├── generic detail-page render
+  ├── mobile render
+  └── marketplace-specific render
+\`\`\`
+
+Do not duplicate evidence or rewrite claims independently per render.
+
 ## Recommended asset roles
 
 Use only roles supported by evidence:
@@ -43,13 +66,13 @@ Use only roles supported by evidence:
 6. dimension / specification image;
 7. material / structure detail;
 8. packaging / included items;
-9. detail-page modules.
+9. semantic detail-page modules.
 
 These are roles, not a mandatory fixed count.
 
 ## MUST
 
-For every planned image record:
+For every semantic asset record:
 - \`id\`
 - \`sku\` / variant
 - \`role\`
@@ -64,6 +87,7 @@ For every planned image record:
 - \`copy_evidence\`
 - \`generation_method\`
 - \`prompt_template\` where applicable
+- \`output_profiles\`
 - \`layer_plan\`
 - \`acceptance_criteria\`
 - \`risks\`
@@ -73,21 +97,20 @@ For every planned image record:
 
 For authoritative product photos, default to \`SOURCE_PRODUCT_PIXEL\`.
 
-Do not plan a generative redraw of the product body as a normal production route.
-
 Other allowed sources:
 - \`VERIFIED_CAD_3D\`
 - \`CONCEPT_ONLY\` with explicit non-factual labeling
 
 ## MUST NOT
 
-- invent an unsupported rear / side / bottom view;
-- turn a visually similar generated product into a SKU image;
+- invent unsupported views;
+- turn a generated lookalike into a SKU image;
 - create dimension graphics from unknown values;
-- infer packaging contents from the hero photo;
-- use a person scene to imply unverified load capacity or ergonomic benefit;
+- infer packaging contents;
+- imply unverified load / ergonomic benefits;
 - treat a scene as metric when scale is unverified;
-- silently add deliverables the user did not request unless the user asked for a complete set.
+- claim a named output preset is platform-compliant without current verification;
+- silently add deliverables unless the user asked for a complete set.
 
 ## Planning statuses
 
@@ -95,8 +118,6 @@ Other allowed sources:
 - \`REVIEW\`
 - \`BLOCKED\`
 - \`NOT_APPLICABLE\`
-
-If an asset is blocked, record the missing source rather than filling it with invented content.
 
 ## Outputs
 
@@ -106,4 +127,4 @@ Create:
 - \`blocked-assets.md\`
 - \`copy-deck.md\`
 
-The image plan becomes the source of truth for the Delivery Gate counters.
+The plan is the source of truth for execution-state and Delivery Gate accounting.

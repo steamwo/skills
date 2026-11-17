@@ -1,13 +1,15 @@
 ---
 name: ecommerce-visual-qa
-description: Run evidence-backed QA for product identity, source-pixel provenance, dimensions, scale, perspective, person interaction, material fidelity, copy truth, cross-image consistency, marketplace readiness, and final delivery accounting.
+description: Run evidence-backed QA for input integrity, preflight readiness, product identity, source-pixel provenance, dimensions, scale, prompt traceability, person interaction, surface profiles, detail modules, cross-image consistency, delivery completeness, and marketplace readiness.
 ---
 
 # Ecommerce Visual QA
 
 ## Objective
 
-Evaluate each asset and the complete image set. Do not collapse visual quality, product truth, scale accuracy, and delivery completeness into one score.
+Evaluate each asset and the complete production system.
+
+Do not collapse visual quality, product truth, operational readiness, profile validity, and delivery completeness into one score.
 
 ## QA states
 
@@ -16,162 +18,126 @@ Evaluate each asset and the complete image set. Do not collapse visual quality, 
 - \`FAIL\`
 - \`NOT_CHECKED\`
 
-## Gate A — Product identity
-
-Check against authoritative references:
-- silhouette;
-- component count;
-- relative positions;
-- hardware locations;
-- holes / seams / joints;
-- handles / supports / edge profiles;
-- logo / markings;
-- visible texture / grain / color.
-
-Any identity-critical drift is \`FAIL\`.
-
-## Gate B — Product pixel provenance
-
-Record:
-- source product asset;
-- whether final product pixels are \`SOURCE_PRODUCT_PIXEL\`, \`VERIFIED_CAD_3D\`, or generated;
-- masks and transformations;
-- any authorized edits.
-
-If an authoritative source photo existed but the product was regenerated as a lookalike without explicit creative-preview authorization, set \`FAIL\`.
-
-## Gate C — Input-source integrity
+## Gate A — Input-source integrity
 
 Check:
 - user-intent fields came from explicit user input;
-- attachment content was not used to invent platform, language, ratio, market, style, or extra requirements;
-- product-evidence fields derived from attachments are labeled as evidence rather than user intent;
-- optional unspecified fields were omitted or handled by an explicit legal \`auto\` option.
+- product evidence derived from attachments is labeled as evidence;
+- optional unspecified fields were omitted or handled through explicit legal policy.
 
-## Gate D — Dimensions and specifications
-
-Check:
-- values;
-- units;
-- axis definitions;
-- measurement state;
-- evidence;
-- product vs packaging;
-- net vs gross weight;
-- dimension-line endpoints.
-
-Unknown / estimated values MUST NOT appear as verified customer-facing specifications.
-
-## Gate E — Scale and perspective
+## Gate B — Execution preflight
 
 Check:
-- \`scale-calibration.json\`;
-- contact plane;
-- product anchor;
-- camera / projection assumptions;
-- reference objects;
-- depth relationships;
-- uniform product scaling;
-- absence of geometry warping.
+- source assets usable;
+- required tools available;
+- originals preserved;
+- preprocessing traceable;
+- output destination valid;
+- blocked requirements identified before expensive work.
 
-## Gate F — Person interaction
+## Gate C — Product identity
 
-Check:
-- hand / finger anatomy;
-- grip points;
-- body support;
-- foot / body placement;
-- foreground / background occlusion;
-- gravity;
-- product geometry unchanged;
-- no implied unverified performance.
+Check silhouette, components, hardware, joints, supports, logos, texture, and other identity-critical details against authoritative references.
 
-## Gate G — Material / color
+Identity drift = \`FAIL\`.
 
-Check source-aligned material appearance and ensure brand grading does not recolor the product body.
+## Gate D — Product pixel provenance
 
-## Gate H — Cutout and composite
+Record source product asset, mask, transformations, authorized edits, and provenance class.
 
-Check:
-- holes / gaps preserved;
-- no fringe;
-- no mask-eaten structure;
-- contact / cast shadow direction;
-- shadow does not overwrite product RGB;
-- no confusing duplicate target product in background.
+A generated lookalike replacing an available authoritative source is \`FAIL\`.
 
-## Gate I — Copy and graphics
+## Gate E — Dimensions / specifications
 
-Check:
-- Chinese spelling;
-- numbers;
-- units;
-- punctuation;
-- claim evidence;
-- packaging quantities;
-- certifications;
-- logos;
-- readability.
+Check values, units, axes, evidence, product-vs-packaging, and dimension-line endpoints.
 
-## Gate J — Prompt traceability
+Unknown / estimated values MUST NOT appear as verified specs.
 
-For generated backgrounds / people, verify:
-- template version recorded;
-- rendered prompt saved;
+## Gate F — Scale / perspective
+
+Check scale-calibration records, contact plane, camera assumptions, reference objects, uniform product scaling, and absence of geometry warp.
+
+## Gate G — Prompt traceability
+
+For generated assets verify:
+- template version;
+- rendered prompt;
 - required placeholders resolved;
-- fixed product-exclusion clause present;
-- no unsupported facts added.
+- fixed product-exclusion clauses preserved;
+- no unsupported facts introduced.
 
-## Gate K — Cross-image consistency
+## Gate H — Person interaction
 
-Check same SKU / variant, structure, verified dimensions, appearance, copy, and person consistency when required.
+Check anatomy, grip/contact points, occlusion, gravity, and unchanged product geometry.
 
-## Gate L — Marketplace export
+## Gate I — Detail module integrity
 
-Check marketplace, category, slot, rule source, verification date, dimensions / format / file size / naming.
+Check:
+- each module has one clear semantic purpose;
+- claims inherit evidence;
+- different profile renders preserve semantic priority;
+- mobile / web variants are redesigned when needed rather than blindly squeezed;
+- stitched long image, if present, is traceable to independent modules.
 
-## Gate M — Delivery completeness
+## Gate J — Output profile validity
+
+Check:
+- marketplace;
+- surface;
+- slot;
+- device;
+- design preset;
+- dimensions;
+- rule source;
+- verification date;
+- compliance status.
+
+A \`DESIGN_ONLY\` preset MUST NOT be described as verified platform compliance.
+
+## Gate K — Material / composite
+
+Check source-aligned material appearance, mask correctness, fringe, shadows, and product RGB preservation.
+
+## Gate L — Copy / graphics
+
+Check language, spelling, numbers, units, claims, packaging quantities, certifications, logos, and readability.
+
+## Gate M — Execution state / retry integrity
+
+Read \`execution-state.json\`.
+
+Check:
+- stable asset IDs;
+- checkpoints;
+- input revision;
+- retries recorded;
+- completed valid artifacts reused;
+- no duplicate expensive generation caused solely by interrupted monitoring.
+
+## Gate N — Cross-image consistency
+
+Check same SKU / variant, structure, verified dimensions, appearance, copy, provenance, and requested person consistency.
+
+## Gate O — Delivery completeness
 
 Read \`delivery-manifest.json\`.
 
-Check:
-- planned count;
-- blocked count;
-- expected deliverable count;
-- produced count;
-- QA-completed count;
-- delivered count;
-- accessible delivery references.
+Check planned, blocked, expected, produced, QA-completed, delivered counts and accessible references.
 
-Do not set project completion to \`COMPLETE\` unless the Delivery Gate passes.
+## Gate P — Marketplace export
 
-## Report schema
-
-Each image SHOULD include:
-- \`asset\`
-- \`sku\`
-- \`role\`
-- \`source_images\`
-- \`product_provenance\`
-- \`identity_status\`
-- \`dimension_status\`
-- \`scale_status\`
-- \`interaction_status\`
-- \`copy_status\`
-- \`prompt_trace_status\`
-- \`overall_status\`
-- \`evidence\`
-- \`issues\`
-- \`severity\`
-- \`remediation\`
-- \`reviewer\`
+Check current rule source, verification date, format, dimensions, file size, naming, and slot-specific constraints.
 
 ## Critical distinction
 
-These are independent:
+Report separately:
 - \`visual_plausibility\`
-- \`metric_grounding\`
+- \`input_source_integrity\`
+- \`preflight_readiness\`
 - \`product_pixel_provenance\`
+- \`metric_grounding\`
+- \`output_profile_validity\`
+- \`execution_integrity\`
 - \`delivery_completeness\`
 
 One cannot substitute for another.

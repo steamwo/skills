@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "project_id": "example-project",
+  "input_revision": "rev-001",
+  "overall_state": "PLANNED",
+  "assets": [
+    {
+      "asset_id": "detail-01-overview",
+      "state": "PLANNED",
+      "execution_key": "example-project:detail-01-overview:planning:rev-001",
+      "retry_count": 0,
+      "artifacts": [],
+      "next_allowed_action": "run_preflight",
+      "checkpoint_history": []
+    }
+  ]
+}

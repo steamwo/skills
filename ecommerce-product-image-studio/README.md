@@ -1,121 +1,129 @@
-# E-commerce AI Product Visual Production Suite
+# E-commerce Product Image Studio
 
-This is the orchestrator package for the e-commerce visual workflow.
+The orchestrator for fidelity-first e-commerce product visual production.
 
-## Key architecture
+## Architecture
 
-The workflow now has four explicit contracts before and after generation:
+The project now uses explicit contracts for:
 
-1. **Task input contract** — what the user actually requested.
-2. **Product evidence contract** — what authoritative product assets actually prove.
-3. **Prompt rendering contract** — how generation prompts are built deterministically.
-4. **Delivery contract** — what must exist, pass QA, and be surfaced before the task is called complete.
+- task intake;
+- execution preflight;
+- product evidence;
+- product identity / dimensions;
+- scale / perspective;
+- semantic asset planning;
+- output profiles;
+- detail-page modules;
+- deterministic prompt rendering;
+- source-pixel production;
+- execution state / resume;
+- QA;
+- delivery;
+- marketplace export.
 
-This separation prevents two common failures:
-- inferring user intent from the product image;
-- generating files but not actually delivering / accounting for them.
+## Important distinction
 
-## Intake
+### User intent
 
-Read:
+Platform, surface/profile, ratio, language, market, style, requested deliverables, and extra requirements come from explicit user input.
+
+### Product evidence
+
+Authoritative product images MUST be inspected for:
+- visible geometry;
+- component count;
+- hardware;
+- texture/color;
+- supported camera view;
+- visible markings.
+
+Do not infer user intent from product appearance.
+
+## Execution preflight
+
+Before expensive generation:
+
+- verify source files;
+- verify required tools;
+- preserve originals;
+- verify output destinations;
+- identify required surface profiles;
+- record blockers.
+
+See \`references/execution-preflight.md\`.
+
+## Output profiles
+
+Do not model output as “ratio only”.
+
+Use:
+- marketplace;
+- surface;
+- slot;
+- device;
+- design preset;
+- verified rule source.
+
+Named presets such as Amazon A+ standard / premium web / premium mobile are useful planning labels, but must be re-verified before compliance export.
+
+See \`references/output-profile-contract.md\`.
+
+## Detail modules
+
+Build semantic modules first, then render them into one or more profiles.
+
+Independent modules are the preferred editable masters.
+
+A stitched long image is normally a derivative.
+
+See \`references/detail-module-contract.md\`.
+
+## Resumable execution
+
+Create \`execution-state.json\`.
+
+Use stable asset IDs and durable checkpoints.
+
+If execution is interrupted:
+- reuse valid outputs;
+- resume from the first invalid/incomplete stage;
+- do not resubmit the same expensive job blindly.
+
+See \`references/execution-state-contract.md\`.
+
+## Product fidelity
+
+\`\`\`text
+real SKU photo
+→ reviewed alpha mask
+→ ORIGINAL PRODUCT RGB
+→ generated empty background / independent person
+→ scale-aware compositing
+→ typography / detail modules
+→ QA
+\`\`\`
+
+A generated lookalike is not the same SKU.
+
+## Machine-readable examples
+
 - \`references/task-input-schema.json\`
-- \`references/intake-contract.md\`
+- \`templates/task-input.example.json\`
+- \`templates/output-profile.example.json\`
+- \`templates/execution-state.example.json\`
+- \`templates/delivery-manifest.example.json\`
 
-Create \`task-input.json\`.
+## Validation
 
-Important distinction:
-
-- **User intent** such as marketplace, ratio, language, market, requested style, deliverables, and extra requirements comes from explicit user input.
-- **Product evidence** such as visible geometry, hardware, texture, and supported view MUST be extracted from authoritative product images.
-
-商品图片必须读取用于商品身份锁定；但不能从图片去猜用户要淘宝还是 Amazon、中文还是英文、4:9 还是 1:1。
-
-Validate intake:
+Validate task intake:
 
 \`\`\`bash
 python ecommerce-product-image-studio/scripts/validate_task_input.py \
   --input sku-001/task-input.json
 \`\`\`
 
-## Product fidelity
-
-If the user supplies a real SKU photo:
-
-\`\`\`text
-real SKU photo
-→ alpha mask
-→ ORIGINAL PRODUCT RGB
-→ generated EMPTY background / independent person
-→ scale-aware compositing
-→ programmatic typography
-→ QA
-\`\`\`
-
-A generated lookalike is not the same SKU.
-
-## Deterministic prompts
-
-Read:
-- \`references/prompt-rendering.md\`
-- \`templates/empty-scene-prompt.md\`
-- \`templates/person-layer-prompt.md\`
-
-Required unresolved placeholders block the asset. Optional absent fields are omitted. Fixed product-exclusion clauses are never removed.
-
-## Delivery gate
-
-Read \`references/delivery-gate.md\`.
-
-Create \`delivery-manifest.json\` and track:
-- planned;
-- blocked;
-- expected;
-- produced;
-- QA-completed;
-- delivered.
-
-Do not claim “complete” unless every expected final asset has QA status and an accessible delivery reference.
-
-## Project structure
-
-\`\`\`text
-sku-001/
-  input/
-  task-input.json
-  product.json
-  product-identity.json
-  product-dimensions.json
-  brand.json
-  plan/
-    asset-audit.md
-    evidence-matrix.json
-    missing-assets.md
-    image-plan.json
-    scale-calibration.json
-    copy-deck.md
-  work/
-    prompts/
-    masks/
-    cutouts/
-    backgrounds/
-    people/
-    shadows/
-    composites/
-    layouts/
-  output/
-    master/
-    platform/
-    detail-modules/
-  qa/
-    per-image/
-    qa-report.md
-  delivery-manifest.json
-\`\`\`
-
 ## China marketplace notes / 中国电商说明
 
-淘宝、天猫、京东、拼多多的主图槽位、详情页宽度、文字限制和文件大小等必须按当前卖家后台 / 官方资料核验。
+平台详情页应优先保留独立分屏 / 模块源文件，再根据平台输出长图、移动端版、Web 版等派生版本。
 
-用户指定的 4:9、1:1 等比例可以作为设计要求，但不能自动解释为所有平台的统一官方规则。
-
-中文、数字、尺寸线、Logo 和参数表使用可控排版工具，不依赖图像模型生成最终文字。
+历史尺寸、示例档位和经验比例不能当成永久平台规则。
