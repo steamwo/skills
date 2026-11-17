@@ -1,107 +1,98 @@
 # Agent Skill Specification Conventions
 
-This repository is **English-first for machine-executable rules** and **Chinese-friendly for China-commerce localization**.
+This repository is an **e-commerce visual production system**, not a generic prompt collection.
 
-## Core production principles
+## Core priorities
 
-### Explicit intent vs product evidence
+1. same-SKU identity;
+2. truthful evidence;
+3. buyer-decision value;
+4. platform commerce style;
+5. natural commercial photography;
+6. variant correctness;
+7. campaign consistency;
+8. official compliance.
 
-User intent comes from explicit user input.
+## Identity fidelity vs pixel fidelity
 
-Product evidence may and often must be extracted from authoritative attachments.
+Default consumer-product route:
+- pass real product photos directly to a capable reference-image model;
+- enforce a stable PRODUCT IDENTITY LOCK;
+- judge whether the output remains the same SKU.
 
-Do not infer marketplace, ratio, language, style, or requested deliverables from product appearance.
+Strict source-pixel compositing is a fallback / special mode for logos, packaging text, precision interfaces, regulated labels, model plates, or repeated identity drift.
 
-### Buyer-decision-first planning
+Do not use “pixel preservation” as an excuse for bad collage-like ecommerce imagery.
 
-E-commerce completeness is measured by purchase-question coverage, not raw image count.
+## Stable locks
 
-Each semantic asset SHOULD answer a concrete buyer question and cite evidence.
+Use stable blocks:
+- PRODUCT IDENTITY LOCK;
+- CAMPAIGN STYLE LOCK;
+- PLATFORM COMMERCE STYLE LOCK.
 
-### SKU / variant scope
+Identity and campaign locks remain stable across the set.
+Shot role changes per asset.
 
-Every fact, copy block, product visual, dimension, and package claim SHOULD have scope:
-- family;
-- variant;
-- bundle;
-- market.
+## Platform style vs compliance
 
-Use sharedness states:
-- \`SHARED_VERIFIED\`
-- \`VARIANT_SPECIFIC\`
-- \`UNKNOWN_SHAREDNESS\`
-- \`NOT_APPLICABLE\`
+Platform style profiles are heuristic conversion guidance.
 
-Unknown sharedness is not permission to reuse.
+Official marketplace requirements are separate and must be current / source-backed.
 
-### Reusable master / derivative model
+## One asset, one dominant job
 
-Prefer:
-- authoritative source;
-- reusable production master;
-- semantic asset;
-- surface / marketplace derivative.
+Each image/module should have one primary purchase-decision job.
 
-A derivative MUST inherit product provenance, evidence, variant scope, and relevant copy version.
+Do not fill a set with near-duplicate mood shots.
 
-If an upstream dependency changes, downstream derivatives become stale.
+## Reference-image generation
 
-### Preflight before expensive work
+Reference generation is the default for most:
+- hero photography;
+- lifestyle scenes;
+- person-use scenes;
+- material / structure close-ups.
 
-Validate source assets, tools, output destination, and required profiles before costly generation.
+Strict compositing is not default.
 
-### Output profiles
+## Commercial scene grammar
 
-Treat output as marketplace + surface + slot + device + preset.
+Scene prompts should express:
+- who;
+- where;
+- action;
+- camera;
+- light;
+- product salience;
+- 2–4 relevant props;
+- scale reference if useful.
 
-Design preset ≠ verified compliance.
+## Candidate / repair loop
 
-### Product pixel preservation
+Important generative assets SHOULD use bounded candidates.
 
-When an authoritative photo exists, default to source-product pixels.
+QA outputs targeted repair instructions.
 
-Do not replace the SKU with a generated lookalike.
+Regenerate only failed assets.
 
-### Content before canvas
+## Copy / layout
 
-For detail pages, define semantic content and buyer question before choosing canvas dimensions.
+Short copy and clear zones improve mobile readability.
 
-Independent modules SHOULD be editable masters; long images are usually derivatives.
+When exact text remains unreliable, move final typography to deterministic design/layout tooling.
 
-### Resumable execution
+## Variant scope
 
-Use stable semantic asset IDs, checkpoints, dependency-aware invalidation, and recorded retries.
+Unknown sharedness is not permission to reuse across SKUs.
 
-Do not duplicate expensive work because monitoring was interrupted.
+## Resumable execution
 
-### Delivery contracts
+Use stable asset IDs, dependency-aware invalidation, and bounded retries.
 
-Track planned, blocked, produced, QA-completed, and delivered outputs.
+## China marketplace notes
 
-Count expected deliverables by actual asset scope and output profile, not naive multiplication.
-
-## Evidence states
-
-- \`visible_in_reference\`
-- \`user_confirmed\`
-- \`document_verified\`
-- \`estimated\`
-- \`unknown\`
-- \`conflicting\`
-
-## Asset provenance classes
-
-- \`SOURCE_PRODUCT_PIXEL\`
-- \`VERIFIED_CAD_3D\`
-- \`GENERATED_BACKGROUND\`
-- \`GENERATED_PERSON\`
-- \`GENERATED_PROP\`
-- \`PROGRAMMATIC_TEXT_GRAPHIC\`
-- \`CONCEPT_ONLY\`
-
-## China marketplace notes / 中国电商平台说明
-
-- 淘宝、天猫、1688、京东、拼多多、抖音等应按平台 + surface + slot + 端侧理解。
-- 同一个 SKU 资产应尽量复用真实商品母版，再派生不同平台版本。
-- 多规格商品必须区分共用资产和规格专属资产，禁止串 SKU。
-- 中文标题、数字、Logo、尺寸线和参数表使用可控排版工具。
+- 淘宝/天猫/1688：货架/搜索/比较逻辑更强，详情页承担较长的信任与决策链。
+- 拼多多：强调快速理解商品、规格/数量/价值信息与小卡片可读性；这属于转化启发式，不是官方模板。
+- 抖音：内容 + 货架并存，移动端、场景、人物使用与内容相关性更重要；仍需符合当前官方主图/商城规则。
+- 所有平台风格策略都不能授权虚假折扣、虚构卖点或未知规格。

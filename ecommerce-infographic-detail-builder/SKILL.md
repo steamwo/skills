@@ -1,137 +1,107 @@
 ---
 name: ecommerce-infographic-detail-builder
-description: Build evidence-backed e-commerce semantic detail modules and variant-aware responsive derivatives from verified product facts, buyer-decision goals, SKU scope, and output profiles.
+description: Build mobile-readable ecommerce selling-point graphics and semantic detail modules using one dominant message per screen, short verified copy, explicit visual zones, platform style profiles, and responsive derivatives.
 ---
 
 # Ecommerce Infographic & Detail Builder
 
 ## Objective
 
-Build independent detail-page modules that answer purchase questions and can be reused across variants / markets only when their evidence scope permits.
+Turn verified product evidence into **conversion screens**, not poster clutter.
 
-Read:
-- buyer-decision framework;
-- variant-matrix contract;
-- asset-reuse contract;
-- detail-module contract;
-- output-profile contract.
+## One-screen-one-job rule
 
-## Inputs
+A screen/module SHOULD have one dominant communication job:
+- one selling point;
+- one proof target;
+- one dimension question;
+- one material / structure proof;
+- one variant choice;
+- one package question.
 
-- \`buyer-decision-map.json\`
-- \`variant-matrix.json\` when applicable
-- product identity
-- product dimensions
-- approved claims
-- verified packaging / included items
-- brand system
-- image plan
-- output profiles
-- asset derivation map
+Do not cram every benefit into one image.
 
-## Content-before-canvas
+## Copy hierarchy
 
-Each module MUST first define:
-- buyer question;
-- verified answer;
-- variant scope;
-- evidence;
-- semantic priority.
+For Chinese conversion graphics, use short copy.
 
-Only then define layout / canvas.
+Useful starting heuristics:
+- main title: usually short enough to read at thumbnail size;
+- supporting line: one or two concise lines;
+- badge / corner label: very short;
+- exact dimensions / numbers: only verified values.
 
-## Variant-aware module rule
+These are visual heuristics, not platform rules.
 
-Each module MUST declare:
-- \`variant_scope\`
-- \`reuse_class\`
+## Zone layout
 
-Family-shared modules may reuse layout / copy only when all referenced facts are verified shared.
+When copy is included, explicitly define zones:
+- product zone;
+- copy zone;
+- badge / value zone when needed;
+- protected whitespace.
 
-Variant-specific numbers, color, packaging, included items, or product cutouts must be parameterized or rendered per variant.
+Do not let the image model improvise copy placement over the product.
 
-## Asset reuse
+## Thumbnail test
 
-Prefer a reusable semantic master.
+For gallery / search-card assets:
+- review at small-card size;
+- main product should remain obvious;
+- headline should remain legible if headline is part of the design;
+- remove copy before shrinking type below practical readability.
 
-Example:
+## Detail-page module strategy
 
-\`\`\`text
-semantic module: "How to choose length"
-  evidence: variant matrix
-  scope: family
-  ├── Chinese mobile render
-  ├── Amazon web render
-  └── generic detail render
-\`\`\`
+Generate modules independently.
 
-For a per-variant dimension module:
+Typical sequence:
+- recognition / brand promise;
+- core benefit;
+- lifestyle proof;
+- material / structure;
+- dimensions / variants;
+- package / usage notes.
 
-\`\`\`text
-semantic template: "Dimensions"
-  ├── 25cm render → 25cm variant facts
-  ├── 30cm render → 30cm variant facts
-  ├── 35cm render → 35cm variant facts
-  └── 40cm render → 40cm variant facts
-\`\`\`
+For Taobao/Tmall/PDD, independent modules are preferred masters; stitch only as a derivative.
 
-The template may be shared; the product cutout and dimension values remain variant-bound.
+## Platform adaptation
 
-## Dimension rules
+### Taobao / Tmall / 1688
+May support denser factual modules and a longer trust-building sequence.
 
-Use only verified values by default.
+### Pinduoduo
+Use more direct hierarchy, stronger product salience and shorter copy.
 
-MUST distinguish:
-- product vs packaging;
-- net vs gross;
-- measurement states;
-- variant-specific dimensions.
+### Douyin
+Prefer content-native imagery, person/use moments, and lighter on-image text on early screens; details/specs can follow after the hook.
 
-If a single axis is verified, show only that axis.
+## Text rendering strategy
 
-## Copy rules
+If the selected image model reliably renders short Chinese:
+- quote exact approved text;
+- specify font family / weight feeling;
+- specify zone and hierarchy;
+- generate 2–3 candidates when text is stochastic.
 
-Every claim MUST have scope:
-- family;
-- variant;
-- bundle;
-- market.
+If exact text is critical or repeated errors occur:
+- render copy programmatically / in a design tool.
 
-Do not put a variant-specific number into family-shared static copy unless the render parameterizes it correctly.
+## MUST NOT
 
-## Multi-surface rendering
-
-One semantic module MAY render to:
-- mobile;
-- web;
-- marketplace-specific surface;
-- long-image derivative.
-
-All renders inherit:
-- evidence;
-- variant scope;
-- product provenance;
-- copy version.
-
-They may change composition and typography.
+- invent claims to fill a screen;
+- mix promotional benefit and product function without hierarchy;
+- use long copy at thumbnail scale;
+- present unknown dimensions;
+- allow platform style to override evidence.
 
 ## Outputs
 
 Create:
-- module manifest
-- copy deck
-- dimension source map
-- independent semantic masters
-- variant/profile derivatives
-- editable layout sources
-- optional stitched long image
-- QA records
-
-## Gate
-
-A module is \`FAIL\` if:
-- its buyer answer lacks evidence;
-- variant scope is wrong;
-- shared copy contains a wrong variant-specific value;
-- a derivative loses product provenance;
-- an unverified fact appears as customer-facing truth.
+- module manifest;
+- copy deck;
+- dimension source map;
+- independent semantic masters;
+- profile derivatives;
+- thumbnail-readability QA;
+- optional long-image derivative.

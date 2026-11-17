@@ -1,94 +1,75 @@
 ---
 name: product-cutout-composite
-description: Extract and composite the real SKU product while preserving original product RGB; use segmentation only for alpha/masks and keep product pixels traceable through placement, shadow, and export.
+description: Strict-pixel fallback for e-commerce assets where exact source product pixels, logos, packaging text, model plates, or precision details must survive unchanged.
 ---
 
-# Product Cutout Composite
+# Product Cutout Composite — Strict Fidelity Route
 
 ## Objective
 
-Create a reusable product cutout without redrawing the product body.
+Preserve original product RGB when exact pixel fidelity is necessary.
+
+This is **not** the default route for ordinary lifestyle photography.
+
+Read \`ecommerce-product-image-studio/references/reference-generation-contract.md\`.
+
+## Use this route when
+
+- packaging text must be exact;
+- logo / label fidelity is critical;
+- precision ports / interfaces / model plates matter;
+- a reference-generation model repeatedly changes identity-critical structure;
+- user explicitly requests source-pixel preservation;
+- a platform asset is better served by deterministic composition.
+
+## Do not use merely because
+
+- a product has a white background;
+- masking is technically possible;
+- compositing feels safer;
+- the model might make a small visual change.
+
+For many home, fitness, furniture and lifestyle products, reference-image generation produces more natural light, contact and scene integration.
 
 ## Core rule
-
-The segmentation model may create an alpha mask. It MUST NOT replace product RGB.
 
 \`\`\`text
 source image RGB
 + reviewed alpha mask
-= product cutout
+= strict-fidelity product cutout
 \`\`\`
 
-## Inputs
-
-- authoritative source image;
-- product identity contract;
-- optional user-supplied transparent PNG / mask;
-- target background / scene;
-- placement plan.
+Segmentation creates alpha only; it MUST NOT replace product RGB.
 
 ## MUST
 
-- preserve the original source RGB inside valid product pixels;
-- save the alpha mask separately;
-- inspect holes, gaps, thin parts, transparent parts, and low-contrast edges;
-- record source image path / hash when possible;
-- use uniform layer scaling by default;
-- preserve aspect ratio;
-- keep shadows on separate layers.
+- preserve original RGB inside product region;
+- save mask separately;
+- inspect thin parts / holes / low-contrast edges;
+- maintain aspect ratio;
+- keep shadows / foreground effects independent;
+- record source and transformations.
 
 ## MUST NOT
 
-- use generative fill to reconstruct the product body;
-- erase real holes, joints, hardware, or texture because the mask is inconvenient;
-- non-uniformly scale the product;
-- alter product color to match the scene;
-- paint shadows over the product RGB;
-- infer missing parts outside the original visible view.
+- warp product geometry;
+- paint generated shadows onto product RGB;
+- generatively repair missing product body and call it source pixels;
+- erase identity details for cleaner masking.
 
-## Allowed post-processing
+## Scene integration
 
-MAY include, when traceable:
-- alpha cleanup;
-- edge decontamination;
-- minor fringe removal;
-- uniform scale;
-- translation;
-- limited rotation consistent with the source view.
-
-If cleanup changes identity-relevant pixels, it requires review.
-
-## Scene placement
-
-The background SHOULD be generated or prepared without the target product.
-
-Composition sequence:
-
-\`\`\`text
-background
-→ independent shadow
-→ original-RGB product cutout
-→ foreground occluders if required
-→ typography / graphics
-\`\`\`
-
-## Outputs
-
-Save:
-- source reference;
-- \`mask.png\`
-- \`product-cutout.png\`
-- composite;
-- shadow layer;
-- placement metadata;
-- provenance record.
+If the result looks like a pasted sticker:
+- improve contact / cast shadow;
+- adjust scene lighting around the product;
+- add foreground occluders when physically plausible;
+- or return to a better reference-generation/edit route if exact pixels are not mandatory.
 
 ## Gate
 
-A final composite fails if:
-- product RGB was generatively redrawn;
-- the mask deletes real structure;
-- geometry was warped;
-- product identity differs from the source.
+Strict-pixel fidelity can still fail commercial quality.
 
-Pixel preservation and mask correctness are separate checks.
+Pass only when:
+- product pixels are correct;
+- edges are correct;
+- contact / perspective / lighting are believable enough for the intended asset.

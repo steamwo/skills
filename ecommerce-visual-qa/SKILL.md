@@ -1,147 +1,149 @@
 ---
 name: ecommerce-visual-qa
-description: Run evidence-backed QA for input integrity, buyer-decision coverage, SKU/variant correctness, asset reuse, product identity, provenance, dimensions, scale, prompt traceability, surface profiles, execution state, delivery completeness, and marketplace readiness.
+description: Run ecommerce visual QA for SKU identity, commercial composition, platform style fit, buyer-decision coverage, reference fidelity, person/contact realism, text readability, evidence truth, derivatives, and delivery completeness; output targeted repair instructions for failed assets.
 ---
 
 # Ecommerce Visual QA
 
 ## Objective
 
-Evaluate individual assets, variant families, derivatives, and the complete production system.
+Decide whether an asset is **good enough to sell with**, not merely whether it is technically valid.
 
-## QA states
+## Hard gates
 
-- \`PASS\`
-- \`REVIEW\`
-- \`FAIL\`
-- \`NOT_CHECKED\`
+A hard failure cannot be averaged away:
+- wrong SKU / identity drift;
+- wrong variant;
+- invented specification / claim;
+- broken anatomy / product interaction;
+- unreadable or wrong required text;
+- false compliance claim.
 
-## Gate A — Input-source integrity
+## Gate A — Product identity
 
-Check explicit user intent vs extracted product evidence.
-
-## Gate B — Execution preflight
-
-Check source usability, tools, preprocessing, outputs, and blockers.
-
-## Gate C — Buyer-decision coverage
-
-Read \`buyer-decision-map.json\`.
+Compare directly with authoritative product reference.
 
 Check:
-- each planned semantic asset answers a buyer question;
-- claimed answer has evidence;
-- important unanswered questions are visible as blocked / partial;
-- decorative duplicates did not replace needed decision coverage.
+- silhouette / proportions;
+- component count;
+- hardware / holes / supports;
+- colour / finish;
+- logo / printed graphics where relevant;
+- variant-specific details.
 
-## Gate D — Variant matrix integrity
-
-Read \`variant-matrix.json\`.
-
-Check:
-- correct family / variant ID;
-- variant axis values;
-- dimension scope;
-- color / finish scope;
-- packaging / included-item scope;
-- copy scope;
-- sharedness state.
-
-Cross-SKU leakage is \`FAIL\`.
-
-## Gate E — Product identity
-
-Check geometry, components, hardware, supports, markings, texture, and variant-specific appearance against authoritative references.
-
-## Gate F — Product pixel provenance
-
-Record product-body source, mask, transformations, authorized edits, and provenance class.
-
-A generated lookalike replacing an authoritative source is \`FAIL\`.
-
-## Gate G — Dimensions / specifications
-
-Check value, unit, axis, variant scope, evidence, packaging separation, and dimension-line endpoints.
-
-## Gate H — Scale / perspective
-
-Check calibration, contact plane, camera assumptions, variant geometry, uniform product scaling, and absence of warp.
-
-## Gate I — Prompt traceability
-
-Check template version, resolved placeholders, fixed product-exclusion clauses, and absence of unsupported facts.
-
-## Gate J — Person interaction
-
-Check anatomy, contact, occlusion, gravity, product geometry, and variant fit.
-
-A person composition reused for a different variant must still fit the variant's verified geometry.
-
-## Gate K — Detail module integrity
-
-Check one semantic purpose, evidence inheritance, variant scope, responsive behavior, and long-image traceability.
-
-## Gate L — Asset reuse / derivative integrity
-
-Read \`asset-derivation-map.json\`.
+## Gate B — Commercial composition
 
 Check:
-- parent asset IDs;
-- variant scope;
-- reuse class;
-- product provenance;
-- output profile;
-- invalidation inputs;
-- stale derivatives.
+- product is visually obvious;
+- product size is appropriate for role;
+- scene supports rather than competes;
+- props are relevant;
+- hierarchy survives mobile / thumbnail viewing;
+- image feels like intentional commercial photography rather than a pasted collage.
 
-A derivative whose upstream dependency changed but was not rebuilt / re-QA'd is \`FAIL\` or \`REVIEW\`.
+## Gate C — Scene story
 
-## Gate M — Output profile validity
+For lifestyle/person scenes:
+- who / where / action is understandable;
+- scene is relevant to the product;
+- lighting and contact feel coherent;
+- use context answers a buyer question.
 
-Check marketplace, surface, slot, device, preset, dimensions, rule source, verification date, and compliance status.
+A generic beautiful room with no product story is \`REVIEW\` or \`FAIL\`.
 
-## Gate N — Material / composite
+## Gate D — Platform style fit
 
-Check mask, texture/color fidelity, shadows, and product RGB preservation.
+Evaluate against the selected heuristic profile:
+- Taobao/Tmall/1688: enough factual/trust-building coverage, coherent detail-page language;
+- Pinduoduo: direct value/variant clarity and thumbnail readability;
+- Douyin: content-native mobile impact, believable scene/person use, product/content relevance.
 
-## Gate O — Copy / graphics
+Report \`platform_style_fit\` separately from official compliance.
 
-Check language, spelling, numbers, units, claims, certifications, quantity, and variant scope.
+## Gate E — Buyer-decision coverage
 
-## Gate P — Execution state / retry integrity
+Check that the asset actually answers its declared buyer question.
 
-Check stable IDs, checkpoints, targeted invalidation, retries, and absence of blind duplicate expensive generation.
+## Gate F — Fidelity mode
 
-## Gate Q — Cross-image / cross-variant consistency
+If \`REFERENCE_RENDERED_PRODUCT\`:
+- same-product identity must pass;
+- exact source pixels are not required.
+
+If \`SOURCE_PRODUCT_PIXEL\`:
+- source pixel provenance and mask quality must pass.
+
+Do not fail a natural reference-rendered scene merely because its pixels differ from the input photo.
+
+## Gate G — Dimensions / facts
+
+Check value, unit, axis, variant scope and evidence.
+
+## Gate H — Person interaction
+
+Check anatomy, grip/contact, weight-bearing logic, occlusion and product geometry.
+
+## Gate I — Text / information graphics
 
 Check:
-- same variant within a variant-bound asset chain;
-- family-shared facts truly shared;
-- dimensions and copy do not leak across variants;
-- comparison images preserve intended scale relationships;
-- product appearance remains consistent with each source variant.
+- exact approved wording;
+- spelling / units;
+- hierarchy;
+- mobile / thumbnail readability;
+- no model-invented text.
 
-## Gate R — Delivery completeness
+## Gate J — Set consistency
 
-Count expected outputs by semantic asset × required variant scope × output profile.
+Check:
+- campaign palette / light / grade;
+- same product family;
+- no contradictory copy;
+- varied shot roles without stylistic chaos.
 
-Do not use naive “number of SKUs × number of images” when assets are legitimately shared.
+## Gate K — Candidate ranking
 
-## Gate S — Marketplace export
+Score:
+- identity_fidelity
+- commercial_composition
+- scene_story
+- product_salience
+- platform_style_fit
+- lighting_realism
+- person_interaction
+- text_readability
+- claim_truth
 
-Check current platform rules and export constraints.
+Select the best candidate only after hard gates pass.
 
-## Critical separation
+## Repair output
 
-Report separately:
-- \`visual_plausibility\`
-- \`buyer_decision_coverage\`
-- \`variant_integrity\`
-- \`product_pixel_provenance\`
-- \`metric_grounding\`
-- \`asset_reuse_integrity\`
-- \`output_profile_validity\`
-- \`execution_integrity\`
-- \`delivery_completeness\`
+When an asset fails, output:
+- failure reason;
+- severity;
+- 1–3 targeted prompt repair sentences;
+- whether to retry same route, change scene/camera, or escalate fidelity mode.
 
-One cannot substitute for another.
+Examples:
+- product drift → restate exact identity features;
+- product too small → increase occupancy / sharpest-element instruction;
+- scene too busy → remove unrelated props;
+- person contact wrong → specify exact contact geometry;
+- platform mismatch → reapply platform style lock;
+- text bad → shorten or move to deterministic layout.
+
+## Retry gate
+
+Regenerate **only the failed asset**.
+
+After bounded repair rounds, escalate route or mark for human review.
+
+## Delivery
+
+QA report SHOULD include:
+- accepted candidate ID;
+- fidelity mode;
+- platform style profile;
+- hard-gate statuses;
+- commercial score fields;
+- repair history;
+- final recommendation.

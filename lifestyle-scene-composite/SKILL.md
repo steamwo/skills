@@ -1,102 +1,128 @@
 ---
 name: lifestyle-scene-composite
-description: Build product lifestyle scenes by deterministically rendering an empty-environment prompt, calibrating scale and perspective, then compositing authoritative product pixels without generative redraw.
+description: Create commercially believable lifestyle and in-use scenes from real product references using reference-image generation first, product identity locks, scene routing, platform style locks, candidate ranking, and strict-pixel compositing only when required.
 ---
 
-# Lifestyle Scene Composite
+# Lifestyle Scene Production
 
 ## Objective
 
-Place a real SKU into a believable lifestyle environment without changing the product.
+Create a scene buyers can imagine themselves in while keeping the product recognisably the same SKU.
 
-## Required inputs
+Read:
+- \`ecommerce-product-image-studio/references/reference-generation-contract.md\`
+- \`ecommerce-product-image-studio/references/commercial-scene-router.md\`
+- \`ecommerce-product-image-studio/references/platform-commerce-style-contract.md\`
+- \`ecommerce-product-image-studio/references/candidate-repair-loop.md\`
 
-- \`task-input.json\`
-- \`product-identity.json\`
-- \`product-dimensions.json\`
-- \`scale-calibration.json\`
-- authoritative product view or verified CAD/3D
-- source audit
-- \`ecommerce-product-image-studio/templates/empty-scene-prompt.md\`
-
-## Correct pipeline
+## Default route
 
 \`\`\`text
-1. select supported product view
-2. plan contact plane + scale + camera
-3. render empty-scene prompt from template
-4. generate EMPTY scene
-5. create product alpha mask
-6. composite ORIGINAL PRODUCT RGB
-7. add independent contact / cast shadows
-8. run identity + scale + composite QA
+authoritative product photo
+→ PRODUCT IDENTITY LOCK
+→ platform + campaign style lock
+→ commercial scene brief
+→ reference-image generation / edit
+→ candidate QA
+→ accept best
 \`\`\`
 
-## Prompt rendering
+Do **not** begin by cutting the product out unless strict-pixel fidelity is required.
 
-MUST use the repository prompt template when available.
+## Scene brief
 
-- unresolved required fields → \`BLOCKED\`;
-- missing optional fields → omit;
-- user style text → preserve intent without generic embellishment;
-- fixed “do not generate target product” clause → never remove.
-
-Save the rendered prompt with provenance metadata.
-
-## Empty scene generation
-
-Background generation MAY create:
-- room;
-- floor / table / wall;
-- non-product props;
+MUST define:
+- buyer question;
+- who / where / action;
+- camera;
 - lighting;
-- negative space.
+- product occupancy target;
+- 2–4 relevant props maximum;
+- scale reference when useful;
+- platform commerce style profile.
 
-## MUST
+The environment needs a story, not arbitrary decoration.
 
-- use a source product view compatible with the scene camera;
-- preserve product geometry;
-- place with uniform scaling;
-- align contact plane and gravity;
-- keep product and scene shadows separate;
-- record scale state.
+## Reference generation
+
+Pass the authoritative product image(s) directly to the capable image-generation/edit tool.
+
+Prompt structure:
+
+\`\`\`text
+PRODUCT IDENTITY LOCK
++ CAMPAIGN STYLE LOCK
++ PLATFORM COMMERCE STYLE LOCK
++ scene story
++ camera / lighting
++ product salience / occupancy
++ exact interaction
++ negative constraints
+\`\`\`
+
+## Candidate exploration
+
+For an important lifestyle scene, generate 2–3 candidates when budget allows.
+
+Vary one axis at a time:
+- camera;
+- environment;
+- light;
+- person action.
+
+Rank by:
+- identity fidelity;
+- commercial composition;
+- scene story;
+- product salience;
+- platform fit;
+- lighting realism;
+- physical interaction.
+
+## Composition heuristics
+
+Starting points:
+- product roughly 25–50% of useful frame for lifestyle;
+- product should be among the sharpest / highest-salience elements;
+- supporting props: usually 2–4;
+- shallow depth of field MAY help keep scene subordinate;
+- leave usable copy space only when the planned asset needs copy.
+
+These are heuristics, not compliance rules.
+
+## Strict-pixel fallback
+
+Escalate to \`product-cutout-composite\` only when:
+- logo / label / packaging text must be exact;
+- precision interfaces must remain pixel-identical;
+- reference generation repeatedly changes identity-critical details;
+- user explicitly requests source-pixel preservation.
 
 ## MUST NOT
 
-- generate the product together with the scene when source-pixel fidelity is required;
-- distort product perspective to fit the background;
-- use AI furniture as an undocumented metric reference;
-- redraw product texture / hardware / supports;
-- claim accurate real-world scale when \`SCALE_UNVERIFIED\`;
-- infer scene style from the product image unless the user explicitly requested matching.
+- use a generic empty background + pasted cutout merely because it is easy;
+- accept a scene that looks like a collage when a reference-generation route can integrate light and perspective naturally;
+- let props become the subject;
+- change product structure;
+- imply unverified load / safety / performance;
+- claim metric scale when scale evidence is insufficient.
 
-## View mismatch
-
-If the product source view does not match the scene:
-1. regenerate / change the background;
-2. use another verified source view;
-3. use verified CAD/3D.
-
-Do not warp the product to fake a new camera view.
-
-## Output
+## Outputs
 
 Save:
 - scene brief;
-- rendered prompt;
-- empty background;
-- source product;
-- mask;
-- cutout;
-- shadow layers;
-- composite;
-- scale-calibration reference;
-- provenance record;
-- \`lifestyle-qa.md\`.
+- identity lock version;
+- platform / campaign style versions;
+- rendered prompts;
+- candidate images;
+- candidate scores;
+- accepted asset;
+- fidelity mode;
+- repair history;
+- QA record.
 
 ## Gate
 
-A scene can be visually attractive and still fail.
+Commercial scene quality and product identity must both pass.
 
-Set \`FAIL\` when product identity changes.
-Set \`REVIEW\` when placement is plausible but metric scale is not grounded.
+If candidate quality stays poor after bounded repair, change the scene or fidelity route instead of polishing a bad composition.

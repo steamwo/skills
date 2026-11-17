@@ -1,77 +1,93 @@
 ---
 name: brand-visual-system
-description: Define a reusable e-commerce brand visual system for backgrounds, typography, layout, icons, lighting, and graphics while isolating the authoritative product body from brand recoloring or geometry changes.
+description: Define a reusable e-commerce campaign style lock for palette, photography, lighting, camera, layout, typography, prop density, and forbidden treatments; inject only the relevant style sections into each asset prompt.
 ---
 
 # Brand Visual System
 
 ## Objective
 
-Make a product image set feel visually consistent without changing product truth.
+Keep an e-commerce image set visually coherent without turning every prompt into the same generic style paragraph.
 
 ## Inputs
 
-- brand guide;
-- logo;
-- licensed / available fonts;
-- confirmed brand colors;
-- tone / audience;
-- product identity record;
-- marketplace targets.
+- brand guide / logo;
+- confirmed colours;
+- target audience;
+- marketplace / platform commerce profile;
+- product identity;
+- optional visual references.
 
-## Define
+## Campaign Style Lock
 
-- primary / secondary / background / text / accent colors;
-- Chinese and Latin font roles;
-- numeric / unit typography;
-- grids;
-- spacing;
-- icon style;
-- borders / corner radii;
-- photography / lighting direction;
-- prop density;
-- depth-of-field preference;
-- logo safe area;
-- cross-SKU consistency rules.
+Create one stable block for the asset family:
 
-## Product isolation rule
+\`\`\`text
+CAMPAIGN STYLE LOCK
+Palette: ...
+Lighting family: ...
+Background family: ...
+Camera family: ...
+Colour grade: ...
+Typography mood: ...
+Prop density: ...
+Mood: ...
+Hard avoids: ...
+\`\`\`
 
-Brand styling applies to:
-- background;
-- copy;
-- graphic shapes;
-- icons;
-- independent props.
+The stable lock is reused across the set.
 
-It MUST NOT automatically recolor:
-- wood;
-- fabric;
-- metal;
-- painted surfaces;
-- logos;
-- real product highlights / finish.
+Shot-specific composition changes per asset.
 
-Product color correction requires a separate evidence / authorization basis.
+## Structured style sections
 
-## MUST NOT
+Create \`brand-system.json\` with sections:
 
-- deform the logo;
-- add certifications / partner logos without evidence;
-- recolor product to match brand palette;
-- use brand styling to hide product-identity mismatches.
+- \`brand.tone\`
+- \`photography.background\`
+- \`photography.lighting\`
+- \`photography.camera\`
+- \`photography.grade\`
+- \`photography.crop\`
+- \`layout.margin\`
+- \`layout.typeface\`
+- \`layout.text_color\`
+- \`person\` when relevant
+- \`forbid[]\`
 
-## China-commerce typography
+## Selective prompt injection
 
-For Chinese detail pages:
-- define title, subtitle, body, number, unit, and disclaimer styles;
-- keep mobile readability in mind;
-- ensure fonts are available and appropriately licensed;
-- use programmatic / design-tool text for final copy.
+Inject only relevant sections.
+
+Examples:
+- lifestyle scene → tone + photography + forbid;
+- person-use → tone + person + photography + forbid;
+- selling-point graphic → tone + layout + forbid;
+- detail module → tone + layout + selected photography + forbid.
+
+Irrelevant style fields SHOULD NOT enter the prompt.
+
+A person-face description does not belong in a pure product-detail prompt.
+
+## Product isolation
+
+Brand styling MUST NOT silently recolour or redesign the real SKU.
+
+Product colour changes require explicit variant evidence / authorization.
+
+## China commerce
+
+For Chinese conversion graphics:
+- define title/subtitle/body/numeric hierarchy;
+- prioritize mobile and thumbnail readability;
+- keep copy short enough for the target surface;
+- use deterministic typography when exact text matters.
 
 ## Outputs
 
 Create:
 - \`brand-system.json\`
+- \`campaign-style-lock.txt\`
 - \`brand-style-guide.md\`
 
-All planned assets SHOULD reference a brand-system version.
+Every planned asset SHOULD reference the campaign style version.

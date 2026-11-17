@@ -1,71 +1,99 @@
 ---
 name: product-identity-lock
-description: Build a traceable SKU identity contract that locks visible geometry, structure, hardware, color, texture, markings, and authoritative source views so generative tools cannot silently redesign the product.
+description: Build a traceable SKU identity contract that locks the product's recognisable geometry, structure, hardware, colour, texture, markings, and authoritative views for both reference-image generation and strict-pixel fallback.
 ---
 
 # Product Identity Lock
 
 ## Objective
 
-Create a machine-readable contract for what makes the current SKU visually itself.
+Describe what makes the current SKU recognisably itself.
 
-This skill controls identity. Physical measurement values belong to \`product-dimension-lock\`.
+Identity fidelity is not the same as pixel identity.
+
+For most consumer-product lifestyle work, a capable reference-image model MAY re-render the product if identity-critical features remain correct. Strict source-pixel preservation is reserved for assets that require it.
+
+Read \`ecommerce-product-image-studio/references/reference-generation-contract.md\`.
 
 ## Authoritative source rule
 
-If the user provides a real product photo for the current SKU, it is authoritative for the visible product body.
+Real current-SKU product photos are authoritative evidence for visible identity.
 
-**MUST**
-- preserve visible silhouette;
-- preserve component count and relative positions;
-- preserve holes, joints, screws, seams, handles, supports, logos, edge profiles, and end geometry;
-- preserve visible color, texture, grain, marks, and natural variation;
-- record which camera views are actually supported;
-- link every locked feature to evidence.
+Lock:
+- silhouette / proportions;
+- component count;
+- relative positions;
+- holes / joints / screws / seams / handles / supports;
+- edge and end geometry;
+- visible colour / finish / texture;
+- logos / labels / printed graphics when relevant;
+- supported camera views;
+- must-not-appear features.
 
-**MUST NOT**
-- replace the product with a visually similar generated product;
-- redraw product geometry from text;
-- invent unsupported sides or hidden construction;
-- remove visible product characteristics just to make the result “cleaner”;
-- treat style similarity as identity fidelity.
+Every lock item SHOULD link to evidence.
 
-## Region classes
+## Product Identity Lock block
 
-Define:
-- \`LOCKED_PRODUCT_REGION\`: product identity pixels / geometry.
-- \`EDITABLE_REGION\`: background, layout space, independent props, graphics, copy.
-- \`CONDITIONAL_REGION\`: changes require explicit authorization and traceability.
-
-## Pixel-preservation policy
-
-When source-pixel compositing is possible:
+Create a concise reusable block:
 
 \`\`\`text
-source photo RGB + alpha mask
-→ transform only as a whole layer
-→ composite into scene
+PRODUCT IDENTITY LOCK — DO NOT CHANGE
+Shape & proportions: ...
+Colour & finish: ...
+Visible material / texture: ...
+Parts & details: ...
+Logo / printed text: ...
+Component count: ...
+Must NOT change: ...
+Must NOT appear: ...
 \`\`\`
 
-Allowed by default:
-- uniform scale;
-- translation;
-- limited rotation that does not invent a new product view;
-- edge cleanup that does not remove real structure.
+Unknown values are omitted.
 
-Not allowed by default:
-- non-uniform scaling;
-- liquify / warp;
-- generative fill over the product body;
-- product-aware style transfer;
-- geometry repair by diffusion.
+Paste the same lock verbatim into all candidates for the same asset family.
 
-## Output schema
+## Fidelity modes
+
+### \`REFERENCE_RENDERED_PRODUCT\`
+
+Allowed when:
+- authoritative product reference is passed directly to the image model;
+- result keeps the same recognisable SKU;
+- no strict-pixel trigger applies.
+
+### \`SOURCE_PRODUCT_PIXEL\`
+
+Use when exact source appearance is required:
+- packaging / label text;
+- logos that must be exact;
+- fine model plates;
+- precision interfaces;
+- repeated reference-generation drift.
+
+### \`VERIFIED_CAD_3D\`
+
+Use for unsupported camera views only when the CAD / 3D source is verified for the same SKU.
+
+### \`CONCEPT_ONLY\`
+
+Use when no authoritative product reference exists.
+
+## MUST NOT
+
+- substitute a visually similar product;
+- change product topology / component count;
+- invent hidden construction;
+- change colourway / material / logo;
+- stretch geometry to fit a scene;
+- call an unsupported new camera view factual unless verified CAD/3D supports it.
+
+## Output
 
 Create \`product-identity.json\` containing:
 - \`sku\`
 - \`variant\`
 - \`authoritative_references\`
+- \`identity_lock_text\`
 - \`geometry\`
 - \`visible_features\`
 - \`material_appearance\`
@@ -73,16 +101,15 @@ Create \`product-identity.json\` containing:
 - \`must_not_invent\`
 - \`supported_views\`
 - \`unsupported_views\`
-- \`region_policy\`
+- \`strict_pixel_triggers\`
+- \`recommended_fidelity_mode\`
 - \`dimension_profile_ref\`
-- \`provenance_policy\`
-- \`approved_edits\`
 - \`unknowns\`
 - \`conflicts\`
 - \`version\`
 
 ## Gate
 
-Any final image that changes an identity-critical feature from the authoritative reference is \`FAIL\`.
+If the result no longer reads as the same SKU, it is \`FAIL\` regardless of scene quality.
 
-If the requested composition requires an unsupported product view, request another real view or verified CAD/3D; otherwise mark the asset \`BLOCKED\` or \`CONCEPT_ONLY\`.
+Exact pixel matching is required only when the asset's fidelity mode is \`SOURCE_PRODUCT_PIXEL\`.

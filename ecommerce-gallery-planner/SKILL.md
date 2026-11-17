@@ -1,35 +1,65 @@
 ---
 name: ecommerce-gallery-planner
-description: Plan a buyer-decision-driven e-commerce asset family across SKU variants, semantic modules, reusable masters, output profiles, provenance, scale status, dependencies, and acceptance criteria.
+description: Plan a buyer-decision-driven ecommerce asset family with platform-specific conversion mix, SKU/variant scope, commercial shot roles, reusable masters, output profiles, and candidate strategy.
 ---
 
 # Ecommerce Gallery Planner
 
 ## Objective
 
-Plan the **minimum truthful asset family that resolves the important purchase questions**.
+Plan the minimum truthful asset family that resolves important buying questions **in the visual language of the target platform**.
 
 Do not optimize for raw image count.
 
 Read:
-- \`ecommerce-product-image-studio/references/buyer-decision-framework.md\`
-- \`ecommerce-product-image-studio/references/variant-matrix-contract.md\`
-- \`ecommerce-product-image-studio/references/asset-reuse-contract.md\`
-- \`ecommerce-product-image-studio/references/output-profile-contract.md\`
-- \`ecommerce-product-image-studio/references/detail-module-contract.md\`
+- buyer decision framework;
+- variant matrix contract;
+- asset reuse contract;
+- platform commerce style contract;
+- commercial scene router;
+- output profile contract.
 
-## Required inputs
+## Platform conversion mix
 
-- \`task-input.json\`
-- \`product.json\`
-- \`product-identity.json\`
-- \`product-dimensions.json\`
-- \`variant-matrix.json\` when applicable
-- \`buyer-decision-map.json\`
-- reference audit outputs
-- scale calibration for scale-sensitive scenes
-- brand system if available
-- output profile requirements
+Platform selection changes the **asset mix and visual emphasis**, not product facts.
+
+### Taobao / Tmall / 1688 heuristic
+
+Prioritize a balanced sequence:
+- clear hero;
+- 1–2 high-priority selling-point graphics;
+- believable lifestyle / use scene;
+- material / structure detail;
+- verified specification / dimensions;
+- variant choice;
+- package / included items when verified;
+- modular detail-page screens.
+
+The set should progressively answer buying questions rather than repeat mood imagery.
+
+### Pinduoduo heuristic
+
+Prioritize:
+- instantly legible hero;
+- core value / reason-to-buy;
+- variant / bundle clarity;
+- verified specification;
+- direct usage proof;
+- package / quantity when verified.
+
+Use short, high-salience hierarchy. Avoid tiny copy and decorative luxury layouts that hide the product.
+
+### Douyin heuristic
+
+Prioritize:
+- strong mobile hero / cover;
+- in-use lifestyle scene;
+- person interaction where useful;
+- one clear benefit per asset;
+- product detail proof;
+- compact specification after interest is established.
+
+The set should feel content-native and believable, not like a sterile catalog assembled from pasted cutouts.
 
 ## Buyer-decision coverage
 
@@ -39,81 +69,37 @@ Every semantic asset SHOULD declare:
 - \`decision_answer\`
 - \`evidence_refs\`
 
-Typical stages:
-- recognition;
-- relevance;
-- value;
-- usage;
-- fit / scale;
-- trust;
-- specification;
-- variant choice;
-- included items;
-- risk reduction.
+One asset should have one dominant conversion job.
 
-Do not create near-duplicate assets that answer the same question unless they serve a distinct variant / profile / evidence need.
+## Shot roles
 
-## Variant scope
-
-Every semantic asset MUST declare one of:
-- \`family\`
-- one or more explicit \`variant_id\`
-- \`bundle\`
-- market-specific scope when needed.
-
-Reuse requires verified sharedness.
-
-Examples:
-- brand typography module → often family-shared;
-- 25cm dimension graphic → variant-specific;
-- empty gym background → potentially reusable;
-- 25cm product cutout → variant-specific;
-- package contents → variant-specific unless verified shared.
-
-## Asset reuse class
-
-Every semantic asset SHOULD declare:
-- \`reuse_class\`: \`FAMILY_SHARED\`, \`VARIANT_BOUND\`, or \`CONDITIONAL\`;
-- \`parent_asset_ids\`;
-- \`invalidation_inputs\`.
-
-This allows the execution engine to reuse upstream masters without losing SKU correctness.
-
-## Asset families
-
-Distinguish:
-- semantic asset / module;
-- variant binding;
-- output-profile renders.
-
-Example:
-
-\`\`\`text
-semantic asset: "size selection"
-  scope: family
-  evidence: variant-matrix.json
-  ├── zh-CN mobile render
-  └── Amazon web render
-\`\`\`
-
-Do not duplicate evidence independently per render.
-
-## Recommended roles
-
-Use only when supported:
-1. hero / primary product;
-2. additional verified product view;
-3. verified feature / benefit;
-4. lifestyle scene;
-5. person-use scene;
-6. dimension / specification;
-7. material / structure detail;
+Recommended roles:
+1. hero / recognition;
+2. selling-point / single benefit;
+3. lifestyle / context;
+4. person-use / action;
+5. macro / material proof;
+6. structure / component proof;
+7. specification / dimensions;
 8. variant comparison;
-9. packaging / included items;
-10. usage / compatibility note;
-11. semantic detail-page module.
+9. package / included items;
+10. detail-page semantic module.
 
-These are roles, not a fixed mandatory count.
+Do not add another role if it does not answer a new question.
+
+## Candidate strategy
+
+For each generative asset record:
+- \`candidate_count\`
+- \`creative_axis\`
+- \`fidelity_mode\`
+- \`platform_style_profile\`
+
+Default heuristics:
+- hero: 2–3 candidates;
+- lifestyle: 2–3;
+- person-use: 2–3;
+- deterministic dimension graphic: 1.
 
 ## Required record
 
@@ -125,37 +111,30 @@ For every semantic asset:
 - \`decision_answer\`
 - \`variant_scope\`
 - \`reuse_class\`
-- \`requested_by\` or planning rationale
 - \`source_images\`
-- \`supported_view\`
-- \`product_pixel_policy\`
+- \`identity_lock_version\`
+- \`campaign_style_version\`
+- \`platform_style_profile\`
+- \`fidelity_mode\`
+- \`candidate_count\`
+- \`commercial_shot_brief\`
+- \`product_salience_target\`
 - \`scale_status\`
 - \`dimension_source\`
 - \`copy_evidence\`
-- \`generation_method\`
-- \`prompt_template\`
 - \`output_profiles\`
-- \`parent_asset_ids\`
-- \`invalidation_inputs\`
+- \`dependencies\`
 - \`acceptance_criteria\`
-- \`risks\`
 - \`status\`
 
 ## MUST NOT
 
-- multiply all image roles by all SKUs automatically;
+- multiply all roles by all SKUs automatically;
+- make eight generic “nice scenes” with no distinct buying job;
+- use the same shot grammar for every platform;
 - reuse a product asset across variants when sharedness is unknown;
-- invent unsupported views, dimensions, packaging, or claims;
-- call independent AI-generated products a precise size comparison;
-- create decorative duplicates while important buyer questions remain blocked;
-- claim a named output preset is compliant without verification.
-
-## Planning statuses
-
-- \`READY\`
-- \`REVIEW\`
-- \`BLOCKED\`
-- \`NOT_APPLICABLE\`
+- turn a generated lookalike into a precise specification asset;
+- claim heuristic platform style is official compliance.
 
 ## Outputs
 
@@ -163,8 +142,7 @@ Create:
 - \`buyer-decision-map.json\`
 - \`image-plan.json\`
 - \`variant-asset-map.json\`
+- \`platform-asset-mix.json\`
 - \`plan-summary.md\`
 - \`blocked-assets.md\`
-- \`copy-deck.md\`
-
-The plan becomes the source of truth for execution-state, asset-derivation, QA, and Delivery Gate accounting.
+- \`copy-deck.md\`.

@@ -1,121 +1,166 @@
 # steamwo / Skills
 
-Reusable Agent Skills for e-commerce visual production.
+Reusable Agent Skills for **e-commerce visual production**.
 
-This repository is **English-first for machine-executable rules** and **Chinese-friendly for China-commerce workflows**.
+This repository is not a generic AI image prompt pack. It is designed to turn real SKU references into commercially useful, platform-aware visual asset families.
 
 **Orchestrator:** [ecommerce-product-image-studio](./ecommerce-product-image-studio/SKILL.md)
 
-## Positioning
-
-This is not a generic “AI image prompt collection”.
-
-It is an **E-commerce Visual Production System** designed around:
-- real SKU fidelity;
-- product-family / variant correctness;
-- buyer-decision coverage;
-- reusable production masters;
-- multi-platform derivatives;
-- resumable execution;
-- evidence-backed QA;
-- accountable delivery.
-
-## Production model
+## Current production philosophy
 
 \`\`\`text
-explicit task intake
-→ execution preflight
-→ product evidence audit
-→ product family / variant matrix
-→ identity + dimensions
+real product references
+→ evidence + PRODUCT IDENTITY LOCK
+→ SKU / variant model
 → buyer-decision map
-→ semantic asset planning
-→ scale calibration
-→ reusable master production
-→ asset derivation graph
-→ output profiles
-→ responsive / marketplace renders
-→ QA
+→ platform commerce style profile
+→ CAMPAIGN STYLE LOCK
+→ shot / scene routing
+→ reference-image generation or edit
+→ 2–3 candidates for important assets
+→ commercial + identity QA
+→ targeted repair / rerun only failures
+→ semantic detail modules
+→ marketplace / mobile / web derivatives
 → delivery gate
-→ export
 \`\`\`
 
-## E-commerce completeness
+## Reference-first, not cutout-first
 
-A “complete set” is not defined by a fixed number such as 8 or 9 images.
+For most consumer products, lifestyle and commercial scenes SHOULD pass the real product photo directly to a capable reference-image generation/edit tool.
 
-It is defined by whether the required purchase questions are truthfully covered:
-- product recognition;
-- relevance / use case;
-- verified value / benefit;
-- usage;
-- fit / scale;
-- trust / construction;
-- specifications;
-- variant selection;
-- included items;
-- risk / compatibility notes.
+Use strict source-pixel cutout/compositing only when exact pixels matter:
+- packaging text;
+- logos / labels;
+- precision ports / interfaces;
+- model plates;
+- repeated identity drift.
 
-## SKU / variant production
+A technically perfect mask pasted into a weak background is not a successful ecommerce image.
 
-For a product family:
+## Platform commerce styles
+
+The repository separates:
+
+- **platform commerce style** — heuristic conversion language;
+- **official platform compliance** — current, source-backed rules.
+
+Built-in heuristic profiles currently include:
+- Taobao / Tmall / 1688;
+- Pinduoduo;
+- Douyin;
+- generic master.
+
+### Taobao / Tmall / 1688
+
+Think:
+- shelf / search / comparison;
+- longer trust-building chain;
+- hero + selling point + lifestyle + material/detail + dimensions + variants + detail modules.
+
+### Pinduoduo
+
+Think:
+- fast value judgement;
+- direct hierarchy;
+- strong product / variant / quantity clarity;
+- short readable copy;
+- avoid decorative layouts that hide the offer.
+
+### Douyin
+
+Think:
+- mobile content + shelf;
+- strong product recognition;
+- believable scene / person / usage moments;
+- content-native framing;
+- compact specs after interest is established.
+
+These are creative heuristics, not official platform rules.
+
+## Stable locks
+
+A coherent set uses:
 
 \`\`\`text
-family
-├── shared verified assets
-├── variant A bound assets
-├── variant B bound assets
-└── unknown-sharedness assets → REVIEW / BLOCKED
+PRODUCT IDENTITY LOCK
++ CAMPAIGN STYLE LOCK
++ PLATFORM COMMERCE STYLE LOCK
++ asset-specific shot brief
 \`\`\`
 
-Do not multiply every image by every SKU.
+The first three remain stable.
+The shot brief changes per image.
 
-Do not reuse a product image / dimension / packaging fact across variants unless the sharedness is verified.
+## Commercial scenes
 
-## Asset reuse
+A scene should answer:
+- who uses it;
+- where;
+- what they are doing;
+- why this scene helps a buyer decide.
 
-Use a derivative graph:
+Use:
+- a clear story;
+- camera + lighting;
+- product salience;
+- 2–4 relevant props;
+- realistic interaction.
+
+Do not generate empty “pretty rooms” with no product purpose.
+
+## Candidate and repair loop
+
+Important hero / lifestyle / person-use assets SHOULD use bounded candidate exploration.
 
 \`\`\`text
-authoritative source
-→ reviewed production master
-→ semantic asset
-→ marketplace / surface / language derivative
+generate
+→ identity QA
+→ commercial composition QA
+→ platform-style QA
+→ rank
+→ targeted repair sentences
+→ rerun failed asset only
 \`\`\`
 
-Examples:
-- real product cutout can feed multiple marketplace compositions;
-- one verified semantic detail module can render to mobile / web profiles;
-- copy localization can reuse the visual composite;
-- a new output profile should not force product regeneration.
+## Detail pages
 
-## Product fidelity
+Use one-screen-one-job:
+- one benefit;
+- one proof;
+- one specification question;
+- one material/detail question;
+- one variant choice.
 
-If an authoritative product photo exists, the product MUST NOT be regenerated from text or replaced by a visually similar AI product.
+Independent modules are the editable masters.
+A stitched long image is normally a derivative.
 
-Use original product RGB + reviewed alpha mask or verified current-SKU CAD/3D.
+## Existing contracts
 
-## Key contracts
-
-The orchestrator includes contracts for:
-- intake;
-- preflight;
+The orchestrator contains contracts for:
+- task intake;
+- execution preflight;
+- product evidence / identity;
+- dimensions;
 - buyer decisions;
 - variants;
-- asset reuse;
+- reference-generation strategy;
+- platform commerce style;
+- scene routing;
+- campaign style;
+- prompt rendering;
+- candidate repair;
 - output profiles;
-- detail modules;
-- deterministic prompts;
-- execution state;
+- asset reuse / derivation;
 - QA;
 - delivery.
 
-See [AGENT_SPEC_CONVENTIONS.md](./AGENT_SPEC_CONVENTIONS.md).
+## Research / inspiration
 
-## China marketplace notes / 中国电商
+See [ECOMMERCE_VISUAL_RESEARCH.md](./ECOMMERCE_VISUAL_RESEARCH.md).
 
-淘宝、天猫、1688、京东、拼多多、抖音、Amazon 等应当作为不同的输出 surface / profile，而不是重新生成一个“长得差不多的商品”。
+The current visual-generation strategy was informed by public ecommerce-agent work including:
+- \`xianyu110/ecommerce-image-skills\`;
+- \`dlazy-ai/ecommerce-skills\`.
 
-多规格商品的正确目标是：
-
-> 一套真实商品事实与可复用视觉母版，派生所有需要的 SKU / 平台 / 端侧资产。
+The repository adapts their useful workflow ideas into its own evidence, variant, buyer-decision and delivery architecture.

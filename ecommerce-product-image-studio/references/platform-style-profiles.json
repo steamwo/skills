@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "status": "heuristic_not_official_rule",
+  "profiles": {
+    "generic_master": {
+      "traffic_context": "general ecommerce",
+      "decision_mode": "recognize_compare_decide",
+      "information_density": "medium",
+      "scene_priority": "medium",
+      "person_priority": "conditional",
+      "spec_priority": "high_when_verified",
+      "value_emphasis": "medium",
+      "trust_emphasis": "high",
+      "emotional_hook": "medium",
+      "copy_density": "medium",
+      "thumbnail_readability": "high",
+      "recommended_asset_mix": [
+        "hero",
+        "lifestyle",
+        "detail",
+        "specification",
+        "variant_choice"
+      ]
+    },
+    "taobao_tmall_1688": {
+      "traffic_context": "shelf_search_comparison",
+      "decision_mode": "recognize_evaluate_compare_trust_decide",
+      "information_density": "high",
+      "scene_priority": "medium_high",
+      "person_priority": "category_dependent",
+      "spec_priority": "high",
+      "value_emphasis": "medium_high",
+      "trust_emphasis": "high",
+      "emotional_hook": "medium",
+      "copy_density": "medium_high",
+      "thumbnail_readability": "high",
+      "recommended_asset_mix": [
+        "hero",
+        "selling_point",
+        "lifestyle",
+        "detail",
+        "specification",
+        "variant_choice",
+        "package_if_verified",
+        "detail_modules"
+      ],
+      "avoid": [
+        "duplicate_mood_shots",
+        "unsupported_claims",
+        "editorial_whitespace_without_buying_information"
+      ]
+    },
+    "pinduoduo": {
+      "traffic_context": "fast_value_judgement_shelf",
+      "decision_mode": "recognize_value_variant_decide",
+      "information_density": "medium_high",
+      "scene_priority": "medium",
+      "person_priority": "category_dependent",
+      "spec_priority": "high",
+      "value_emphasis": "very_high",
+      "trust_emphasis": "medium_high",
+      "emotional_hook": "medium",
+      "copy_density": "short_direct",
+      "thumbnail_readability": "very_high",
+      "recommended_asset_mix": [
+        "hero",
+        "core_value",
+        "variant_choice",
+        "specification",
+        "usage",
+        "package_if_verified"
+      ],
+      "avoid": [
+        "tiny_copy",
+        "overly_editorial_layout",
+        "fake_discount",
+        "decorative_clutter"
+      ]
+    },
+    "douyin": {
+      "traffic_context": "content_plus_shelf_mobile",
+      "decision_mode": "attention_interest_trust_purchase",
+      "information_density": "medium",
+      "scene_priority": "very_high",
+      "person_priority": "high_when_useful",
+      "spec_priority": "medium_high_after_hook",
+      "value_emphasis": "medium_high",
+      "trust_emphasis": "high",
+      "emotional_hook": "high",
+      "copy_density": "short_punchy",
+      "thumbnail_readability": "very_high",
+      "recommended_asset_mix": [
+        "strong_hero",
+        "in_use_scene",
+        "person_use",
+        "single_benefit",
+        "detail",
+        "simple_specification"
+      ],
+      "avoid": [
+        "clutter",
+        "low_quality_cutout_look",
+        "pure_text_card",
+        "irrelevant_scene",
+        "distorted_people"
+      ]
+    }
+  }
+}
