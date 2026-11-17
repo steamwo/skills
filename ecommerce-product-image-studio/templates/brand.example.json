@@ -1,0 +1,28 @@
+{
+  "brand_name": "待填写",
+  "logo_file": null,
+  "palette": {
+    "primary": "#6B5745",
+    "secondary": "#D8C7AE",
+    "background": "#F6F2EB",
+    "text": "#29251F",
+    "accent": "#A66A45"
+  },
+  "typography": {
+    "chinese_heading": "待指定/按品牌字体授权",
+    "chinese_body": "待指定",
+    "latin": "待指定"
+  },
+  "visual_style": {
+    "keywords": ["自然", "克制", "真实材质", "温暖家居"],
+    "lighting": "soft natural light",
+    "composition": "clean, generous negative space",
+    "props": "minimal and subordinate to product"
+  },
+  "rules": {
+    "keep_logo_undistorted": true,
+    "do_not_invent_brand_marks": true,
+    "do_not_change_product_color_to_match_palette": true,
+    "text_should_be_typeset_after_image_generation": true
+  }
+}
