@@ -1,105 +1,125 @@
 # E-commerce Product Image Studio
 
-The orchestrator for fidelity-first e-commerce product visual production.
+A fidelity-first production system for real e-commerce product families and SKUs.
 
-## Architecture
+## What the system optimizes
 
-The project now uses explicit contracts for:
+Not “generate more pictures”.
 
-- task intake;
-- execution preflight;
-- product evidence;
-- product identity / dimensions;
-- scale / perspective;
-- semantic asset planning;
-- output profiles;
-- detail-page modules;
-- deterministic prompt rendering;
-- source-pixel production;
-- execution state / resume;
-- QA;
-- delivery;
-- marketplace export.
+It optimizes:
+- product truth;
+- buyer-decision coverage;
+- correct SKU / variant scope;
+- reusable masters;
+- targeted derivatives;
+- multi-platform / multi-surface output;
+- resumable production;
+- QA-accounted delivery.
 
-## Important distinction
+## Core contracts
 
-### User intent
+- \`task-input-schema.json\` — explicit user intent
+- \`execution-preflight.md\` — source/tool/output readiness
+- \`buyer-decision-framework.md\` — purchase-question coverage
+- \`variant-matrix-contract.md\` — family vs variant truth
+- \`asset-reuse-contract.md\` — reusable masters and derivative graph
+- \`output-profile-contract.md\` — marketplace / surface / device profiles
+- \`detail-module-contract.md\` — semantic detail-page modules
+- \`prompt-rendering.md\` — deterministic generation prompts
+- \`execution-state-contract.md\` — resume / targeted invalidation
+- \`delivery-gate.md\` — actual final derivative delivery
 
-Platform, surface/profile, ratio, language, market, style, requested deliverables, and extra requirements come from explicit user input.
+## Buyer-decision-first planning
 
-### Product evidence
+A complete image set should answer the important buyer questions, for example:
 
-Authoritative product images MUST be inspected for:
-- visible geometry;
-- component count;
-- hardware;
-- texture/color;
-- supported camera view;
-- visible markings.
+\`\`\`text
+What is it?
+→ Is it for me?
+→ Why choose it?
+→ How is it used?
+→ Will it fit?
+→ Which variant should I choose?
+→ What are the verified specs?
+→ What is included?
+\`\`\`
 
-Do not infer user intent from product appearance.
+Image count is not the goal.
 
-## Execution preflight
+## Variant matrix
 
-Before expensive generation:
+For multi-SKU families, create \`variant-matrix.json\`.
 
-- verify source files;
-- verify required tools;
-- preserve originals;
-- verify output destinations;
-- identify required surface profiles;
-- record blockers.
-
-See \`references/execution-preflight.md\`.
-
-## Output profiles
-
-Do not model output as “ratio only”.
+Do not assume all dimensions / product visuals / packaging / copy are shared.
 
 Use:
-- marketplace;
-- surface;
-- slot;
-- device;
-- design preset;
-- verified rule source.
+- \`SHARED_VERIFIED\`
+- \`VARIANT_SPECIFIC\`
+- \`UNKNOWN_SHAREDNESS\`
+- \`NOT_APPLICABLE\`
 
-Named presets such as Amazon A+ standard / premium web / premium mobile are useful planning labels, but must be re-verified before compliance export.
+Unknown sharedness means “do not reuse yet”.
 
-See \`references/output-profile-contract.md\`.
+## Reuse / derivative graph
+
+Prefer:
+
+\`\`\`text
+authoritative source
+→ reusable production master
+→ semantic asset
+→ platform / surface derivative
+\`\`\`
+
+Example:
+
+\`\`\`text
+SOURCE product cutout
+      ↓
+lifestyle semantic composite
+      ├── Taobao detail render
+      ├── Amazon render
+      └── mobile render
+\`\`\`
+
+Do not regenerate the real product for every marketplace.
 
 ## Detail modules
 
-Build semantic modules first, then render them into one or more profiles.
+Independent semantic modules are preferred masters.
 
-Independent modules are the preferred editable masters.
+A long image is normally a derivative assembled from those modules.
 
-A stitched long image is normally a derivative.
+## Delivery accounting
 
-See \`references/detail-module-contract.md\`.
+Expected outputs are calculated from:
 
-## Resumable execution
+\`\`\`text
+semantic asset
+× required variant scope
+× requested output profiles
+\`\`\`
 
-Create \`execution-state.json\`.
+not from:
 
-Use stable asset IDs and durable checkpoints.
+\`\`\`text
+SKU count × fixed image count
+\`\`\`
 
-If execution is interrupted:
-- reuse valid outputs;
-- resume from the first invalid/incomplete stage;
-- do not resubmit the same expensive job blindly.
-
-See \`references/execution-state-contract.md\`.
+This keeps shared assets shared and variant-bound assets correct.
 
 ## Product fidelity
+
+If an authoritative product photo exists:
 
 \`\`\`text
 real SKU photo
 → reviewed alpha mask
 → ORIGINAL PRODUCT RGB
 → generated empty background / independent person
-→ scale-aware compositing
-→ typography / detail modules
+→ composite
+→ semantic modules
+→ profile derivatives
 → QA
 \`\`\`
 
@@ -107,23 +127,20 @@ A generated lookalike is not the same SKU.
 
 ## Machine-readable examples
 
-- \`references/task-input-schema.json\`
 - \`templates/task-input.example.json\`
+- \`templates/buyer-decision-map.example.json\`
+- \`templates/variant-matrix.example.json\`
+- \`templates/asset-derivation-map.example.json\`
 - \`templates/output-profile.example.json\`
 - \`templates/execution-state.example.json\`
 - \`templates/delivery-manifest.example.json\`
 
-## Validation
+## China marketplace notes / 中国电商
 
-Validate task intake:
+对于多规格商品，不建议“每个 SKU 从头生成一整套”。
 
-\`\`\`bash
-python ecommerce-product-image-studio/scripts/validate_task_input.py \
-  --input sku-001/task-input.json
-\`\`\`
-
-## China marketplace notes / 中国电商说明
-
-平台详情页应优先保留独立分屏 / 模块源文件，再根据平台输出长图、移动端版、Web 版等派生版本。
-
-历史尺寸、示例档位和经验比例不能当成永久平台规则。
+正确做法是：
+- 商品主体、尺寸、颜色、包装等按 SKU 锁定；
+- 可共用背景、品牌系统和部分语义模块按证据复用；
+- 再派生淘宝 / 天猫 / 1688 / 京东 / 拼多多 / 抖音 / Amazon 等平台版本；
+- 最终逐个 variant + profile 做 QA。

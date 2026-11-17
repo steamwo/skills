@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "project_id": "example-project",
+  "assets": [
+    {
+      "asset_id": "product-cutout-25",
+      "level": "PRODUCTION_MASTER",
+      "parent_asset_ids": [
+        "source-photo-25"
+      ],
+      "variant_scope": [
+        "length-25cm"
+      ],
+      "product_provenance": "SOURCE_PRODUCT_PIXEL",
+      "invalidation_inputs": [
+        "source-photo-25",
+        "mask-review"
+      ]
+    },
+    {
+      "asset_id": "detail-dimensions-25",
+      "level": "SEMANTIC_ASSET",
+      "parent_asset_ids": [
+        "product-cutout-25",
+        "product-dimensions-25"
+      ],
+      "variant_scope": [
+        "length-25cm"
+      ],
+      "invalidation_inputs": [
+        "product-cutout-25",
+        "product-dimensions-25",
+        "copy-version"
+      ]
+    },
+    {
+      "asset_id": "detail-dimensions-25-mobile",
+      "level": "SURFACE_DERIVATIVE",
+      "parent_asset_ids": [
+        "detail-dimensions-25"
+      ],
+      "variant_scope": [
+        "length-25cm"
+      ],
+      "output_profile": "generic-mobile",
+      "invalidation_inputs": [
+        "detail-dimensions-25",
+        "output-profile"
+      ]
+    }
+  ]
+}

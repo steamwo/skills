@@ -2,24 +2,46 @@
 
 ## Purpose
 
-A task is not complete merely because files were generated. Final assets must be QA-accounted and actually delivered to the user.
+A task is complete only when every expected final derivative is QA-accounted and actually delivered.
+
+For product families, do **not** calculate expected output as:
+
+\`\`\`text
+number_of_SKUs × fixed_image_count
+\`\`\`
+
+because some semantic assets are legitimately shared and others are variant-bound.
+
+## Delivery unit
+
+The final delivery unit is:
+
+\`\`\`text
+semantic_asset
+× required_variant_scope
+× required_output_profile
+\`\`\`
+
+Examples:
+
+- family-shared brand module × 1 family scope × 2 profiles = 2 deliverables;
+- variant-bound hero × 4 variants × 1 profile = 4 deliverables;
+- family size-comparison module × 1 family scope × 2 profiles = 2 deliverables;
+- 4 variant dimension modules × 4 variants × 2 profiles = 8 deliverables.
 
 ## Counters
 
 Maintain:
-- \`planned_assets_total\`
-- \`blocked_assets_total\`
-- \`expected_deliverables_total\`
-- \`produced_assets_total\`
-- \`qa_completed_assets_total\`
-- \`delivered_assets_total\`
+- \`planned_semantic_assets_total\`
+- \`blocked_semantic_assets_total\`
+- \`expected_derivatives_total\`
+- \`produced_derivatives_total\`
+- \`qa_completed_derivatives_total\`
+- \`delivered_derivatives_total\`
 
-Where:
+The expected derivative total comes from the image plan + variant matrix + output-profile requirements.
 
-\`\`\`text
-expected_deliverables_total =
-planned_assets_total - blocked_assets_total
-\`\`\`
+Do not derive it from a hard-coded image count.
 
 ## Completion statuses
 
@@ -30,40 +52,68 @@ planned_assets_total - blocked_assets_total
 
 ## COMPLETE requires
 
-- every non-blocked planned asset has a produced file;
-- every produced final asset has QA status;
-- every final asset has an accessible delivery reference (attachment, file path made available to the user, or supported URL);
-- the delivered count matches the expected deliverable count;
-- no asset marked \`FAIL\` is silently delivered as approved.
+- every expected non-blocked derivative has a produced file;
+- every final derivative has QA status;
+- every final derivative has an accessible delivery reference;
+- delivered derivative count equals expected derivative count;
+- no \`FAIL\` asset is silently counted as approved;
+- family-shared assets are not duplicated merely to inflate counts;
+- variant-bound assets are not collapsed into one shared file.
 
-## PARTIAL
+## Shared asset handling
 
-Use when useful assets were delivered but:
-- some planned assets are missing;
-- some assets remain \`REVIEW\`;
-- a tool limitation prevented a subset of deliverables.
+A family-shared semantic asset may satisfy multiple variants only when its scope is \`SHARED_VERIFIED\`.
 
-The response MUST state what is missing.
+The delivery manifest SHOULD record the family scope explicitly rather than copying the same file once per SKU.
 
-## BLOCKED
+## Variant-bound handling
 
-Use when the requested deliverable cannot be truthfully produced, for example:
-- missing authoritative view;
-- missing required dimensions;
-- missing sale-quantity evidence;
-- interaction requires product deformation.
+A variant-bound asset MUST have:
+- explicit \`variant_id\`;
+- correct variant provenance / dimensions / copy;
+- its own final derivative where required.
+
+## Output-profile handling
+
+The same semantic asset rendered for web and mobile counts as separate final derivatives when both are requested.
+
+A single mechanically resized file MUST NOT be counted as two valid derivatives if the second profile requires a redesigned layout.
 
 ## Delivery manifest
 
-Create \`delivery-manifest.json\` containing, for each asset:
-- \`id\`
+Create \`delivery-manifest.json\`.
+
+Each final entry SHOULD include:
+- \`delivery_id\`
+- \`semantic_asset_id\`
 - \`role\`
-- \`planned_status\`
+- \`decision_stage\`
+- \`variant_scope\`
+- \`reuse_class\`
+- \`output_profile\`
+- \`parent_asset_ids\`
 - \`production_status\`
 - \`qa_status\`
 - \`delivery_status\`
 - \`delivery_reference\`
 - \`product_provenance\`
+- \`copy_version\`
 - \`notes\`
 
-Never claim “all images completed” when the delivery manifest does not support it.
+## PARTIAL
+
+Use when useful derivatives were delivered but some expected outputs are missing, blocked, or still in review.
+
+State exactly which semantic asset / variant / profile combinations are missing.
+
+## BLOCKED
+
+Use when requested outputs cannot be truthfully produced, for example:
+- missing authoritative variant source;
+- missing dimensions;
+- unknown cross-variant sharedness;
+- missing packaging evidence;
+- unsupported product view;
+- interaction requires product deformation.
+
+Never claim “all images complete” unless the manifest supports it.

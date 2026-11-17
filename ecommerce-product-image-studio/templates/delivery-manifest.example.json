@@ -1,12 +1,76 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "project_id": "example-project",
-  "planned_assets_total": 0,
-  "blocked_assets_total": 0,
-  "expected_deliverables_total": 0,
-  "produced_assets_total": 0,
-  "qa_completed_assets_total": 0,
-  "delivered_assets_total": 0,
+  "planned_semantic_assets_total": 2,
+  "blocked_semantic_assets_total": 0,
+  "expected_derivatives_total": 3,
+  "produced_derivatives_total": 0,
+  "qa_completed_derivatives_total": 0,
+  "delivered_derivatives_total": 0,
   "overall_status": "IN_PROGRESS",
-  "assets": []
+  "deliveries": [
+    {
+      "delivery_id": "hero-25-generic",
+      "semantic_asset_id": "hero",
+      "role": "hero",
+      "decision_stage": "RECOGNITION",
+      "variant_scope": [
+        "length-25cm"
+      ],
+      "reuse_class": "VARIANT_BOUND",
+      "output_profile": "generic_gallery",
+      "parent_asset_ids": [
+        "product-cutout-25"
+      ],
+      "production_status": "PLANNED",
+      "qa_status": "NOT_CHECKED",
+      "delivery_status": "PENDING",
+      "delivery_reference": null,
+      "product_provenance": "SOURCE_PRODUCT_PIXEL",
+      "copy_version": null,
+      "notes": null
+    },
+    {
+      "delivery_id": "variant-choice-mobile",
+      "semantic_asset_id": "variant-choice",
+      "role": "variant_comparison",
+      "decision_stage": "VARIANT_CHOICE",
+      "variant_scope": [
+        "family"
+      ],
+      "reuse_class": "FAMILY_SHARED",
+      "output_profile": "generic_mobile",
+      "parent_asset_ids": [
+        "variant-matrix"
+      ],
+      "production_status": "PLANNED",
+      "qa_status": "NOT_CHECKED",
+      "delivery_status": "PENDING",
+      "delivery_reference": null,
+      "product_provenance": "PROGRAMMATIC_TEXT_GRAPHIC",
+      "copy_version": "v1",
+      "notes": null
+    },
+    {
+      "delivery_id": "variant-choice-web",
+      "semantic_asset_id": "variant-choice",
+      "role": "variant_comparison",
+      "decision_stage": "VARIANT_CHOICE",
+      "variant_scope": [
+        "family"
+      ],
+      "reuse_class": "FAMILY_SHARED",
+      "output_profile": "generic_web",
+      "parent_asset_ids": [
+        "variant-matrix"
+      ],
+      "production_status": "PLANNED",
+      "qa_status": "NOT_CHECKED",
+      "delivery_status": "PENDING",
+      "delivery_reference": null,
+      "product_provenance": "PROGRAMMATIC_TEXT_GRAPHIC",
+      "copy_version": "v1",
+      "notes": null
+    }
+  ]
 }

@@ -1,15 +1,13 @@
 ---
 name: ecommerce-visual-qa
-description: Run evidence-backed QA for input integrity, preflight readiness, product identity, source-pixel provenance, dimensions, scale, prompt traceability, person interaction, surface profiles, detail modules, cross-image consistency, delivery completeness, and marketplace readiness.
+description: Run evidence-backed QA for input integrity, buyer-decision coverage, SKU/variant correctness, asset reuse, product identity, provenance, dimensions, scale, prompt traceability, surface profiles, execution state, delivery completeness, and marketplace readiness.
 ---
 
 # Ecommerce Visual QA
 
 ## Objective
 
-Evaluate each asset and the complete production system.
-
-Do not collapse visual quality, product truth, operational readiness, profile validity, and delivery completeness into one score.
+Evaluate individual assets, variant families, derivatives, and the complete production system.
 
 ## QA states
 
@@ -20,122 +18,128 @@ Do not collapse visual quality, product truth, operational readiness, profile va
 
 ## Gate A — Input-source integrity
 
-Check:
-- user-intent fields came from explicit user input;
-- product evidence derived from attachments is labeled as evidence;
-- optional unspecified fields were omitted or handled through explicit legal policy.
+Check explicit user intent vs extracted product evidence.
 
 ## Gate B — Execution preflight
 
-Check:
-- source assets usable;
-- required tools available;
-- originals preserved;
-- preprocessing traceable;
-- output destination valid;
-- blocked requirements identified before expensive work.
+Check source usability, tools, preprocessing, outputs, and blockers.
 
-## Gate C — Product identity
+## Gate C — Buyer-decision coverage
 
-Check silhouette, components, hardware, joints, supports, logos, texture, and other identity-critical details against authoritative references.
-
-Identity drift = \`FAIL\`.
-
-## Gate D — Product pixel provenance
-
-Record source product asset, mask, transformations, authorized edits, and provenance class.
-
-A generated lookalike replacing an available authoritative source is \`FAIL\`.
-
-## Gate E — Dimensions / specifications
-
-Check values, units, axes, evidence, product-vs-packaging, and dimension-line endpoints.
-
-Unknown / estimated values MUST NOT appear as verified specs.
-
-## Gate F — Scale / perspective
-
-Check scale-calibration records, contact plane, camera assumptions, reference objects, uniform product scaling, and absence of geometry warp.
-
-## Gate G — Prompt traceability
-
-For generated assets verify:
-- template version;
-- rendered prompt;
-- required placeholders resolved;
-- fixed product-exclusion clauses preserved;
-- no unsupported facts introduced.
-
-## Gate H — Person interaction
-
-Check anatomy, grip/contact points, occlusion, gravity, and unchanged product geometry.
-
-## Gate I — Detail module integrity
+Read \`buyer-decision-map.json\`.
 
 Check:
-- each module has one clear semantic purpose;
-- claims inherit evidence;
-- different profile renders preserve semantic priority;
-- mobile / web variants are redesigned when needed rather than blindly squeezed;
-- stitched long image, if present, is traceable to independent modules.
+- each planned semantic asset answers a buyer question;
+- claimed answer has evidence;
+- important unanswered questions are visible as blocked / partial;
+- decorative duplicates did not replace needed decision coverage.
 
-## Gate J — Output profile validity
+## Gate D — Variant matrix integrity
 
-Check:
-- marketplace;
-- surface;
-- slot;
-- device;
-- design preset;
-- dimensions;
-- rule source;
-- verification date;
-- compliance status.
-
-A \`DESIGN_ONLY\` preset MUST NOT be described as verified platform compliance.
-
-## Gate K — Material / composite
-
-Check source-aligned material appearance, mask correctness, fringe, shadows, and product RGB preservation.
-
-## Gate L — Copy / graphics
-
-Check language, spelling, numbers, units, claims, packaging quantities, certifications, logos, and readability.
-
-## Gate M — Execution state / retry integrity
-
-Read \`execution-state.json\`.
+Read \`variant-matrix.json\`.
 
 Check:
-- stable asset IDs;
-- checkpoints;
-- input revision;
-- retries recorded;
-- completed valid artifacts reused;
-- no duplicate expensive generation caused solely by interrupted monitoring.
+- correct family / variant ID;
+- variant axis values;
+- dimension scope;
+- color / finish scope;
+- packaging / included-item scope;
+- copy scope;
+- sharedness state.
 
-## Gate N — Cross-image consistency
+Cross-SKU leakage is \`FAIL\`.
 
-Check same SKU / variant, structure, verified dimensions, appearance, copy, provenance, and requested person consistency.
+## Gate E — Product identity
 
-## Gate O — Delivery completeness
+Check geometry, components, hardware, supports, markings, texture, and variant-specific appearance against authoritative references.
 
-Read \`delivery-manifest.json\`.
+## Gate F — Product pixel provenance
 
-Check planned, blocked, expected, produced, QA-completed, delivered counts and accessible references.
+Record product-body source, mask, transformations, authorized edits, and provenance class.
 
-## Gate P — Marketplace export
+A generated lookalike replacing an authoritative source is \`FAIL\`.
 
-Check current rule source, verification date, format, dimensions, file size, naming, and slot-specific constraints.
+## Gate G — Dimensions / specifications
 
-## Critical distinction
+Check value, unit, axis, variant scope, evidence, packaging separation, and dimension-line endpoints.
+
+## Gate H — Scale / perspective
+
+Check calibration, contact plane, camera assumptions, variant geometry, uniform product scaling, and absence of warp.
+
+## Gate I — Prompt traceability
+
+Check template version, resolved placeholders, fixed product-exclusion clauses, and absence of unsupported facts.
+
+## Gate J — Person interaction
+
+Check anatomy, contact, occlusion, gravity, product geometry, and variant fit.
+
+A person composition reused for a different variant must still fit the variant's verified geometry.
+
+## Gate K — Detail module integrity
+
+Check one semantic purpose, evidence inheritance, variant scope, responsive behavior, and long-image traceability.
+
+## Gate L — Asset reuse / derivative integrity
+
+Read \`asset-derivation-map.json\`.
+
+Check:
+- parent asset IDs;
+- variant scope;
+- reuse class;
+- product provenance;
+- output profile;
+- invalidation inputs;
+- stale derivatives.
+
+A derivative whose upstream dependency changed but was not rebuilt / re-QA'd is \`FAIL\` or \`REVIEW\`.
+
+## Gate M — Output profile validity
+
+Check marketplace, surface, slot, device, preset, dimensions, rule source, verification date, and compliance status.
+
+## Gate N — Material / composite
+
+Check mask, texture/color fidelity, shadows, and product RGB preservation.
+
+## Gate O — Copy / graphics
+
+Check language, spelling, numbers, units, claims, certifications, quantity, and variant scope.
+
+## Gate P — Execution state / retry integrity
+
+Check stable IDs, checkpoints, targeted invalidation, retries, and absence of blind duplicate expensive generation.
+
+## Gate Q — Cross-image / cross-variant consistency
+
+Check:
+- same variant within a variant-bound asset chain;
+- family-shared facts truly shared;
+- dimensions and copy do not leak across variants;
+- comparison images preserve intended scale relationships;
+- product appearance remains consistent with each source variant.
+
+## Gate R — Delivery completeness
+
+Count expected outputs by semantic asset × required variant scope × output profile.
+
+Do not use naive “number of SKUs × number of images” when assets are legitimately shared.
+
+## Gate S — Marketplace export
+
+Check current platform rules and export constraints.
+
+## Critical separation
 
 Report separately:
 - \`visual_plausibility\`
-- \`input_source_integrity\`
-- \`preflight_readiness\`
+- \`buyer_decision_coverage\`
+- \`variant_integrity\`
 - \`product_pixel_provenance\`
 - \`metric_grounding\`
+- \`asset_reuse_integrity\`
 - \`output_profile_validity\`
 - \`execution_integrity\`
 - \`delivery_completeness\`

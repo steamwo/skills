@@ -1,152 +1,137 @@
 ---
 name: ecommerce-infographic-detail-builder
-description: Build evidence-backed e-commerce detail-page modules, dimension graphics, structural callouts, responsive surface variants, and optional long-form derivatives from verified product data.
+description: Build evidence-backed e-commerce semantic detail modules and variant-aware responsive derivatives from verified product facts, buyer-decision goals, SKU scope, and output profiles.
 ---
 
 # Ecommerce Infographic & Detail Builder
 
 ## Objective
 
-Build product detail content as **independent semantic modules** that can be rendered into different marketplace, desktop, mobile, and long-image profiles without changing product facts.
+Build independent detail-page modules that answer purchase questions and can be reused across variants / markets only when their evidence scope permits.
 
 Read:
-- \`ecommerce-product-image-studio/references/detail-module-contract.md\`
-- \`ecommerce-product-image-studio/references/output-profile-contract.md\`
+- buyer-decision framework;
+- variant-matrix contract;
+- asset-reuse contract;
+- detail-module contract;
+- output-profile contract.
 
 ## Inputs
 
-- \`task-input.json\`
-- product identity record
-- \`product-dimensions.json\`
-- approved claims and evidence
+- \`buyer-decision-map.json\`
+- \`variant-matrix.json\` when applicable
+- product identity
+- product dimensions
+- approved claims
 - verified packaging / included items
 - brand system
 - image plan
-- one or more output profiles
-
-## Content-before-canvas rule
-
-Plan semantic content first:
-- what buyer question this module answers;
-- which verified facts / claims it communicates;
-- which product source it uses.
-
-Only then choose a canvas / surface profile.
-
-MUST NOT distort content strategy merely to fit a remembered platform size.
-
-## Module model
-
-Each module SHOULD define:
-- \`module_id\`
-- role
-- buyer question
-- semantic priority
-- source product asset
-- verified claims
-- copy source
-- product provenance
-- dimension source
 - output profiles
-- dependencies
-- QA status
+- asset derivation map
 
-Typical module roles:
-- product overview
-- verified feature
-- lifestyle use
-- material / structure
-- dimensions / specification
-- comparison
-- packaging / included items
-- usage / care note
+## Content-before-canvas
 
-## Independent-master rule
+Each module MUST first define:
+- buyer question;
+- verified answer;
+- variant scope;
+- evidence;
+- semantic priority.
 
-Independent modules SHOULD be the editable masters.
+Only then define layout / canvas.
 
-A stitched long image MAY be created as a derivative when requested or required, but MUST NOT be the only source of truth.
+## Variant-aware module rule
 
-## Multi-surface / responsive rendering
+Each module MUST declare:
+- \`variant_scope\`
+- \`reuse_class\`
 
-One semantic module MAY render to:
-- desktop / web
-- mobile
-- generic detail-page module
-- named marketplace surface
-- long-image derivative
+Family-shared modules may reuse layout / copy only when all referenced facts are verified shared.
 
-Different renders SHOULD share:
-- copy evidence
-- SKU / variant
-- product provenance
-- semantic priority
+Variant-specific numbers, color, packaging, included items, or product cutouts must be parameterized or rendered per variant.
 
-They MAY change:
-- crop
-- stacking
-- typography scale
-- line breaks
-- negative space
-- image / copy balance
+## Asset reuse
 
-Do not mechanically shrink a desktop module into a mobile module if hierarchy or readability breaks.
+Prefer a reusable semantic master.
 
-## Dimension graphic rules
+Example:
 
-**MUST**
-- use only verified values by default;
-- preserve axis definitions;
-- distinguish product vs packaging dimensions;
-- distinguish net vs gross weight;
-- distinguish folded / assembled / extended states;
-- point dimension arrows to the correct physical boundaries;
-- keep a source map for every published number.
+\`\`\`text
+semantic module: "How to choose length"
+  evidence: variant matrix
+  scope: family
+  ├── Chinese mobile render
+  ├── Amazon web render
+  └── generic detail render
+\`\`\`
 
-**MUST NOT**
-- infer dimensions from a lifestyle scene;
-- infer dimensions from person scale;
-- fill unknown axes with estimated numbers;
-- mix packaging values into product values;
-- let an image model invent numeric labels.
+For a per-variant dimension module:
 
-If only one dimension is confirmed, only show that dimension.
+\`\`\`text
+semantic template: "Dimensions"
+  ├── 25cm render → 25cm variant facts
+  ├── 30cm render → 30cm variant facts
+  ├── 35cm render → 35cm variant facts
+  └── 40cm render → 40cm variant facts
+\`\`\`
+
+The template may be shared; the product cutout and dimension values remain variant-bound.
+
+## Dimension rules
+
+Use only verified values by default.
+
+MUST distinguish:
+- product vs packaging;
+- net vs gross;
+- measurement states;
+- variant-specific dimensions.
+
+If a single axis is verified, show only that axis.
 
 ## Copy rules
 
-Each claim MUST map to:
-- user confirmation;
-- visible evidence;
-- official current-SKU documentation.
+Every claim MUST have scope:
+- family;
+- variant;
+- bundle;
+- market.
 
-Unsupported marketing copy is removed or marked for review.
+Do not put a variant-specific number into family-shared static copy unless the render parameterizes it correctly.
 
-## Named platform presets
+## Multi-surface rendering
 
-Named presets such as Amazon A+ standard / premium web / premium mobile MAY be used as planning labels.
+One semantic module MAY render to:
+- mobile;
+- web;
+- marketplace-specific surface;
+- long-image derivative.
 
-Their pixel dimensions MUST be re-verified before compliance export. A named preset alone is \`DESIGN_ONLY\`, not proof of marketplace compliance.
+All renders inherit:
+- evidence;
+- variant scope;
+- product provenance;
+- copy version.
 
-## Typography / 中国电商排版
-
-中文标题、正文、单位、数字、尺寸线、Logo、图标：
-- 使用可控字体和排版工具；
-- 不依赖图像模型生成最终文案；
-- 检查错别字、数字、单位、标点和移动端可读性；
-- 平台比例和画布尺寸以当前后台 / 官方要求为准。
+They may change composition and typography.
 
 ## Outputs
 
 Create:
-- \`copy-deck.md\`
-- \`dimensions-source-map.md\`
 - module manifest
-- independent module images
-- output-profile variants
+- copy deck
+- dimension source map
+- independent semantic masters
+- variant/profile derivatives
 - editable layout sources
-- stitched long image only when requested / required
-- infographic QA report
+- optional stitched long image
+- QA records
 
 ## Gate
 
-A visually attractive module with unsupported claims, unverified numeric specs, or a falsely claimed platform profile is \`FAIL\`.
+A module is \`FAIL\` if:
+- its buyer answer lacks evidence;
+- variant scope is wrong;
+- shared copy contains a wrong variant-specific value;
+- a derivative loses product provenance;
+- an unverified fact appears as customer-facing truth.

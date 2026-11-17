@@ -1,74 +1,87 @@
 # Agent Skill Specification Conventions
 
-This repository is **English-first for machine-executable technical rules** and **Chinese-friendly for China-commerce localization**.
+This repository is **English-first for machine-executable rules** and **Chinese-friendly for China-commerce localization**.
 
-## Language policy
+## Core production principles
 
-Use English for execution logic, schemas, status enums, field names, gates, and cross-skill contracts.
+### Explicit intent vs product evidence
 
-Use Chinese or bilingual text for China marketplace notes, Chinese typography/copy guidance, and seller-facing examples.
+User intent comes from explicit user input.
 
-## Normative keywords
+Product evidence may and often must be extracted from authoritative attachments.
 
-- **MUST**: required.
-- **MUST NOT**: prohibited.
-- **SHOULD**: default unless documented otherwise.
-- **MAY**: optional.
-- **BLOCKED**: cannot safely continue.
-- **REVIEW**: uncertainty remains.
-- **PASS / FAIL / NOT_CHECKED**: QA states.
+Do not infer marketplace, ratio, language, style, or requested deliverables from product appearance.
 
-## Input contracts
+### Buyer-decision-first planning
 
-Structured skills SHOULD define machine-readable input contracts.
+E-commerce completeness is measured by purchase-question coverage, not raw image count.
 
-Fields SHOULD define:
-- type;
-- required / optional;
-- legal options;
-- source policy;
-- omission / default behavior.
+Each semantic asset SHOULD answer a concrete buyer question and cite evidence.
 
-### Intent vs evidence
+### SKU / variant scope
 
-**User intent** MUST come from explicit user input:
-- target platform;
-- target market;
-- image ratio;
-- output / surface profile;
-- language;
-- style;
-- requested deliverables;
-- extra requirements.
+Every fact, copy block, product visual, dimension, and package claim SHOULD have scope:
+- family;
+- variant;
+- bundle;
+- market.
 
-**Product evidence** MAY and often MUST be extracted from authoritative attachments:
-- visible geometry;
-- component count;
-- hardware;
-- texture / color;
-- supported camera view;
-- verified dimensions shown in source documents.
+Use sharedness states:
+- \`SHARED_VERIFIED\`
+- \`VARIANT_SPECIFIC\`
+- \`UNKNOWN_SHAREDNESS\`
+- \`NOT_APPLICABLE\`
 
-Do not infer intent from evidence.
+Unknown sharedness is not permission to reuse.
 
-## Preflight before expensive work
+### Reusable master / derivative model
 
-Long or costly workflows SHOULD validate:
-- source assets;
-- required tools;
-- output destination;
-- requested surface/profile;
-- known blockers
+Prefer:
+- authoritative source;
+- reusable production master;
+- semantic asset;
+- surface / marketplace derivative.
 
-before expensive generation starts.
+A derivative MUST inherit product provenance, evidence, variant scope, and relevant copy version.
 
-Preprocessing MUST be non-destructive and traceable.
+If an upstream dependency changes, downstream derivatives become stale.
 
-Preprocessing MAY make a source usable but MUST NOT alter user intent or product truth.
+### Preflight before expensive work
+
+Validate source assets, tools, output destination, and required profiles before costly generation.
+
+### Output profiles
+
+Treat output as marketplace + surface + slot + device + preset.
+
+Design preset ≠ verified compliance.
+
+### Product pixel preservation
+
+When an authoritative photo exists, default to source-product pixels.
+
+Do not replace the SKU with a generated lookalike.
+
+### Content before canvas
+
+For detail pages, define semantic content and buyer question before choosing canvas dimensions.
+
+Independent modules SHOULD be editable masters; long images are usually derivatives.
+
+### Resumable execution
+
+Use stable semantic asset IDs, checkpoints, dependency-aware invalidation, and recorded retries.
+
+Do not duplicate expensive work because monitoring was interrupted.
+
+### Delivery contracts
+
+Track planned, blocked, produced, QA-completed, and delivered outputs.
+
+Count expected deliverables by actual asset scope and output profile, not naive multiplication.
 
 ## Evidence states
 
-Use:
 - \`visible_in_reference\`
 - \`user_confirmed\`
 - \`document_verified\`
@@ -76,101 +89,8 @@ Use:
 - \`unknown\`
 - \`conflicting\`
 
-Never silently promote \`estimated\` or \`unknown\` to verified.
-
-## Output profiles
-
-Treat output as **marketplace + surface + slot + device + design preset**, not merely an aspect ratio.
-
-Distinguish:
-- design preset;
-- verified compliance profile.
-
-A named marketplace preset is not proof of current compliance.
-
-When desktop / mobile layouts differ materially, create separate renders rather than blindly resizing.
-
-## Deterministic prompt rendering
-
-When a stable prompt template exists:
-- render from verified structured inputs;
-- omit missing optional blocks;
-- block unresolved required placeholders;
-- preserve fixed fidelity constraints;
-- do not enrich requirements with generic goals the user did not state.
-
-## Product identity rule
-
-When the user provides an authoritative product photograph, default to pixel preservation.
-
-\`\`\`text
-AUTHORITATIVE PRODUCT PHOTO
-        ↓
-reference audit
-        ↓
-identity lock
-        ↓
-alpha mask
-        ↓
-ORIGINAL PRODUCT RGB
-        ↓
-empty generated scene / person
-        ↓
-scale calibration
-        ↓
-compositing
-        ↓
-detail modules / typography
-        ↓
-QA
-        ↓
-delivery gate
-\`\`\`
-
-A visually similar generated product is not the same SKU.
-
-## Product Pixel Preservation Rule
-
-**MUST**
-- preserve source product geometry and visible identity;
-- keep product RGB traceable to a source photo or verified CAD/3D.
-
-**MUST NOT**
-- regenerate the product from text;
-- substitute a lookalike;
-- alter geometry to fit a scene;
-- invent unseen product facts.
-
-## Detail-page modules
-
-Detail pages SHOULD be modeled as independent semantic modules.
-
-Plan content before canvas.
-
-A semantic module MAY render to multiple output profiles while inheriting the same:
-- claim evidence;
-- SKU identity;
-- product provenance;
-- dimensions.
-
-A stitched long image SHOULD usually be a derivative, not the only editable master.
-
-## Resumable execution
-
-Multi-step skills SHOULD maintain stable asset IDs and durable checkpoints.
-
-On resume:
-- reuse valid completed artifacts;
-- continue from the first invalid/incomplete stage;
-- do not duplicate expensive work simply because monitoring was interrupted.
-
-Input changes SHOULD invalidate only dependent downstream stages.
-
-Retries MUST record why they occurred.
-
 ## Asset provenance classes
 
-Use:
 - \`SOURCE_PRODUCT_PIXEL\`
 - \`VERIFIED_CAD_3D\`
 - \`GENERATED_BACKGROUND\`
@@ -179,19 +99,9 @@ Use:
 - \`PROGRAMMATIC_TEXT_GRAPHIC\`
 - \`CONCEPT_ONLY\`
 
-## Delivery contracts
-
-Artifact-generating skills SHOULD track:
-- planned;
-- blocked;
-- produced;
-- QA-completed;
-- delivered.
-
-Do not claim complete delivery unless every expected final asset has a user-accessible reference.
-
 ## China marketplace notes / 中国电商平台说明
 
-- 淘宝、天猫、1688、京东、拼多多、抖音等应按 surface / slot 理解，不只是单一“平台尺寸”。
-- 历史尺寸或示例档位不能硬编码成永久规则。
+- 淘宝、天猫、1688、京东、拼多多、抖音等应按平台 + surface + slot + 端侧理解。
+- 同一个 SKU 资产应尽量复用真实商品母版，再派生不同平台版本。
+- 多规格商品必须区分共用资产和规格专属资产，禁止串 SKU。
 - 中文标题、数字、Logo、尺寸线和参数表使用可控排版工具。

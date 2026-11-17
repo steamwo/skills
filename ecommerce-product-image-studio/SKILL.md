@@ -1,58 +1,44 @@
 ---
 name: ecommerce-product-image-studio
-description: Orchestrate a fidelity-first e-commerce product visual workflow with explicit intake, execution preflight, verified product evidence, surface profiles, deterministic prompts, source-pixel compositing, resumable execution, QA, delivery accounting, and marketplace export.
+description: Orchestrate a fidelity-first e-commerce visual production system with explicit intake, execution preflight, buyer-decision planning, SKU/variant matrices, output profiles, deterministic prompts, source-pixel compositing, reusable derivatives, resumable execution, QA, delivery accounting, and marketplace export.
 ---
 
 # Ecommerce Product Image Studio
 
 ## Objective
 
-Produce a complete, traceable e-commerce visual asset family for a real SKU.
+Produce a complete, traceable e-commerce visual asset family for a real product family and its SKUs.
 
-Priority order:
-
+The system optimizes for:
 1. product identity and source-pixel fidelity;
 2. verified product facts and dimensions;
 3. explicit user intent;
-4. operational readiness;
-5. scene/person scale and perspective;
-6. surface / marketplace requirements;
-7. brand styling and creative presentation.
+4. buyer-decision coverage;
+5. variant correctness;
+6. reusable production masters;
+7. operational readiness;
+8. scene/person scale and perspective;
+9. surface / marketplace requirements;
+10. brand styling and creative presentation.
 
 Creative quality MUST NOT override product truth.
 
-## Normative rule: source product pixels
-
-If the user supplies an authoritative product photo, that photo is the default source of truth for the visible product body.
-
-**MUST**
-- preserve original product RGB whenever practical;
-- obtain or create an alpha mask separately;
-- preserve source view, geometry, visible hardware, texture, color, logos, holes, seams, edge profiles, and component count;
-- record source asset provenance for every final image.
-
-**MUST NOT**
-- regenerate the product from a text prompt;
-- use image-to-image generation that redraws the product body and then treat it as the original SKU;
-- replace the product with a visually similar model;
-- stretch, liquify, warp, or generatively modify product geometry to fit a scene;
-- invent unseen sides, accessories, packaging, dimensions, or performance claims.
-
-A generated lookalike product is an identity \`FAIL\`.
-
-## Required contracts and sub-skills
+## Required contracts
 
 Read:
 - \`references/task-input-schema.json\`
 - \`references/intake-contract.md\`
 - \`references/execution-preflight.md\`
+- \`references/buyer-decision-framework.md\`
+- \`references/variant-matrix-contract.md\`
+- \`references/asset-reuse-contract.md\`
 - \`references/output-profile-contract.md\`
 - \`references/detail-module-contract.md\`
 - \`references/prompt-rendering.md\`
 - \`references/execution-state-contract.md\`
 - \`references/delivery-gate.md\`
 
-Use applicable modules:
+Use applicable sub-skills:
 - \`product-reference-audit\`
 - \`product-identity-lock\`
 - \`product-dimension-lock\`
@@ -68,227 +54,243 @@ Use applicable modules:
 - \`marketplace-export-preflight\`
 - \`wood-product-fidelity\` when wood products are involved.
 
-## Stage -2 — Task intake
+## Product pixel rule
 
-Create \`task-input.json\` from the machine-readable input schema.
+If the user supplies an authoritative product photo, that photo is the default source of truth for the visible product body.
 
-### Intent fields
+**MUST**
+- preserve original product RGB whenever practical;
+- create / review alpha separately;
+- preserve source view, geometry, hardware, texture, color, logos, holes, seams, edge profiles, and component count;
+- record product provenance for every final asset.
 
-Marketplace, market, ratio, surface profile, language, requested deliverables, style, and extra requirements MUST come from explicit user intent.
+**MUST NOT**
+- regenerate the product from text;
+- replace the product with a visually similar model;
+- use image-to-image product redraw as a normal production route;
+- stretch, warp, liquify, or generatively modify product geometry;
+- invent unseen sides, accessories, packaging, dimensions, or performance claims.
 
-Do not infer them from:
-- attachment appearance;
-- filenames;
-- product category;
-- previous defaults;
-- common marketplace practice.
+A generated lookalike product is an identity \`FAIL\`.
 
-### Evidence fields
+## Stage -3 — Task intake
 
-Authoritative product images MUST be inspected for:
-- visible geometry;
-- components;
-- hardware;
-- texture / color;
-- supported view;
-- visible markings.
+Create \`task-input.json\`.
 
-Do not promote visual evidence into unsupported business claims.
+Intent fields such as marketplace, ratio, output profile, language, requested style, target market, and deliverables MUST come from explicit user intent.
 
-### Missing-field policy
+Authoritative product images MUST be inspected for product evidence.
 
-Ask only for missing fields that block the next requested deliverable.
+Do not infer business intent from product appearance.
 
-Examples:
-- no platform → generic master is possible;
-- no full dimensions → metric dimension graphics / scale claims may be blocked;
-- no sale quantity → package / included-item claims are blocked;
-- no rear view → factual rear-view image is blocked.
+## Stage -2 — Execution preflight
 
-## Stage -1 — Execution preflight
+Create \`execution-preflight.json\`.
 
-Before expensive generation, create \`execution-preflight.json\`.
-
-Check:
-- source files exist and are usable;
-- source resolution is adequate for planned crop / output;
-- required production tools are available;
-- output destinations are writable and non-destructive;
-- platform / surface profiles are identified when required;
-- preprocessing is non-destructive and traceable.
-
-Preflight statuses:
-- \`READY\`
-- \`READY_WITH_REVIEW\`
-- \`BLOCKED\`
+Validate source files, required tools, output paths, preprocessing, and requested profiles before expensive generation.
 
 Do not silently fall back to product regeneration because a required fidelity tool is missing.
 
-## Stage 0 — Scope and execution state
+## Stage -1 — Product family / variant matrix
+
+If the product has more than one SKU or variant, create \`variant-matrix.json\` before planning the image set.
+
+MUST identify:
+- family ID;
+- variant axes;
+- variant IDs / SKUs;
+- variant-specific dimensions;
+- variant-specific color / material / packaging / copy;
+- facts verified to be family-shared;
+- facts whose sharedness is unknown;
+- variant-bound assets;
+- family-shared assets.
+
+Use sharedness states:
+- \`SHARED_VERIFIED\`
+- \`VARIANT_SPECIFIC\`
+- \`UNKNOWN_SHAREDNESS\`
+- \`NOT_APPLICABLE\`
+
+Do not assume a fact or visual asset is shared across variants merely because only one variant was photographed.
+
+## Stage 0 — Scope, stable IDs, and execution state
 
 Create \`execution-state.json\`.
 
 MUST identify:
-- project / SKU / variant;
-- stable planned asset IDs;
-- requested asset roles;
+- project / product family;
+- SKU / variant scope;
+- stable semantic asset IDs;
 - output profile families;
-- authoritative product references.
+- authoritative source assets.
 
-Each durable stage SHOULD checkpoint its state.
-
-Resume interrupted work from the first invalid / incomplete stage instead of recreating the entire project.
+Every durable stage SHOULD checkpoint its output.
 
 ## Stage 1 — Reference audit
 
 Run \`product-reference-audit\`.
 
-MUST produce:
-- source inventory;
-- view coverage;
-- evidence matrix;
-- missing-asset list;
-- source usage map.
-
-One photo MUST NOT be treated as proof of unseen geometry or full 3D dimensions.
+Create source inventory, view coverage, evidence matrix, missing-assets list, and usage map.
 
 ## Stage 2 — Product identity lock
 
 Run \`product-identity-lock\`.
 
-Create \`product-identity.json\` with:
-- authoritative references;
-- must-preserve geometry and details;
-- must-not-invent facts;
-- locked / editable / conditionally editable regions;
-- provenance requirements.
+Identity MUST be recorded per relevant variant scope.
+
+Family-shared identity features require verified invariance.
 
 ## Stage 3 — Dimension lock
 
 Run \`product-dimension-lock\`.
 
-Create \`product-dimensions.json\`.
+Dimensions that differ by variant MUST remain at variant level.
 
-Every published number MUST have:
-- value;
-- unit;
-- axis / measurement definition;
-- evidence;
-- status.
+A family-level dimension may be used only when verified identical across all applicable variants.
 
-Unknown dimensions remain unknown.
+## Stage 4 — Buyer-decision map
 
-## Stage 4 — Scale and perspective
+Before deciding image count, create \`buyer-decision-map.json\`.
 
-For scene or person images, run \`product-scale-calibration\`.
+Plan around purchase questions such as:
+- What is this?
+- Is it relevant to my use?
+- Why choose it?
+- How is it used?
+- Will it fit?
+- Which variant should I choose?
+- What materials / structure support trust?
+- What are the verified specifications?
+- What exactly is included?
+- What usage / compatibility limits matter?
 
-MUST define:
-- contact plane;
-- product anchor;
-- camera / projection assumptions;
-- reference objects, if any;
-- person scale basis, if any;
-- scale status.
+Each semantic asset SHOULD map to:
+- \`decision_stage\`
+- \`buyer_question\`
+- \`decision_answer\`
+- \`evidence_refs\`
 
-If evidence is insufficient, set \`SCALE_UNVERIFIED\`.
+Do not create decorative duplicates merely to increase image count.
 
-## Stage 5 — Asset family and detail-module plan
+## Stage 5 — Scale and perspective
+
+For scale-sensitive scenes, run \`product-scale-calibration\`.
+
+For variant families, scale assumptions MUST be checked per variant when geometry differs.
+
+## Stage 6 — Semantic asset family plan
 
 Run \`ecommerce-gallery-planner\`.
 
-Plan semantic assets / modules first, then one or more output profiles.
+Plan semantic assets first, then output-profile renders.
 
-Each semantic asset MUST have:
+Each semantic asset MUST declare:
 - stable \`asset_id\`;
-- role and buyer question;
-- source references;
-- product pixel policy;
+- buyer-decision stage;
+- variant scope;
+- reuse class;
+- source assets;
+- product provenance policy;
+- dimensions / copy evidence;
 - scale status;
 - output profiles;
-- generation / compositing method;
-- copy evidence;
+- dependencies;
 - acceptance criteria.
 
-Do not fill slots by inventing views or facts.
+Do not multiply every asset by every SKU by default.
 
-## Stage 6 — Output profiles
+## Stage 7 — Asset reuse / derivative graph
 
-For each requested surface, create / verify output profiles.
+Create \`asset-derivation-map.json\`.
+
+Classify assets by layer:
+- authoritative source;
+- reusable production master;
+- composed semantic asset;
+- surface / marketplace derivative.
+
+Reuse valid upstream assets when their inputs and variant scope remain valid.
+
+Examples:
+- brand system → usually family-shared;
+- empty background → may be reusable;
+- product cutout → usually variant-bound;
+- size-specific dimension graphic → variant-bound;
+- translated copy → downstream derivative;
+- mobile layout → derivative of semantic module.
+
+When an upstream dependency changes, invalidate only dependent downstream assets.
+
+## Stage 8 — Output profiles
+
+Create output profiles per requested marketplace / surface / slot / device.
 
 Distinguish:
-- \`DESIGN_ONLY\` preset;
-- \`VERIFIED\` marketplace compliance profile.
+- \`DESIGN_ONLY\`
+- \`VERIFIED\`
+- \`NEEDS_REVIEW\`
+- \`BLOCKED\`
 
-Named presets such as Amazon A+ standard / premium web / premium mobile are useful planning labels, but their current dimensions MUST be verified before platform-compliance claims.
+Named presets are not proof of current marketplace compliance.
 
-Desktop and mobile versions MAY require separate layout renders rather than simple resizing.
+## Stage 9 — Deterministic prompt rendering
 
-## Stage 7 — Deterministic prompt rendering
+Use repository templates.
 
-Use repository prompt templates when available:
-- \`templates/empty-scene-prompt.md\`
-- \`templates/person-layer-prompt.md\`
+Required unresolved placeholders block production.
+Missing optional values are omitted.
+Fixed product-fidelity constraints remain.
 
-Required unresolved placeholders block the asset.
-Missing optional fields are omitted.
-Fixed product-fidelity clauses remain present.
-
-Save rendered prompts and template versions.
-
-## Stage 8 — Production
+## Stage 10 — Production
 
 ### Product body
 
-Default route:
+Default:
 
 \`\`\`text
 authoritative photo
 → alpha mask
 → ORIGINAL PRODUCT RGB cutout
-→ composite
+→ semantic composite
 \`\`\`
 
-### Background
+### Background / person / props
 
-AI MAY generate empty rooms, surfaces, props, and atmosphere.
-
-Background prompts MUST exclude the target product and confusing lookalikes.
-
-### Person
-
-People MUST be independent assets / layers when source-pixel fidelity is required.
-
-### Shadows
-
-Create contact / cast shadows independently. Shadows MUST NOT overwrite product RGB.
+AI MAY generate independent, non-product layers.
 
 ### Text / dimensions
 
-Final Chinese copy, numbers, dimensions, arrows, logos, and tables SHOULD use layout / design tools.
+Use layout / design tooling for final copy, numbers, logos, dimension lines, and tables.
 
-## Stage 9 — Product + person + scene
+## Stage 11 — Product + person + scene
 
 Run \`product-human-scene-integration\`.
 
-If believable interaction requires product deformation or redraw, set \`BLOCKED\`.
+A reusable person pose or background MAY be shared only when the target variant still fits the verified scale / contact geometry.
 
-## Stage 10 — Detail modules and responsive renders
+Do not deform a different variant to reuse an old composition.
+
+## Stage 12 — Detail modules and responsive renders
 
 Run \`ecommerce-infographic-detail-builder\`.
 
-Build independent semantic modules as editable masters.
+Build independent semantic modules as masters.
 
-Render them into requested surface profiles.
+Render them into requested profiles.
 
-A stitched long image is a derivative deliverable, not the only master, unless the user explicitly requires otherwise.
+A stitched long image is a derivative deliverable, not the only editable master.
 
-## Stage 11 — QA
+## Stage 13 — QA
 
 Run \`ecommerce-visual-qa\`.
 
-Separate gates:
+Separate gates MUST cover:
 - input-source integrity;
 - preflight readiness;
+- buyer-decision coverage;
+- variant correctness;
+- asset reuse / derivative integrity;
 - identity fidelity;
 - pixel provenance;
 - dimension truth;
@@ -296,83 +298,64 @@ Separate gates:
 - prompt traceability;
 - person interaction;
 - copy truth;
-- surface-profile validity;
-- cross-image consistency;
+- output-profile validity;
+- cross-image / cross-variant consistency;
+- execution integrity;
 - delivery completeness.
 
-## Stage 12 — Resume / retry
+## Stage 14 — Resume / targeted invalidation
 
-Read \`execution-state.json\` before rerunning interrupted work.
+Read \`execution-state.json\` and \`asset-derivation-map.json\`.
 
-MUST:
-- reuse valid durable outputs;
-- retry only failed / invalidated stages;
-- record retry reason;
-- avoid duplicate expensive generation jobs with the same execution key.
+Reuse valid upstream assets.
+
+Invalidate only the smallest dependent graph.
 
 Examples:
-- copy-only change → rerun layout / QA, not background generation;
-- platform profile change → rerun export / profile render, not product cutout;
-- product source change → invalidate downstream cutout / composite / layout / QA.
+- translation change → copy/layout/QA only;
+- output profile change → profile render/export only;
+- one variant dimension changes → affected variant's dimension and scale-dependent assets only;
+- source product photo changes → variant cutout and all downstream dependent assets;
+- family-shared brand style changes → layouts may rerender, product cutouts remain valid.
 
-## Stage 13 — Delivery gate
+Blind duplicate expensive generation is prohibited.
+
+## Stage 15 — Delivery gate
 
 Create \`delivery-manifest.json\`.
 
-A run is not \`COMPLETE\` until:
-- every non-blocked expected final asset exists;
-- every final asset has QA status;
-- every final asset has an accessible delivery reference;
-- delivered count equals expected count.
+Count deliverables by actual requested semantic asset × required variant scope × required output profiles, not by naive SKU multiplication.
 
-Never claim “all images complete” when only some assets were surfaced.
+A run is not \`COMPLETE\` until every expected, non-blocked final derivative has QA status and an accessible delivery reference.
 
-## Stage 14 — Marketplace export
+## Stage 16 — Marketplace export
 
 Run \`marketplace-export-preflight\`.
 
 Marketplace requirements MUST be current and source-backed.
 
-Do not hard-code remembered dimensions as permanent truth.
-
-## Failure conditions
-
-Set \`FAIL\` or \`BLOCKED\` when:
-- product geometry differs from the authoritative SKU;
-- product was regenerated instead of source-pixel composited;
-- required source view is unsupported;
-- a number is published without evidence;
-- metric scale is claimed without grounding;
-- person interaction requires product deformation;
-- package contents or claims are invented;
-- required prompt fields are unresolved;
-- required preflight capability is unavailable;
-- a design preset is falsely presented as verified compliance;
-- the same expensive generation task is blindly duplicated;
-- final delivery is claimed complete while the manifest is incomplete.
-
 ## Outputs
 
-A complete run SHOULD produce:
+A complete production run SHOULD include:
 - \`task-input.json\`
 - \`execution-preflight.json\`
 - \`execution-state.json\`
-- \`asset-audit.md\`
-- \`evidence-matrix.json\`
+- \`variant-matrix.json\` when applicable
+- \`buyer-decision-map.json\`
+- reference audit outputs
 - \`product-identity.json\`
 - \`product-dimensions.json\`
 - \`scale-calibration.json\` where applicable
 - \`image-plan.json\`
+- \`asset-derivation-map.json\`
 - output-profile records
-- rendered prompt records
-- product cutouts / masks
-- generated backgrounds / person layers
-- layered composites
-- independent detail modules
-- responsive / platform renders
-- copy / dimension source maps
-- per-image and cross-image QA
+- rendered prompts
+- masks / product cutouts
+- generated empty backgrounds / people
+- semantic composites
+- detail modules
+- profile / marketplace derivatives
+- QA
 - \`delivery-manifest.json\`
-- marketplace preflight records
 
-Generated files are not complete until identity, provenance, QA, execution-state, and delivery contracts are satisfied.
+Generated files are not complete until product truth, variant scope, buyer-decision coverage, provenance, dependency state, QA, and delivery contracts are satisfied.

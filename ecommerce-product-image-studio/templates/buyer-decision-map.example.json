@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "project_id": "example-project",
+  "decision_stages": [
+    {
+      "decision_stage": "RECOGNITION",
+      "buyer_question": "What is this product?",
+      "status": "COVERED",
+      "asset_ids": [
+        "hero-01"
+      ],
+      "evidence_refs": [
+        "product-identity.json"
+      ]
+    },
+    {
+      "decision_stage": "VARIANT_CHOICE",
+      "buyer_question": "Which variant should I choose?",
+      "status": "PARTIALLY_COVERED",
+      "asset_ids": [
+        "variant-comparison-01"
+      ],
+      "evidence_refs": [
+        "variant-matrix.json"
+      ],
+      "unresolved": [
+        "width/height equality across variants is not verified"
+      ]
+    }
+  ]
+}

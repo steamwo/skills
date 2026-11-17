@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "family_id": "wood-parallette-family",
+  "variant_axes": [
+    "handle_length_cm"
+  ],
+  "shared_identity_features": [
+    {
+      "feature": "general visible construction",
+      "sharedness": "UNKNOWN_SHAREDNESS",
+      "note": "Do not assume identical support dimensions until verified."
+    }
+  ],
+  "variants": [
+    {
+      "variant_id": "length-25cm",
+      "sku": null,
+      "axes": {
+        "handle_length_cm": 25
+      },
+      "dimensions": {
+        "length_mm": 250,
+        "width_mm": null,
+        "height_mm": null,
+        "status": "partial"
+      },
+      "asset_scope": "VARIANT_SPECIFIC"
+    },
+    {
+      "variant_id": "length-30cm",
+      "sku": null,
+      "axes": {
+        "handle_length_cm": 30
+      },
+      "dimensions": {
+        "length_mm": 300,
+        "width_mm": null,
+        "height_mm": null,
+        "status": "partial"
+      },
+      "asset_scope": "VARIANT_SPECIFIC"
+    }
+  ]
+}
