@@ -1,60 +1,86 @@
 ---
 name: ecommerce-infographic-detail-builder
-description: 使用真实商品素材和已确认资料制作中文电商卖点图、尺寸规格图、结构图、包装清单图、详情页分屏及长图，避免 AI 文字乱码和参数虚构。
+description: Build traceable e-commerce copy, dimension graphics, structural callouts, detail-page modules, and long-form layouts from verified product data without delegating final numeric or Chinese text accuracy to image generation.
 ---
 
 # Ecommerce Infographic & Detail Builder
 
-## 目标
+## Objective
 
-将已核实的商品信息组织成清晰、准确、可编辑的电商图文。图像模型负责背景/氛围，不负责生成最终中文文案、数字、尺寸线、Logo 或技术参数。
+Turn verified product facts into readable, editable e-commerce graphics.
 
-## 输入
+Image generation MAY provide background or visual atmosphere. Final customer-facing copy, numbers, dimension lines, logos, and tables SHOULD be laid out programmatically or in a design tool.
 
-- 已通过身份锁定的商品图片和对应 SKU。
-- product-dimensions.json：尺寸、单位、轴定义、测量口径、来源和状态。
-- 用户确认的卖点、材质、数量、包装、重量和使用说明。
-- 品牌字体、颜色、Logo 和视觉规范。
-- 图片计划及目标平台规则。
+## Inputs
 
-## 规格图制作
+- product identity record;
+- \`product-dimensions.json\`;
+- approved claims and evidence;
+- verified packaging / included items;
+- brand system;
+- image plan;
+- marketplace constraints.
 
-1. 只读取尺寸档案中状态为 user_confirmed 或 document_verified 的数值。
-2. 统一内部单位（mm/g），输出时可换算为 cm/kg；换算过程必须可复核。
-3. 明确长度、宽度、高度对应的视图方向和测量端点。
-4. 产品本体尺寸与包装尺寸分开；净重/毛重分开；展开/折叠状态分开。
-5. 尺寸线、箭头、引线和局部放大框必须指向正确的真实边界。
-6. 未知轴不画数字；估算值不得作为正式规格；冲突值暂停制作并请求确认。
-7. 不从合成场景、人物、道具或图片像素反推产品尺寸。
-8. 不让尺寸线遮挡关键结构、商品本体或产品标签。
+## Dimension graphic rules
 
-## 内容设计
+**MUST**
+- use only verified values by default;
+- preserve axis definitions;
+- distinguish product vs packaging dimensions;
+- distinguish net vs gross weight;
+- distinguish folded / assembled / extended states;
+- point dimension arrows to the correct physical boundaries;
+- keep a source map for every published number.
 
-- 主标题：一句话表达当前模块主题。
-- 副标题：补充一项已证实的信息。
-- 卖点模块：每条卖点对应证据来源。
-- 细节标注：引线、编号或局部放大框必须指向真实细节。
-- 结构图：只标注可见/有工程资料支持的部件。
-- 包装图：区分商品本体、配件、赠品和包装材料。
-- 详情页顺序：商品整体 → 核心价值 → 使用场景 → 材质/结构证据 → 尺寸规格 → 包装/注意事项。
+**MUST NOT**
+- infer dimensions from a lifestyle scene;
+- infer dimensions from person scale;
+- fill unknown axes with estimated numbers;
+- mix packaging values into product values;
+- let an image model invent numeric labels.
 
-## 制作规范
+If only one dimension is confirmed, only show that dimension.
 
-1. 先锁定 copy-deck，逐条记录文案和证据。
-2. 使用程序或设计工具排版文字、数字、尺寸线、图标和 Logo。
-3. 中文字体必须可用且有适当授权；检查字重、标点和移动端可读性。
-4. 不让图像模型写中文字、数字、尺寸、Logo 或产品铭牌。
-5. 文字与商品图层分开，方便编辑。
-6. 每个详情页分屏独立保存，最后再拼成长图。
-7. 图片尺寸和比例来自目标平台当期规则，不从旧模板猜测。
-8. 保留数据源、单位换算、排版源文件和最终导出。
+## Copy rules
 
-## 输出
+Each claim MUST map to:
+- user confirmation;
+- visible evidence;
+- official current-SKU documentation.
 
-- copy-deck.md：逐条文案与证据。
-- dimensions-source-map.md：每个数字到尺寸档案/来源的映射。
-- 每个独立分屏 PNG 和可编辑源文件。
-- detail-long.png：拼接长图。
-- QA 报告：错字、数值、单位、方向、尺寸线端点、遮挡、层级、可读性和证据核验。
+Unsupported marketing copy is removed or marked for review.
 
-如果任何卖点或尺寸缺乏证据，删去该信息或标记待确认，不得用营销语言或模型估算补齐事实。
+## Detail image design
+
+A detail module SHOULD have one primary purpose:
+- overall product;
+- verified feature;
+- lifestyle scene;
+- material / structure detail;
+- dimension / specification;
+- packaging / included items;
+- usage note.
+
+For China-market detail pages, independent vertical modules are often preferable to one pre-stitched image when the user wants separately editable assets.
+
+## Typography / 中国电商排版
+
+中文标题、正文、单位、数字、尺寸线、Logo、图标：
+- 应使用可控字体和排版工具；
+- 不应依赖图像模型生成最终文案；
+- 应检查错别字、数字、单位、标点、移动端可读性；
+- 平台比例和画布尺寸以当前后台要求为准。
+
+## Outputs
+
+Create:
+- \`copy-deck.md\`
+- \`dimensions-source-map.md\`
+- independent module images
+- editable layout sources
+- stitched long image only when requested / required
+- infographic QA report
+
+## Gate
+
+A visually attractive infographic with an unsupported number or claim is \`FAIL\`.

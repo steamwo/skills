@@ -1,73 +1,116 @@
-# 商品身份与事实证据契约
+# Product Identity and Evidence Contract
 
-## 事实分类
+## Purpose
 
-每个商品信息必须属于以下一种状态：
+Define what counts as factual product evidence and what must remain unchanged across e-commerce assets.
 
-- verified_by_user：用户明确提供或确认。
-- visible_in_reference：能从某张实拍图直接观察到。
-- document_verified：由当前 SKU 的正式规格/工程文件支持。
-- derived_with_caveat：可合理估计，但必须标为估计且不能用作规格承诺。
-- unknown：资料不足。
-- conflicting：不同照片或资料互相矛盾。
+## Evidence states
 
-AI 不得把 unknown 或 derived 信息升级成 confirmed。
+Use:
+- \`visible_in_reference\`
+- \`user_confirmed\`
+- \`document_verified\`
+- \`estimated\`
+- \`unknown\`
+- \`conflicting\`
 
-## 身份锁字段
+An agent MUST NOT promote \`estimated\` or \`unknown\` to a verified state.
 
-### 几何与结构
-- 外轮廓、视觉长宽高比例、厚度、部件数量、连接关系。
-- 接缝、孔位、螺丝、铰链、榫卯、镂空、弧度、倒角、边缘和底部接触点。
-- 组合件的相对位置与数量。
-- 哪些视角有真实证据，哪些视角尚未拍摄。
+## Identity fields
 
-### 材质与表面
-- 材料种类及证据。
-- 颜色与天然色差。
-- 纹理方向、颗粒、木节、端面纹理。
-- 表面处理：无漆、上油、打蜡、涂层、喷粉等；未确认时写 unknown。
-- 表面光泽与微观质感。
+### Geometry / structure
 
-### 品牌与商品事实
-- 品牌、Logo、型号、SKU。
-- 售卖数量、配件、包装清单。
-- 尺寸、重量、承重、适用范围、认证与功能宣称。
-- 每条卖点必须有证据来源。
+Track:
+- silhouette;
+- visible proportions;
+- component count;
+- relative component positions;
+- joints;
+- holes;
+- screws / fasteners;
+- handles;
+- supports;
+- curves;
+- chamfers / radii;
+- edge profiles;
+- contact points;
+- supported camera views.
 
-## 物理尺寸独立契约
+### Material appearance
 
-物理尺寸由 product-dimension-lock 维护在 product-dimensions.json 中。身份锁中的视觉比例不能代替实测尺寸。尺寸必须记录：
-- 长/宽/高轴定义、单位和测量基准。
-- 组装/折叠/展开状态，以及是否含突出部件。
-- 来源、测量方法、公差或不确定度。
-- 商品本体与包装尺寸的区别。
-- SKU/变体对应关系。
+Track:
+- visible color;
+- texture direction;
+- grain / knots / natural variation;
+- end-grain appearance;
+- surface gloss / finish appearance;
+- metal / fabric / plastic visible properties.
 
-单张无标尺照片不能建立完整三维尺寸；尺寸冲突不得自行取平均或选择。
+Appearance is not proof of species, certification, or chemical composition.
 
-## 三类图像区域
+### Product facts
 
-1. **锁定区**：商品本体身份关键区域。优先使用源图 RGB；禁止生成式重绘。
-2. **可编辑区**：背景、布景、留白、独立道具、图形与文字。
-3. **条件编辑区**：只在用户授权、证据充分且可回滚时编辑，例如轻微边缘去色或指定非关键背景修补。
+Track evidence for:
+- brand / logo / model / SKU;
+- sale quantity;
+- included items;
+- dimensions;
+- weight;
+- load capacity;
+- compatibility;
+- certification;
+- function claims.
 
-Mask 必须单独保存，并能追溯其来源。Mask 的错误可能删除真实结构，即使商品 RGB 没有被模型改写，也不能视为保真。
+## Product pixel contract
 
-## 参考图优先级
+When the user supplies an authoritative real product photo:
 
-1. 用户确认的当前 SKU 实拍图。
-2. 同一 SKU 的其他角度/细节实拍图。
-3. 用户提供的 CAD、工程图、尺寸图或生产资料。
-4. 同系列 SKU 只能作为风格/系列参考，不得替代当前 SKU 的具体纹理和结构。
-5. 网络图、竞品图、AI 生成图不能作为当前 SKU 的身份事实。
+\`\`\`text
+LOCKED PRODUCT BODY = authoritative source RGB
+\`\`\`
 
-## 变更控制
+Default allowed changes:
+- alpha extraction;
+- edge cleanup;
+- uniform scaling;
+- translation;
+- limited source-view-consistent rotation.
 
-任何改变锁定区的操作都必须记录：
-- 修改目的与授权。
-- 涉及的区域。
-- 修改前后文件。
-- 是否影响商品事实。
-- QA 结果与人工审批人。
+Default prohibited changes:
+- generative redraw;
+- image-to-image repainting of the product body;
+- non-uniform scale;
+- liquify / warp;
+- invented unseen geometry;
+- texture replacement;
+- hardware relocation;
+- component removal / addition.
 
-未经授权不得删除真实木节、修平接缝、改变五金颜色、补出孔位或改动产品比例。
+## Region classes
+
+1. \`LOCKED_PRODUCT_REGION\`
+2. \`EDITABLE_REGION\`
+3. \`CONDITIONAL_REGION\`
+
+The alpha mask is not automatically correct. Mask errors can delete real structure and must be QA-reviewed.
+
+## Reference priority
+
+1. current-SKU user-confirmed real photos;
+2. other current-SKU real views / details;
+3. current-SKU CAD / engineering / dimension documents;
+4. same-series products as style/context only;
+5. competitor / web / AI-generated images as non-factual references only.
+
+## Change control
+
+Any authorized change to a locked region MUST record:
+- purpose;
+- authorization;
+- affected region;
+- before / after asset;
+- factual impact;
+- QA result;
+- reviewer.
+
+A generated lookalike is not a compliant product-identity transformation.

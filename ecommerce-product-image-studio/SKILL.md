@@ -1,225 +1,280 @@
 ---
 name: ecommerce-product-image-studio
-description: 从真实 SKU 素材、产品身份和物理尺寸出发，规划并制作多张电商主图、产品场景/人物图、尺寸规格图、细节图和详情页；强制进行空间尺度校准、商品保真、跨图质检与平台导出预检。
+description: Orchestrate a fidelity-first e-commerce product visual workflow from real SKU references, verified dimensions, source-pixel compositing, lifestyle/person scenes, detail graphics, QA, and marketplace export preflight.
 ---
 
 # Ecommerce Product Image Studio
 
-## 目标与边界
+## Objective
 
-将真实 SKU 资料转化为一套**商品身份可信、物理尺度有依据、图片用途完整、视觉统一且可审核**的电商视觉资产。目标不是把商品贴进漂亮背景，而是制作能支持购买决策的完整图片套图。
+Produce a complete, traceable e-commerce visual set for a real SKU.
 
-优先级不可颠倒：
+Priority order:
 
-1. 商品身份、结构与真实像素
-2. 物理尺寸、售卖内容和已核实事实
-3. 商品与场景/人物的空间尺度和透视
-4. 目标平台当前规则
-5. 品牌表达、场景创意和视觉美化
+1. product identity and source-pixel fidelity;
+2. verified product facts and dimensions;
+3. scene/person scale and perspective;
+4. current marketplace constraints;
+5. brand styling and creative presentation.
 
-本 Skill 不自带图像模型或 API。必须使用当前 Agent 已配置的图像生成、分割、设计、3D/CAD 或图像处理工具。没有工具时输出计划、Prompt、图层说明和待执行项，不得声称已生成文件。
+Creative quality MUST NOT override product truth.
 
-## 必须编排的专项 Skills
+## Normative rule: source product pixels
 
-- product-reference-audit：素材、视角、证据和缺失项审查。
-- product-identity-lock：产品身份契约与锁定区域。
-- product-dimension-lock：物理尺寸、单位、测量口径和证据。
-- product-scale-calibration：场景、人物、参照物和相机尺度校准。
-- ecommerce-gallery-planner：多张主图与完整套图规划。
-- product-cutout-composite：真实商品 RGB 与 Alpha Mask。
-- lifestyle-scene-composite：无人物或环境型场景图。
-- human-lifestyle-composite：人物形象、姿势和动作设计。
-- product-human-scene-integration：商品、人物和场景的空间/遮挡融合。
-- ecommerce-infographic-detail-builder：尺寸图、卖点图和详情页排版。
-- brand-visual-system：品牌视觉规则。
-- ecommerce-visual-qa：逐图及跨图质检。
-- marketplace-export-preflight：平台规则核验和导出预检。
-- wood-product-fidelity：木制品任务的强制材质专项约束。
+If the user supplies an authoritative product photo, that photo is the default source of truth for the visible product body.
 
-专项 Skill 不可被一句通用 Prompt 替代。按 SKU 和图片用途调用适用模块。
+**MUST**
+- preserve original product RGB whenever practical;
+- obtain or create an alpha mask separately;
+- preserve source view, geometry, visible hardware, texture, color, logos, holes, seams, edge profiles, and component count;
+- record source asset provenance for every final image.
 
-## 项目目录
+**MUST NOT**
+- regenerate the product from a text prompt;
+- use image-to-image generation that redraws the product body and then treat it as the original SKU;
+- replace the product with a visually similar model;
+- stretch, liquify, warp, or generatively modify product geometry to fit a scene;
+- invent unseen sides, accessories, packaging, dimensions, or performance claims.
 
-先查找用户已经提供的文件，不重复索取。建议每个 SKU 独立管理：
+A generated lookalike product is an identity \`FAIL\`.
 
-~~~text
-project/
-  sku-001/
-    input/                 # 原始实拍、CAD、规格表、包装图
-    product.json           # 商品事实与来源
-    product-identity.json  # 身份契约
-    product-dimensions.json# 物理尺寸档案
-    brand.json
-    plan/
-      asset-audit.md
-      evidence-matrix.json
-      missing-assets.md
-      image-plan.json
-      scale-calibration.json
-      copy-deck.md
-    work/
-      masks/
-      cutouts/
-      backgrounds/
-      people/
-      shadows/
-      composites/
-      layouts/
-    output/
-      master/
-      platform/
-      detail-modules/
-      detail-long.png
-    qa/
-      contact-sheet.png
-      per-image/
-      qa-report.md
-~~~
+## Required sub-skills
 
-源素材只读保存。输出图、生成背景、人物图层、Mask、合成图和 QA 报告分开存放。不要把用户私有商品素材或密钥提交到公共仓库。
+Use applicable modules instead of replacing them with one generic prompt:
 
-## 阶段 0：确认任务范围
+- \`product-reference-audit\`
+- \`product-identity-lock\`
+- \`product-dimension-lock\`
+- \`product-scale-calibration\`
+- \`ecommerce-gallery-planner\`
+- \`product-cutout-composite\`
+- \`lifestyle-scene-composite\`
+- \`human-lifestyle-composite\`
+- \`product-human-scene-integration\`
+- \`ecommerce-infographic-detail-builder\`
+- \`brand-visual-system\`
+- \`ecommerce-visual-qa\`
+- \`marketplace-export-preflight\`
+- \`wood-product-fidelity\` when wood products are involved.
 
-读取商品资料、品牌配置和用户指定的平台、SKU/变体、图片用途及输出尺寸。目标平台未指定时先按通用母版规划，不声称平台合规。平台主图槽位数量、类目限制、文字限制和导出尺寸必须查验当期官方/卖家后台规则。
+## Inputs
 
-## 阶段 1：素材审查与事实矩阵
+Read existing project files before asking the user again.
 
-执行 product-reference-audit：
+Expected inputs may include:
+- authoritative SKU photos;
+- product / variant identifiers;
+- confirmed specifications;
+- dimension drawings, measurement photos, CAD / 3D;
+- packaging references;
+- brand guide;
+- target marketplace and slot;
+- copy claims with evidence.
 
-- 盘点每张照片/视频帧、尺寸图、CAD、工程图、包装图和 SKU 文档。
-- 记录视角、分辨率、清晰度、遮挡、可见结构及使用限制。
-- 区分 visible、user_confirmed、document_verified、estimated、unknown、conflicting。
-- 逐项记录外形、材质、尺寸、重量、售卖数量、包装、配件和卖点的证据来源。
-- 输出缺失素材清单，并判断每张图可支持哪些成品。
+## Status enums
 
-单张照片不能证明未拍摄的背面、底面、内部结构、真实三维尺寸或另一摄影机视角。竞品图只能作为风格参考，不能证明当前 SKU 的事实。
+Evidence:
+- \`visible_in_reference\`
+- \`user_confirmed\`
+- \`document_verified\`
+- \`estimated\`
+- \`unknown\`
+- \`conflicting\`
 
-## 阶段 2：产品身份锁定
+Scale:
+- \`METRICALLY_GROUNDED\`
+- \`VISUALLY_APPROXIMATED\`
+- \`SCALE_UNVERIFIED\`
 
-执行 product-identity-lock，建立 product-identity.json：
+QA:
+- \`PASS\`
+- \`REVIEW\`
+- \`FAIL\`
+- \`NOT_CHECKED\`
 
-- 轮廓、长宽高比例、厚度、部件数量、相对位置和连接关系。
-- 孔位、接缝、榫卯、五金、边缘、倒角、Logo。
-- 颜色、材质、纹理方向、天然瑕疵、表面处理和光泽。
-- 锁定区、可编辑区、授权后可编辑区。
-- 每个事实关联到具体参考图或用户/文件证据。
+## Stage 0 — Scope
 
-商品本体默认保留源图 RGB。仅凭一个视角不能生成“看似真实”的其他视角；需要对应实拍、可信 CAD/3D，或明确标注为概念示意。
+MUST identify:
+- SKU / variant;
+- requested asset roles;
+- target marketplace if known;
+- authoritative product references.
 
-## 阶段 3：物理尺寸锁定（强制）
+If marketplace rules are not verified, plan a generic master and do not claim platform compliance.
 
-执行 product-dimension-lock，建立 product-dimensions.json：
+## Stage 1 — Reference audit
 
-- 产品长、宽、高、重量及单位。
-- 每个数值的来源、测量方法、测量基准和公差/不确定度。
-- 不规则商品的尺寸轴定义、最大外廓、展开/折叠状态。
-- SKU/变体尺寸差异。
-- 包装尺寸与商品本体尺寸分开记录。
-- 售卖数量、套装内容和配件清单单独核实。
+Run \`product-reference-audit\`.
 
-尺寸状态至少区分 user_confirmed、document_verified、estimated、unknown、conflicting。照片像素、AI 估算或同类商品规格不能升级为已验证尺寸。尺寸不完整时不得制作看似精确的三维比例图或数字规格承诺。
+MUST produce:
+- source inventory;
+- view coverage;
+- evidence matrix;
+- missing-asset list;
+- source usage map.
 
-## 阶段 4：空间尺度与透视校准（场景图强制）
+One photo MUST NOT be treated as proof of unseen geometry or full 3D dimensions.
 
-执行 product-scale-calibration，建立 scale-calibration.json。场景图必须先通过尺度计划，再进入合成：
+## Stage 2 — Product identity lock
 
-1. 读取已验证产品尺寸和真实产品参考视角。
-2. 明确商品落点、接触平面、地面/桌面/墙面、相机位置、视角、焦距观感和消失点。
-3. 选择有来源的尺度参照物；记录参照物真实尺寸、所在平面和证据。
-4. 如有人物，人物身高/比例需有用户提供值或明确标为估算，不可暗中当作精确标尺。
-5. 判断当前流程是 2D 同平面合成、透视平面校正，还是需要 CAD/3D 场景投影。
-6. 记录校准方法、假设、误差来源和不能验证的维度。
+Run \`product-identity-lock\`.
 
-禁止把 2D 图层的像素高度当作完整 3D 尺度。地面平面的透视变换不能用于任意改变直立商品的几何形状。若相机视角与商品原图不匹配，不得用非等比拉伸或大幅透视变形“修正”。
+Create \`product-identity.json\` with:
+- authoritative references;
+- must-preserve geometry and details;
+- must-not-invent facts;
+- locked / editable / conditionally editable regions;
+- provenance requirements.
 
-若尺寸/参照物不足：可以制作不暗示尺寸的氛围概念图，但必须标注 SCALE_UNVERIFIED；避免人物、标准家具、门框等强尺度暗示物；不得将其作为比例准确的正式场景图交付。
+## Stage 3 — Dimension lock
 
-## 阶段 5：完整图片套图规划
+Run \`product-dimension-lock\`.
 
-执行 ecommerce-gallery-planner，先生成 image-plan.json 和 plan-summary.md。计划必须包含多张彼此用途不同的图片，按平台槽位和商品证据调整数量。默认规划模块：
+Create \`product-dimensions.json\`.
 
-1. 首图/核心主图：商品清晰、识别明确、主体真实。
-2. 其他主图视角：只使用实际拍摄或可靠 3D/CAD 支持的视角。
-3. 核心卖点/功能图：每条信息有证据。
-4. 产品生活场景图：通过尺度与透视校准。
-5. 人物使用场景图：仅适用于真实使用逻辑明确的商品，人物与商品尺度/接触关系经过校准。
-6. 尺寸规格图：仅使用已确认尺寸、单位和测量口径。
-7. 材质/结构细节图：来自真实细节照片，不生成不存在的纹理。
-8. 包装/配件/售卖清单图：仅在 SKU/包装资料已确认时制作。
-9. 详情页模块：按购买决策组织，不重复堆砌卖点。
+Every published number MUST have:
+- value;
+- unit;
+- axis / measurement definition;
+- evidence;
+- status.
 
-每张图都写明用途、平台槽位、尺寸来源、文案证据、源图、缺失素材、构图、相机/透视、尺度状态、图层来源、生成/合成方法、风险和验收条件。不能支持的模块标记 blocked 或 REVIEW，不得靠生成式补造完成计划。
+Unknown dimensions remain unknown.
 
-先向用户展示图片计划、缺失素材和尺度风险。用户已明确要求直接执行时，可先制作代表性样张，但不得跳过身份/尺寸审查。
+## Stage 4 — Scale and perspective
 
-## 阶段 6：制作与图层管理
+For scene or person images, run \`product-scale-calibration\` before compositing.
 
-### 产品主体
-- 优先使用真实商品照片和原始 RGB；分割模型只提供 Alpha Mask。
-- 保留原图哈希、Mask、裁切、缩放记录。
-- 只允许同比例缩放；不改变结构、厚度、部件数量和关键纹理。
-- 多视角必须有对应证据；不可把正面照片伪装成侧面/背面。
+MUST define:
+- contact plane;
+- product anchor;
+- camera / projection assumptions;
+- reference objects, if any;
+- person scale basis, if any;
+- scale status.
 
-### 背景与场景
-- AI 生成空场景、空间、非商品道具和氛围。
-- Prompt 指定相机、接触平面、商品占位、光向和负面约束。
-- 背景中的家具/参照物如承担尺度作用，必须有明确尺寸来源或标记为非标尺装饰。
-- 场景与商品视角不匹配时重做背景或使用匹配视角/CAD，不扭曲产品。
+If evidence is insufficient, set \`SCALE_UNVERIFIED\` and do not claim real-world scale accuracy.
 
-### 人物
-- 人物作为独立图层/资产管理；保存人物参考、姿势、身高假设、遮挡区域和一致性说明。
-- 手部接触、坐姿承托、握持位置和受力逻辑必须合理。
-- 人物不得遮挡产品身份关键特征或让产品看似具备未证实功能。
-- 多图人物一致性需要参考图/角色设定；没有参考时不得承诺同一人物身份一致。
+## Stage 5 — Gallery plan
 
-### 文字与图形
-- 中文、数字、尺寸线、单位、Logo、图标使用设计工具或程序排版。
-- 图像模型不负责最终数字、中文文案和商标。
-- 文案逐条关联事实证据；参数与商品图层分离，便于复核。
+Run \`ecommerce-gallery-planner\`.
 
-## 阶段 7：尺寸图与详情页
+Each planned asset MUST have:
+- role and buyer question;
+- source references;
+- product pixel policy;
+- scale status;
+- generation/compositing method;
+- copy evidence;
+- acceptance criteria.
 
-执行 ecommerce-infographic-detail-builder：
+Do not fill image slots by inventing views or facts.
 
-- 尺寸图必须注明测量方向、单位、测量口径和数据来源。
-- 只画已确认的尺寸线；未知轴标为未提供，不用估值填空。
-- 产品尺寸、包装尺寸、净重、毛重、售卖数量不能混为一谈。
-- 每个详情页模块独立保存，再拼接长图；保留可编辑源文件。
-- 规格文字与 product-dimensions.json 一致，不能手工二次改数。
+## Stage 6 — Production
 
-## 阶段 8：质量检查与平台预检
+### Product body
 
-执行 ecommerce-visual-qa 和 marketplace-export-preflight。逐张检查：
+Default route:
 
-- 产品身份、几何、材质、颜色、纹理和源图像素来源。
-- 尺寸数字、单位、方向、测量口径和证据。
-- 产品与场景参照物/人物的尺度关系、接触平面和透视。
-- Mask、边缘、阴影、遮挡和图层顺序。
-- 文案、卖点、包装、数量和跨图一致性。
-- 平台、类目、槽位、规则来源、核验日期和导出参数。
+\`\`\`text
+authoritative photo
+→ alpha mask
+→ ORIGINAL PRODUCT RGB cutout
+→ composite
+\`\`\`
 
-状态只能是 PASS / REVIEW / FAIL / NOT_CHECKED。没有尺寸证据时不得标记“比例准确”；视觉上看起来合理不是计量验证。身份、规格或售卖事实错误为 FAIL；缺少证据为 REVIEW 或 NOT_CHECKED。
+Product RGB SHOULD be immutable except for explicitly authorized, non-identity corrections.
 
-## 阶段 9：交付清单
+### Background
 
-按 SKU 交付：
+AI MAY generate:
+- empty rooms;
+- abstract backdrops;
+- environmental surfaces;
+- non-product props.
 
-- 素材审查、证据矩阵、缺失素材清单。
-- product-identity.json 与 product-dimensions.json。
-- scale-calibration.json（场景图适用）。
-- image-plan.json、copy-deck.md 和品牌配置。
-- 多张差异化主图、场景/人物图、规格图、细节图、包装图（有证据时）。
-- 独立详情页模块、拼接长图及可编辑源文件。
-- 原图、Mask、cutout、背景、人物、阴影、合成层和来源记录。
-- 每张图片 QA、整套一致性 QA、平台导出预检。
+Background prompts MUST explicitly exclude the target product and confusing lookalikes.
 
-完成定义：每张图的身份、事实、尺度状态、素材来源和 QA 状态清晰可追溯。生成了图片文件不等于通过验收。
+### Person
 
-## 失败处理
+People MUST be independent assets or layers. Do not generate the person and product as one fused image when source-pixel fidelity is required.
 
-- 尺寸来源缺失或冲突：暂停规格图和比例准确场景图，先补资料。
-- 单张照片不足以支持目标视角：请求补拍或 CAD，不伪造视角。
-- 产品/场景透视不匹配：换背景、换参考角度或使用 3D；禁止拉伸产品。
-- 人物接触点不合理：调整姿势/构图，不修改产品结构来迎合人物。
-- QA FAIL：退回对应阶段返工；不能静默降级为可用。
-- 当前工具不能执行所需操作：明确列出无法执行的步骤，不假装已完成。
+### Shadows
+
+Create contact and cast shadows as independent layers. Shadows MUST NOT overwrite product RGB.
+
+### Text / dimensions
+
+Final Chinese copy, numbers, dimensions, arrows, logos, and tables SHOULD be added with layout/design tools, not trusted to an image model.
+
+## Stage 7 — Product + person + scene
+
+Run \`product-human-scene-integration\`.
+
+MUST validate:
+- hand / body contact points;
+- occlusion order;
+- ground/contact plane;
+- product geometry unchanged;
+- person action does not imply unverified performance.
+
+If realistic interaction cannot be achieved without redrawing product geometry, the asset is \`BLOCKED\`.
+
+## Stage 8 — Infographic and detail modules
+
+Run \`ecommerce-infographic-detail-builder\`.
+
+Use only verified dimensions and claims. Do not infer dimensions from the composite.
+
+For Chinese e-commerce detail pages, independent vertical modules are preferred unless the user specifically requests a stitched long image.
+
+## Stage 9 — QA
+
+Run \`ecommerce-visual-qa\`.
+
+The following are separate gates:
+- identity fidelity;
+- pixel provenance;
+- dimension truth;
+- scale grounding;
+- person interaction;
+- copy truth;
+- export compliance.
+
+A pretty image can still be \`FAIL\`.
+
+## Stage 10 — Marketplace export
+
+Run \`marketplace-export-preflight\`.
+
+Marketplace requirements MUST be current and source-backed. Do not hard-code stale Taobao / Tmall / JD / PDD dimensions as permanent truths.
+
+## Failure conditions
+
+Set \`FAIL\` or \`BLOCKED\` when:
+- generated product geometry differs from the authoritative SKU;
+- product was regenerated instead of source-pixel composited without explicit creative-preview authorization;
+- a required view is unsupported;
+- a dimension is published without evidence;
+- product scale is presented as accurate without grounding;
+- a person interaction requires impossible product deformation;
+- package contents or claims are invented.
+
+## Outputs
+
+A complete run SHOULD produce:
+- \`asset-audit.md\`
+- \`evidence-matrix.json\`
+- \`product-identity.json\`
+- \`product-dimensions.json\`
+- \`scale-calibration.json\` where applicable
+- \`image-plan.json\`
+- product cutouts and masks
+- generated empty backgrounds / person layers
+- layered composites
+- copy deck and dimension source map
+- master exports
+- per-image QA and cross-image QA
+- marketplace preflight records
+
+Generated files are not complete until QA provenance and identity gates are satisfied.

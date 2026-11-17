@@ -1,86 +1,167 @@
 ---
 name: ecommerce-visual-qa
-description: 对电商产品图执行商品身份、物理尺度、透视/接触、人物交互、材质保真、文案事实、品牌一致性和跨图质量检查，输出带证据的 QA 报告。
+description: Run evidence-backed QA for product identity, source-pixel provenance, dimensions, scale, perspective, person interaction, material fidelity, copy truth, cross-image consistency, and marketplace export readiness.
 ---
 
 # Ecommerce Visual QA
 
-## 目标
+## Objective
 
-逐张检查产品图，并检查整套图片的一致性。自动检测只能发现有限问题，不能作为商品真实性、尺寸准确或平台合规的认证。
+Evaluate each asset and the complete image set. Do not collapse visual quality, product truth, and scale accuracy into one score.
 
-## 检查阶段
+## QA states
 
-### A. 商品身份
-- 轮廓、长宽高比例、厚度、部件数量、相对位置和连接关系与权威参考一致。
-- 孔位、接缝、五金、Logo、倒角和边缘无变化。
-- 没有生成不存在的背面、底面、内部结构或配件。
-- 当前 SKU 与变体没有混淆。
+- \`PASS\`
+- \`REVIEW\`
+- \`FAIL\`
+- \`NOT_CHECKED\`
 
-### B. 物理尺寸与规格
-- 数值与 product-dimensions.json 一致。
-- 长/宽/高轴定义、单位、测量状态和口径明确。
-- 产品本体尺寸与包装尺寸、净重与毛重没有混淆。
-- 每个数字都有用户确认或正式文档证据。
-- 未知/估算/冲突值没有作为已验证规格发布。
-- 尺寸线方向、端点和文字标注指向正确的产品边界。
+## Gate A — Product identity
 
-### C. 空间尺度与透视
-- 场景图引用 scale-calibration.json。
-- 产品占位、接触平面、地面/桌面/墙面和相机方向一致。
-- 已知参照物的尺寸、深度/平面和来源明确。
-- 透视场景未使用单一全局缩放因子错误处理不同深度。
-- 2D 平面变换未被用于扭曲直立产品或改变真实几何。
-- 视觉近似和物理尺度验证分开标注。
-- 没有尺寸依据时不得标注“真实比例”“精准比例”或 METRICALLY_GROUNDED。
+Check against authoritative references:
+- silhouette;
+- component count;
+- relative positions;
+- hardware locations;
+- holes / seams / joints;
+- handles / supports / edge profiles;
+- logo / markings;
+- visible texture / grain / color.
 
-### D. 人物与产品交互
-- 人物身高依据或估算状态清楚。
-- 人物动作、手部、支撑脚、坐靠/握持位置和重力逻辑合理。
-- 接触点、前后遮挡、手指数量和边缘无明显错误。
-- 人物没有遮挡关键结构、Logo、商品识别特征或规格文字。
-- 没有暗示未经验证的承重、稳定性、安全性或功能。
-- 多张图片中的同一人物（如有要求）保持可识别的一致性。
+Any identity-critical drift is \`FAIL\`.
 
-### E. 材质与颜色
-- 纹理方向、木节、天然色差和表面处理可信。
-- 没有磨平、重绘、补造或复制纹理。
-- 商品颜色没有被品牌调色或场景色污染。
-- 不把无漆等同于零处理、无甲醛或食品级。
+## Gate B — Product pixel provenance
 
-### F. 抠图与合成
-- Mask 未吞掉孔洞、细杆、透明件或边缘。
-- 无明显白边、黑边、锯齿和背景残留。
-- 接触阴影与投影方向协调，不覆盖商品 RGB。
-- 背景没有出现误导性同款商品或虚构配件。
+Record:
+- source product asset;
+- whether final product pixels are \`SOURCE_PRODUCT_PIXEL\`, \`VERIFIED_CAD_3D\`, or generated;
+- masks and transformations;
+- any authorized edits.
 
-### G. 文案与参数
-- 中文错字、数字、单位、标点和字体渲染正确。
-- 每条卖点均有证据。
-- 尺寸、数量、重量、包装和兼容性准确。
-- 无未经证实的认证、性能或安全承诺。
+If an authoritative source photo existed but the product was regenerated as a lookalike without explicit creative-preview authorization, set \`FAIL\`.
 
-### H. 品牌与整套一致性
-- 字体、色彩、留白、图标和版式统一。
-- 不同图片中的商品颜色、结构、件数、尺寸和文案一致。
-- 图片顺序符合购买决策路径，信息不重复或矛盾。
-- 多张主图的主体比例、产品身份和变体一致。
+Prompt similarity does not pass provenance.
 
-### I. 平台导出
-- 平台、类目、槽位、规则来源与核验日期明确。
-- 文件尺寸、比例、格式、大小和命名符合已核验规则。
+## Gate C — Dimensions and specifications
 
-## 报告格式
+Check:
+- values;
+- units;
+- axis definitions;
+- measurement state;
+- evidence;
+- product vs packaging;
+- net vs gross weight;
+- dimension-line endpoints.
 
-每张图输出：
-- asset、sku、role、source_images、scale_status。
-- identity_status、dimension_status、scale_status、interaction_status、copy_status。
-- checks、evidence、issues、severity、remediation。
-- status：PASS / REVIEW / FAIL / NOT_CHECKED。
-- reviewer：人工审核状态。
+Unknown / estimated values MUST NOT appear as verified customer-facing specifications.
 
-整套图额外检查跨图一致性。身份/事实/规格错误为 FAIL；缺少证据为 REVIEW 或 NOT_CHECKED，不能默认通过。必须区分：
-- visual plausibility：画面看起来是否协调。
-- metric grounding：尺度是否有物理尺寸和校准证据。
-- pixel provenance：商品像素是否来自源图/CAD。
-三者不能互相替代。
+## Gate D — Scale and perspective
+
+Check:
+- \`scale-calibration.json\`;
+- contact plane;
+- product anchor;
+- camera / projection assumptions;
+- reference objects;
+- depth relationships;
+- uniform product scaling;
+- absence of geometry warping.
+
+Do not mark metric scale \`PASS\` when the scene is only visually plausible.
+
+## Gate E — Person interaction
+
+Check:
+- hand / finger anatomy;
+- grip points;
+- body support;
+- foot / body placement;
+- foreground / background occlusion;
+- gravity;
+- product geometry unchanged;
+- no implied unverified performance.
+
+## Gate F — Material / color
+
+Check:
+- visible texture direction;
+- wood grain / knots where applicable;
+- finish appearance;
+- real color;
+- metal / fabric / surface characteristics.
+
+Brand color grading MUST NOT recolor the product body.
+
+## Gate G — Cutout and composite
+
+Check:
+- holes / gaps preserved;
+- no white / dark fringe;
+- no mask-eaten structure;
+- contact / cast shadow direction;
+- shadow does not overwrite product RGB;
+- no confusing duplicate target product in background.
+
+## Gate H — Copy and graphics
+
+Check:
+- Chinese spelling;
+- numbers;
+- units;
+- punctuation;
+- claim evidence;
+- packaging quantities;
+- certifications;
+- logos;
+- readability.
+
+## Gate I — Cross-image consistency
+
+Check:
+- same SKU / variant;
+- same product structure;
+- consistent dimensions;
+- consistent color / material;
+- consistent copy;
+- person consistency when required;
+- no contradictory packaging / quantity.
+
+## Gate J — Marketplace export
+
+Check:
+- marketplace;
+- category;
+- slot;
+- rule source;
+- verification date;
+- dimensions / format / file size / naming.
+
+## Report schema
+
+Each image SHOULD include:
+- \`asset\`
+- \`sku\`
+- \`role\`
+- \`source_images\`
+- \`product_provenance\`
+- \`identity_status\`
+- \`dimension_status\`
+- \`scale_status\`
+- \`interaction_status\`
+- \`copy_status\`
+- \`overall_status\`
+- \`evidence\`
+- \`issues\`
+- \`severity\`
+- \`remediation\`
+- \`reviewer\`
+
+## Critical distinction
+
+These three are independent:
+- \`visual_plausibility\`
+- \`metric_grounding\`
+- \`product_pixel_provenance\`
+
+One cannot substitute for another.

@@ -1,72 +1,105 @@
-# 电商产品视觉 QA 关卡
+# E-commerce Product Visual QA Gates
 
-每张图分别评估，不得用一张图的通过结果替代整套图审核。视觉合理、尺寸可追溯、商品像素保真是不同维度，必须分别记录。
+Evaluate every image independently and then evaluate the complete set.
 
-## Gate 0 — 输入素材
-- 源文件存在、可打开，分辨率适合用途。
-- 商品完整，遮挡/反光/背景复杂度已记录。
-- 图片中可见件数不等于售卖件数；售卖数量已确认或不写。
-- 视角覆盖足以支持计划内容。
-- 尺寸图、CAD/工程文件和包装资料的 SKU/变体匹配。
+Do not use one image passing QA to imply the whole set passes.
 
-## Gate 1 — 商品身份
-- 外轮廓、比例、部件数量和相对位置一致。
-- 孔位、接缝、榫卯、五金、边缘和厚度无变化。
-- 没有生成不存在的背面、底面或内部结构。
-- 不同图片中的商品身份、颜色和变体一致。
+## Gate 0 — Inputs
 
-## Gate 2 — 物理尺寸与规格
-- 长宽高、重量、包装尺寸与当前 SKU 尺寸档案一致。
-- 轴定义、单位、测量状态、测量口径和来源明确。
-- 未知/估算/冲突值没有作为已验证规格发布。
-- 尺寸线端点、方向和数字标注准确。
-- 净重/毛重、商品尺寸/包装尺寸没有混淆。
+- source assets exist and can be opened;
+- SKU / variant is identified;
+- view coverage is recorded;
+- dimensions / claims have evidence states;
+- packaging quantity is not inferred from photo count.
 
-## Gate 3 — 尺度、透视与接触
-- 场景图引用 scale-calibration.json。
-- 商品与参照物尺寸、深度/平面和来源可追溯。
-- 产品接触面、地平面、桌面/墙面、相机方向和消失点协调。
-- 不对不同深度对象套用同一像素缩放因子。
-- 不使用 2D 平面变换扭曲直立产品几何。
-- 没有尺寸证据时标记 SCALE_UNVERIFIED；不能宣称比例准确。
+## Gate 1 — Product identity
 
-## Gate 4 — 人物交互（适用时）
-- 人物身高来源或估算状态明确。
-- 手部、握持、坐靠、支撑脚和接触点合理。
-- 遮挡顺序正确；人物没有穿过产品或悬空。
-- 不暗示未经证实的承重、稳定性或安全性能。
-- 人物没有遮挡产品关键身份特征。
+- geometry matches authoritative references;
+- component count matches;
+- hardware, holes, seams, joints, handles, supports, logos, and edge profiles match;
+- no unsupported view or hidden structure was invented.
 
-## Gate 5 — 材质与合成
-- 木纹方向、木节、端面、天然色差和表面纹理可信。
-- 无漆表面没有变成清漆高光、油润或塑料质感。
-- Mask 没有吞掉镂空、细杆、孔洞或边缘。
-- 无明显白边/黑边、抠图锯齿和背景残留。
-- 阴影没有覆盖或修改商品 RGB。
+Identity drift = \`FAIL\`.
 
-## Gate 6 — 视觉与信息
-- 中文文案无错字，层级清楚，移动端可读。
-- 每个卖点有证据。
-- 尺寸、数量、包装和参数准确。
-- 品牌字体、色彩、留白和图形风格统一。
-- 多张图片之间产品比例、结构和文案一致。
+## Gate 2 — Product pixel provenance
 
-## Gate 7 — 平台导出
-- 对应平台、类目、槽位和规则来源明确。
-- 宽高、比例、格式、体积和切片限制符合已核验规则。
-- 文件命名和版本正确。
+- product body source is recorded;
+- alpha / mask source is recorded;
+- transformations are recorded;
+- source product RGB is preserved when required;
+- no lookalike generated product silently replaces the SKU.
 
-## 结果状态
+If an authoritative photo existed and the production asset is a generated redraw, default to \`FAIL\`.
 
-- PASS：检查项有证据支持，没有发现阻断问题，可交付人工审核。
-- REVIEW：存在不确定项，需要人工检查或补资料。
-- FAIL：商品身份、事实、材质、尺度或平台规则存在明确错误，必须返工。
-- NOT_CHECKED：该项没有证据，不能默认通过。
+## Gate 3 — Dimensions / specifications
 
-## 自动检查能力边界
+- values match the dimension profile;
+- units and axes are correct;
+- product vs packaging is separated;
+- unknown / estimated values are not presented as verified;
+- dimension lines point to correct boundaries.
 
-程序可以检查：文件是否存在、尺寸、格式、文件大小、透明通道、哈希、JSON 数值一致性、图层合成像素是否被覆盖。
+## Gate 4 — Scale / perspective
 
-视觉模型可以辅助发现：轮廓漂移、部件数量变化、木纹异常、文字错误、边缘问题、人物肢体异常和跨图不一致。
+- scale calibration is referenced;
+- contact plane and anchor are coherent;
+- camera / projection assumptions are recorded;
+- product is uniformly scaled;
+- geometry is not warped;
+- metric claims match the scale state.
 
-自动像素检查不能证明 Mask 正确；视觉模型不能证明物理尺寸准确。只有来源可靠的尺寸数据、相机/场景几何或可测量参照，才能支持尺度验证。关键商品图必须人工复核。
+## Gate 5 — Person interaction
+
+- hand / body contact is physically plausible;
+- occlusion order is correct;
+- person does not pass through product;
+- product geometry remains unchanged;
+- no unverified load / safety / ergonomic claim is implied.
+
+## Gate 6 — Material / compositing
+
+- texture / grain / color remain credible and source-aligned;
+- mask preserves holes / thin structures;
+- no obvious fringe;
+- shadows are independent and physically coherent;
+- product RGB is not covered by generated shadow paint.
+
+## Gate 7 — Copy / graphics
+
+- Chinese copy is correct;
+- numbers / units / punctuation are correct;
+- claims have evidence;
+- packaging / certification / compatibility claims are verified;
+- typography is readable.
+
+## Gate 8 — Cross-image consistency
+
+- same SKU / variant;
+- same structure;
+- same verified dimensions;
+- same product appearance;
+- no contradictory claims;
+- no variant mixing.
+
+## Gate 9 — Marketplace export
+
+- marketplace / category / slot is known;
+- rule source is recorded;
+- verification date is recorded;
+- file dimensions / format / size / naming pass current checks.
+
+## Result states
+
+- \`PASS\`: evidence-backed, no blocking issue found.
+- \`REVIEW\`: uncertainty remains.
+- \`FAIL\`: confirmed identity / factual / scale / compliance error.
+- \`NOT_CHECKED\`: insufficient evidence or check not performed.
+
+## Critical separation
+
+Always report separately:
+- \`visual_plausibility\`
+- \`product_pixel_provenance\`
+- \`metric_grounding\`
+
+A beautiful generated product can pass visual plausibility and still fail product identity.

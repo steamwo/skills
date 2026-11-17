@@ -1,40 +1,94 @@
 ---
 name: product-cutout-composite
-description: 为电商产品图分割真实商品主体、检查 Alpha Mask，并将原始商品 RGB 像素合成到白底或场景背景，避免 AI 重绘商品。
+description: Extract and composite the real SKU product while preserving original product RGB; use segmentation only for alpha/masks and keep product pixels traceable through placement, shadow, and export.
 ---
 
-# Product Cutout & Composite
+# Product Cutout Composite
 
-## 目标
+## Objective
 
-创建可复核的商品透明图层，并把真实商品主体放入新背景。分割模型只负责估计 Alpha，不负责重绘商品 RGB。
+Create a reusable product cutout without redrawing the product body.
 
-## 标准流程
+## Core rule
 
-1. 保留源照片只读副本，记录路径、分辨率和 SHA-256。
-2. 使用用户手工透明 PNG，或调用分割工具生成 Alpha Mask。
-3. 把 Mask 应用到原始照片 RGB；不得使用分割模型输出的重绘 RGB。
-4. 检查 Mask：镂空、细杆、木条间隙、透明部件、反光边缘、浅色主体与浅背景交界。
-5. 对明显错误区域手工修正 Mask；原图与修正 Mask 均保留。
-6. 用真实商品图层合成背景，保持纵横比，不得非等比拉伸。
-7. 视角与地面/桌面不匹配时，拒绝合成并重做背景，不要扭曲商品。
-8. 输出透明主体、Mask、合成图和 QA 报告。
+The segmentation model may create an alpha mask. It MUST NOT replace product RGB.
 
-## 合成约束
+\`\`\`text
+source image RGB
++ reviewed alpha mask
+= product cutout
+\`\`\`
 
-- 默认不改变商品本体颜色、纹理、锐度和几何结构。
-- 可在商品层后方创建独立接触阴影，但阴影不能覆盖商品纹理。
-- 不使用生成式填充补造商品边缘、缺失部件或隐藏结构。
-- 需要色彩匹配时，优先调整背景和环境光；若必须修改商品层，应征得用户明确同意并记录。
-- 只可做同比例缩放和裁切，不得拉伸。
+## Inputs
 
-## QA
+- authoritative source image;
+- product identity contract;
+- optional user-supplied transparent PNG / mask;
+- target background / scene;
+- placement plan.
 
-分别验证：
-- Mask 是否保留全部真实结构。
-- 商品内部 RGB 是否来自源图。
-- 边缘是否存在白边、黑边、锯齿或背景残留。
-- 合成视角、尺度、透视和接触阴影是否合理。
-- 是否错误裁切了商品或商标。
+## MUST
 
-程序像素检查只能证明特定合成步骤没有覆盖不透明像素，不能证明 Mask 正确或整体商品真实。最终状态默认 MANUAL_REVIEW_REQUIRED。
+- preserve the original source RGB inside valid product pixels;
+- save the alpha mask separately;
+- inspect holes, gaps, thin parts, transparent parts, and low-contrast edges;
+- record source image path / hash when possible;
+- use uniform layer scaling by default;
+- preserve aspect ratio;
+- keep shadows on separate layers.
+
+## MUST NOT
+
+- use generative fill to reconstruct the product body;
+- erase real holes, joints, hardware, or texture because the mask is inconvenient;
+- non-uniformly scale the product;
+- alter product color to match the scene;
+- paint shadows over the product RGB;
+- infer missing parts outside the original visible view.
+
+## Allowed post-processing
+
+MAY include, when traceable:
+- alpha cleanup;
+- edge decontamination;
+- minor fringe removal;
+- uniform scale;
+- translation;
+- limited rotation consistent with the source view.
+
+If cleanup changes identity-relevant pixels, it requires review.
+
+## Scene placement
+
+The background SHOULD be generated or prepared without the target product.
+
+Composition sequence:
+
+\`\`\`text
+background
+→ independent shadow
+→ original-RGB product cutout
+→ foreground occluders if required
+→ typography / graphics
+\`\`\`
+
+## Outputs
+
+Save:
+- source reference;
+- \`mask.png\`
+- \`product-cutout.png\`
+- composite;
+- shadow layer;
+- placement metadata;
+- provenance record.
+
+## Gate
+
+A final composite fails if:
+- product RGB was generatively redrawn;
+- the mask deletes real structure;
+- geometry was warped;
+- product identity differs from the source.
+
+Pixel preservation and mask correctness are separate checks.

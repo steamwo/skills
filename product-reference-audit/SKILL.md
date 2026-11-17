@@ -1,54 +1,86 @@
 ---
 name: product-reference-audit
-description: 审查电商商品实拍素材、尺寸图、CAD/工程文件、包装资料和 SKU 文档，识别视角、清晰度、可见事实、物理尺寸证据与缺失项。
+description: Audit real product photos, videos, dimension drawings, CAD, packaging references, and SKU documents to establish view coverage, evidence quality, provenance, and missing inputs before any e-commerce image production.
 ---
 
 # Product Reference Audit
 
-## 目标
+## Objective
 
-在设计或生成图片前，盘点用户提供的全部商品素材，确定每个文件实际能证明什么。禁止用视觉推断填补未拍摄的结构或未经测量的物理尺寸。
+Determine what the supplied assets actually prove before any product image generation or compositing begins.
 
-## 执行步骤
+## Inputs
 
-1. 查找用户提供的照片、视频帧、尺寸图、CAD、工程图、BOM、包装图、产品说明和 SKU 文档。
-2. 记录文件路径、类型、像素尺寸、方向、清晰度、曝光、反光、遮挡和背景复杂度。
-3. 识别视角：正面、背面、左/右侧、俯视、仰视、底面、局部细节、尺寸示意或场景照。无法判断时标为 unknown。
-4. 列出照片中直接可见的特征：轮廓、部件数量、孔位、接缝、纹理、颜色、五金和边缘。
-5. 识别尺寸证据：实测表、制造商规格、工程图标注、CAD 模型单位、带标尺照片、测量视频或其他来源。
-6. 记录每个尺寸的方向、单位、测量基准、产品状态、是否含突出件、公差和证据位置。
-7. 对每个计划使用的卖点/参数，标明证据来源与可信状态。
-8. 生成缺失素材清单，并按主图、角度图、场景比例图、规格图和详情页的影响排序。
+MAY include:
+- real SKU photos;
+- video frames;
+- dimension drawings;
+- CAD / 3D files;
+- BOM / engineering documents;
+- packaging photos;
+- spec sheets;
+- user-confirmed product facts.
 
-## 证据状态
+## MUST
 
-- visible：照片直接可见。
-- user_confirmed：用户明确确认。
-- document_verified：由当前 SKU 的正式规格/工程文档支持。
-- estimated：只能估算，不可作为规格承诺。
-- unknown：没有足够证据。
-- conflicting：不同来源相互矛盾。
+- inventory every relevant source file;
+- record SKU / variant identity;
+- classify image view: front, rear, left, right, top, bottom, three-quarter, detail, dimension reference, scene;
+- record resolution, occlusion, glare, blur, crop, and background complexity;
+- list directly visible geometry, hardware, texture, labels, logos, seams, holes, joints, and edges;
+- record dimension evidence with axis, unit, measurement basis, and source location;
+- map each planned claim or specification to evidence;
+- identify unsupported views and facts;
+- preserve source provenance.
 
-照片中有尺子/标尺时，必须确认标尺刻度、平面、方向、透视和与商品测量轴的关系；不满足条件时只能作为辅助参考。
+## MUST NOT
 
-## 强制限制
+- infer unseen rear / bottom / internal construction from one view;
+- infer sale quantity from the number of objects visible in a photo;
+- infer exact dimensions from pixels without a valid scale basis;
+- use competitor images as current-SKU evidence;
+- guess wood species, certification, load capacity, food-contact status, safety rating, or material grade;
+- “complete” missing product views with generative imagery and then mark them as factual.
 
-- 一张三分之四视角图不能证明背面、底面或隐藏结构。
-- 一张没有标尺的照片不能证明完整三维尺寸。
-- 单一已知长度不能自动推导其他两个轴。
-- 图片中的像素高度、AI 视觉估算和竞品规格不能当作当前 SKU 的实测值。
-- 照片中出现的物件数量不能证明售卖数量或包装数量。
-- 不根据外观猜木种、材料等级、承重、食品接触等级、环保认证或尺寸。
-- 网络竞品图只能做风格参考，不能作为当前 SKU 的结构、材质或规格证据。
-- 不因素材不完整而擅自补全产品视角。
+## Evidence states
 
-## 输出
+Use:
+- \`visible_in_reference\`
+- \`user_confirmed\`
+- \`document_verified\`
+- \`estimated\`
+- \`unknown\`
+- \`conflicting\`
 
-在项目 plan/qa 目录生成：
-- asset-audit.md：逐文件素材清单。
-- evidence-matrix.json/csv：商品特征、参数、证据来源、状态。
-- dimension-evidence.md：尺寸来源、单位、轴定义、测量口径和冲突。
-- missing-assets.md：需要补拍或补充的资料。
-- usage-map.md：每张源图适合用于哪些输出，以及不能支持哪些内容。
+## Dimension evidence
 
-审查完成后交给 product-identity-lock、product-dimension-lock 和 ecommerce-gallery-planner。
+A measurement photo MUST be treated as verified only when:
+- scale markings are readable;
+- the measurement axis is clear;
+- the reference and product geometry are sufficiently aligned;
+- perspective does not invalidate the reading.
+
+Otherwise use \`estimated\` or \`unknown\`.
+
+## Outputs
+
+Create:
+- \`asset-audit.md\`
+- \`evidence-matrix.json\` or CSV
+- \`dimension-evidence.md\`
+- \`missing-assets.md\`
+- \`usage-map.md\`
+
+Each source entry SHOULD include:
+- file path;
+- source type;
+- SKU / variant;
+- view;
+- supports;
+- limitations;
+- evidence state;
+- provenance notes.
+
+## Gate
+
+Do not pass unsupported product facts downstream as verified. Hand the audit to \`product-identity-lock\`, \`product-dimension-lock\`, and \`ecommerce-gallery-planner\`.

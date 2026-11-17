@@ -1,55 +1,60 @@
-# 原木无漆商品：电商产品图素材与质量规范
+# Wood Fidelity Rules
 
-## 目标
+## Visible wood identity
 
-为真实原木商品制作完整的电商展示素材，包括主图、辅图、场景图、细节图、规格图与详情页。保真是每一张图片的约束，不是工作流的唯一交付物。
+Treat the following as identity-relevant when visible:
+- grain direction;
+- grain density / pattern;
+- knots;
+- natural color variation;
+- end grain;
+- joints;
+- seams;
+- fasteners;
+- holes;
+- edge profiles;
+- chamfers / radii;
+- component thickness / visible proportions.
 
-## 第一优先级：产品真实
+## MUST NOT
 
-1. 木纹的方向、木节、天然色差与端面纹理是商品事实，不能“美化重建”。
-2. 产品几何事实：板材数量、倒角、连接孔、螺丝、榫卯、拼缝、厚度、比例均不得更改。
-3. 无漆不代表未经其他处理；不能擅自宣称「零处理」「纯天然」「无甲醛」「食品级」等。
-4. 可以根据真实商品照片抠图、裁切、同比例缩放、合成背景，但需要关注高光、接触阴影、边缘颜色溢出。
-5. 如果浅木色接近背景或内部有镂空，分割 AI 可能误删细杆、孔洞、弧线；必须逐处检查。
-6. 镜面高光、表面油润化、改变木种、过度降噪、超分补纹应列为高风险。
-7. 新角度只有在相应实拍照片或可靠 CAD/3D 模型可用时才允许标注为真实结构。
+- replace real grain with generated grain;
+- remove knots by default;
+- clone grain across components;
+- invent end grain;
+- move screws or joints;
+- make raw / matte wood glossy without evidence;
+- infer species from appearance alone;
+- infer oil / wax / lacquer / paint treatment without confirmation;
+- infer “eco-friendly”, “zero formaldehyde”, “food safe”, or certification claims from appearance.
 
-## 电商图片规划清单
+## Detail image rule
 
-- 主图：商品主体清晰，按平台当前要求制作。
-- 辅图/卖点图：仅表达真实且有资料支持的卖点。
-- 场景图：背景可以生成，商品主体使用真实照片合成。
-- 细节图：使用真实微距或原图高分辨率裁切。
-- 规格图：尺寸、数量、重量、包装均以用户确认数据为准。
-- 详情页分屏与长图：先规划信息顺序，再使用真实素材与程序排版。
-- 平台导出：分别核验淘宝、天猫、京东、拼多多当前类目规范。
+Preferred source:
+1. real high-resolution detail photo;
+2. real crop from the authoritative photo;
+3. verified macro reference for the same SKU.
 
-## 拍摄输入建议
+Do not synthesize missing product detail and present it as factual.
 
-- 清晰、对焦准确、无裁断；优先保持原始分辨率。
-- 背景与木色尽量分离，避免木边与浅色墙面完全融为一体。
-- 多角度（正、侧、背）和关键结构微距有助于真实详情页。
-- 高精度木纹特写应直接使用原照片；自动裁切放大不能创造原图不存在的像素细节。
-- 说明商品是单件还是套装；图片中出现多个物件时，不要自行推断售卖数量。
+## Color rule
 
-## 出图质检核对
+Background and brand graphics may be color-graded.
 
-- [ ] 产品整体尺寸比例一致（没有横向/纵向拉伸）
-- [ ] 板材数量、孔位、支架、接口、拼接关系一致
-- [ ] 没有新增木节、伪造纹理、磨平木纹或塑料质感
-- [ ] 没有增亮成清漆/油漆/蜡面效果
-- [ ] 没有商品背景残留的明显白边、黑边、锯齿
-- [ ] 场景地平面、视角和商品姿态兼容
-- [ ] 无凭空制造的背面、榫卯、木种、性能或尺寸参数
-- [ ] 文案均有明确事实来源；平台图尺寸另按后台要求检查
-- [ ] 主图、辅图、场景图、细节图、规格图、详情页之间商品外观与信息一致
+Product color SHOULD remain source-based unless:
+- color calibration data exists; or
+- the user explicitly authorizes a correction.
 
-## 自动 QA 的边界
+## Scene rule
 
-`render.py` 使用 Alpha Mask 与原照片 RGB 合成。程序在 Alpha=255 区域检查输出像素是否与缩放后的真实照片像素相同。这能发现合成层覆盖错误，**不能**证明分割 Mask 一定正确；也不能验证天然木色是否在拍摄时就准确。输出的 `qa-report.json` 不是上架认证。
+Generate the scene without the target product.
 
-## 可选 AI 空场景提示词
+Then composite the real product RGB into the scene. Match atmosphere through background, shadow, and independent lighting layers instead of repainting the wood.
 
-> Realistic minimalist home interior, soft neutral daylight, camera perspective compatible with the supplied real product photo, clearly empty central floor or tabletop area reserved for later compositing a genuine product cutout, no wooden shelf or wooden product, no redrawn product, no text, no logos.
+## QA
 
-如果真实商品是俯拍、悬挂物或壁挂物，背景应换成匹配该视角与接触面的素材。不得为了融入场景而扭曲商品。
+Set \`FAIL\` if:
+- visible wood identity materially changes;
+- generated lookalike replaces the real SKU;
+- hardware / joints / structure drift;
+- unverified material claims appear in customer-facing copy.

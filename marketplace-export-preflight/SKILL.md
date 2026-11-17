@@ -1,46 +1,80 @@
 ---
 name: marketplace-export-preflight
-description: 为淘宝、天猫、京东、拼多多电商图片执行分平台规格预检、裁切、尺寸格式检查和导出命名，规则必须来自当期平台/类目资料。
+description: Verify current marketplace- and slot-specific image export requirements before producing platform variants; preserve product geometry while applying only compliant crop, scale, padding, compression, and naming operations.
 ---
 
 # Marketplace Export Preflight
 
-## 目标
+## Objective
 
-把 master 图片安全地导出为指定平台和图片槽位所需的版本。不得将过时的通用尺寸当作当前平台规范。
+Convert approved master assets into marketplace-specific exports without assuming stale platform rules.
 
-## 开始前确认
+## Inputs
 
-- 平台：淘宝、天猫、京东、拼多多。
-- 店铺类目与商品类目。
-- 槽位：主图、SKU 图、活动图、视频封面、详情页等。
-- 规则来源：当前卖家后台、官方帮助文档或用户提供的规则截图。
-- 核验日期和适用终端（移动端/PC）。
+MUST identify:
+- marketplace;
+- product category;
+- image slot;
+- current rule source;
+- verification date;
+- target device / surface when relevant.
 
-## 核验字段
+## Rule source priority
 
-- 宽、高、比例与最小分辨率。
-- 文件格式、文件大小、透明通道限制。
-- 主图数量、背景/边框/文字/Logo/水印要求。
-- 详情页宽度、单屏高度、长图或切片限制。
-- 色彩模式和特殊类目要求。
+Prefer:
+1. current seller backend;
+2. current official marketplace documentation;
+3. user-provided current rule screenshots / docs.
 
-## 导出步骤
+Do not rely on memory for current compliance.
 
-1. 建立每个平台独立的 platform-profile.json。
-2. 对规则来源与核验日期进行记录。
-3. 从 master 文件生成平台版本；只做同比例缩放、裁切、留白和压缩。
-4. 不拉伸商品主体，不改变产品比例。
-5. 检查商品是否被裁切、文字是否越界、参数是否清晰。
-6. 自动检查宽高、格式、体积和文件名。
-7. 规则不全时将状态设为 NEEDS_REVIEW 或 BLOCKED。
+## Verify
 
-## 状态
+As applicable:
+- width / height / aspect ratio;
+- minimum resolution;
+- format;
+- file size;
+- transparency;
+- allowed text / logo / watermark;
+- hero-image background requirements;
+- detail-page width / segmentation;
+- color mode;
+- category-specific constraints;
+- naming.
 
-- VERIFIED：所有必要规则均有可靠来源和核验日期。
-- NEEDS_REVIEW：部分规则或槽位尚未确认。
-- BLOCKED：无可靠规则来源，或导出文件明确不符合要求。
+## Allowed export operations
 
-## 重要限制
+MAY:
+- uniform resize;
+- crop;
+- padding;
+- compression;
+- format conversion;
+- naming / directory organization.
 
-本 Skill 不内置动态平台规则数据库。不得凭记忆声称当前合规，不得自动上传或发布商品。最终导出仅表示通过已记录的预检项目。
+MUST NOT:
+- stretch product geometry;
+- change SKU identity;
+- generatively “repair” a crop;
+- introduce new unverified text or claims during export.
+
+## Status
+
+- \`VERIFIED\`
+- \`NEEDS_REVIEW\`
+- \`BLOCKED\`
+
+## China marketplace notes / 中国电商平台
+
+淘宝、天猫、京东、拼多多的规则可能随类目、活动、客户端和卖家后台变化。
+
+- 必须记录规则来源和核验日期。
+- 不要把历史主图尺寸或详情页宽度写成永久硬编码规则。
+- 如果用户只说“电商图一般 4:9”，应把它当作用户指定的设计比例，而不是所有平台的官方统一要求。
+
+## Output
+
+Create a \`platform-profile.json\` per marketplace / slot and an export preflight report.
+
+Passing preflight means the file passed the recorded checks; it does not mean the marketplace guarantees acceptance.

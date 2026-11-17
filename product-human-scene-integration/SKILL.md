@@ -1,82 +1,94 @@
 ---
 name: product-human-scene-integration
-description: 将真实商品主体、经过规划的人物图层和场景背景整合为电商生活方式图片，处理尺度、透视、接触点、遮挡、阴影和跨图一致性，同时锁定商品本体像素。
+description: Integrate authoritative product pixels, independent person layers, and a scene using calibrated placement, occlusion, contact points, and shadows without redrawing or deforming the product.
 ---
 
 # Product Human Scene Integration
 
-## 目标
+## Objective
 
-将三个独立部分可靠整合：
-1. 当前 SKU 的真实商品主体（源图 RGB 或可信 CAD/3D）。
-2. 人物图层（由 human-lifestyle-composite 规划/制作）。
-3. 场景背景与非商品道具。
+Create a believable product + person + environment composition while preserving the SKU identity.
 
-不得让图像模型自由重绘三者来“自动融合”。商品身份、尺度、人物动作和遮挡必须可检查、可追溯。
+## Required inputs
 
-## 前置条件
+- \`product-identity.json\`
+- \`product-dimensions.json\`
+- \`scale-calibration.json\`
+- product cutout from authoritative source pixels
+- person layers / pose plan
+- empty background
+- applicable wood fidelity rules
 
-必须读取：
-- product-identity.json。
-- product-dimensions.json。
-- scale-calibration.json。
-- image-plan.json 对应图片条目。
-- 商品 cutout/Mask、人物参考/Mask、空场景背景。
-- wood-product-fidelity（木制品适用时）。
+## Layer model
 
-缺少尺寸/尺度证据时，输出只能是标记为 SCALE_UNVERIFIED 的概念视觉，不得称为比例准确。
+A useful structure is:
 
-## 融合前空间规划
+\`\`\`text
+background
+background props
+rear person parts
+product shadow
+SOURCE PRODUCT PIXELS
+front person parts
+foreground props
+text / graphics
+\`\`\`
 
-1. 确认产品、人物和场景使用同一相机方向、地面/桌面/墙面坐标和透视关系。
-2. 明确人物相对产品的位置、朝向、距离、身高依据和动作。
-3. 为每个交互定义接触点：手掌/手指、脚、臀部、背部、握持部位、支撑面或悬挂点。
-4. 定义遮挡顺序：人物在产品前/后、手臂跨越产品的区域、产品孔洞/镂空是否应透出背景。
-5. 规划产品与人物的接触阴影、投影方向和环境光。
-6. 确认人物动作不会暗示未经证实的产品功能或承重能力。
+Split the person into front / rear regions when needed for realistic hand or body occlusion.
 
-## 推荐图层结构
+## MUST
 
-根据实际遮挡关系调整，不强制固定顺序：
+- preserve product pixels and geometry;
+- use the same camera / contact-plane assumptions across product, person, and scene;
+- align all contact points;
+- ensure correct foreground / background order;
+- keep contact and cast shadows independent;
+- verify hands, fingers, feet, body support, and gravity;
+- record person scale status.
 
-- background：空场景。
-- background_props：背景道具。
-- rear_person_parts：位于商品后方的人体部分。
-- product_shadow：商品独立接触阴影。
-- product_cutout：真实商品主体 RGB + Alpha。
-- front_person_parts：位于商品前方的手、手臂或身体部分。
-- foreground_props：前景道具。
-- text_and_graphics：后期排版文字、尺寸线和图标。
+## MUST NOT
 
-人物可按肢体拆分为前后图层，避免整个人物只能统一置于商品前或商品后。所有 Mask 单独保存。
+- fuse a generated person and generated lookalike product into a single image and call it the real SKU;
+- generatively repaint the product under hands;
+- stretch the product to match hand position;
+- move hardware / supports / handles to improve interaction;
+- imply unverified product capability.
 
-## 合成步骤
+## Interaction problem handling
 
-1. 以尺度校准方案放置产品，默认只允许整体等比缩放、平移和小幅旋转。
-2. 将人物放入同一场景坐标；不要通过拉长/缩短人物或商品来掩盖错误透视。
-3. 依照 pose-plan.json 放置接触点和手部/身体遮挡图层。
-4. 检查产品支撑、握持、坐靠、开合和重力方向是否符合实际结构。
-5. 只在产品后方或接触位置建立独立阴影；不得用生成式填充覆盖产品 RGB。
-6. 调整背景光线和独立环境层；未经授权不对商品关键像素做色彩重绘。
-7. 对手指、头发、镂空、透明件、细杆、接触边缘和投影做局部检查。
-8. 保留全部输入层、Mask、合成顺序、参数和最终文件。
+If a hand cannot grip the real product geometry:
+- change hand pose;
+- change person placement;
+- change camera / crop;
+- use another verified product view.
 
-## 强制失败条件
+Never “fix” the product.
 
-出现以下情况必须调整人物动作/场景或暂停，不得修改商品事实：
-- 手部必须覆盖/重绘产品关键结构才能看似握住。
-- 人物与商品比例冲突，且无可信尺度证据。
-- 产品接触点悬空、穿插或不符合重力。
-- 产品视角与背景透视明显冲突。
-- 人物遮挡商品核心识别特征或尺寸标注。
-- 生成过程改变商品部件、纹理、颜色、孔位、Logo 或数量。
+## Failure conditions
 
-## 输出
+\`FAIL\`:
+- product structure changes;
+- product texture / hardware / component count changes;
+- person intersects impossible product geometry;
+- occlusion produces impossible structure.
 
-- integrated-scene-brief.md。
-- background、product-cutout、person layers、Masks、shadows。
-- composite 文件及可编辑分层源文件。
-- integration-qa.md：身份、尺度等级、相机/透视、接触点、遮挡、手部、光影、跨图一致性和未验证项。
-- 来源记录：原图、人物参考、模型/工具、Prompt、参数、时间和版本。
+\`REVIEW\`:
+- interaction is visually plausible but person or scene scale is estimated.
 
-人物与场景融合成功不代表商品尺寸已验证。最终报告必须分别给出产品身份 QA、尺度 QA 和人物交互 QA。
+\`BLOCKED\`:
+- required interaction cannot be achieved from available source views without product redraw.
+
+## Outputs
+
+Save:
+- integration brief;
+- product source / cutout;
+- person source / split layers;
+- background;
+- masks;
+- shadow layers;
+- layered composite;
+- \`integration-qa.md\`;
+- asset provenance.
+
+Final QA MUST report product identity, product pixel provenance, scale, and person interaction separately.

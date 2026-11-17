@@ -1,36 +1,77 @@
 ---
 name: brand-visual-system
-description: 为电商产品图建立品牌视觉系统，统一色彩、字体、构图、光线和图标风格，同时避免品牌视觉改变商品真实颜色。
+description: Define a reusable e-commerce brand visual system for backgrounds, typography, layout, icons, lighting, and graphics while isolating the authoritative product body from brand recoloring or geometry changes.
 ---
 
 # Brand Visual System
 
-## 目标
+## Objective
 
-建立可跨 SKU 复用的品牌视觉规则，使主图、卖点图、场景图和详情页统一，同时保证商品本体颜色与材质不被品牌调色污染。
+Make a product image set feel visually consistent without changing product truth.
 
-## 输入
+## Inputs
 
-- 用户提供的品牌指南、Logo、字体文件和参考图。
-- 用户确认的品牌色、字体、语气和目标客群。
-- 产品身份档案和平台目标。
+- brand guide;
+- logo;
+- licensed / available fonts;
+- confirmed brand colors;
+- tone / audience;
+- product identity record;
+- marketplace targets.
 
-## 建立规则
+## Define
 
-- 品牌主色、辅助色、背景色、文字色和强调色。
-- 中文标题/正文、拉丁字母、数字的字体和字重。
-- 标题、卖点、参数、图标、边框、圆角、留白和网格。
-- 摄影光线、背景材质、道具密度、景深和构图倾向。
-- Logo 安全区、最小尺寸、反白版本与禁止变形规则。
-- 多 SKU 统一项与 SKU 差异项。
+- primary / secondary / background / text / accent colors;
+- Chinese and Latin font roles;
+- numeric / unit typography;
+- grids;
+- spacing;
+- icon style;
+- borders / corner radii;
+- photography / lighting direction;
+- prop density;
+- depth-of-field preference;
+- logo safe area;
+- cross-SKU consistency rules.
 
-## 商品色彩隔离
+## Product isolation rule
 
-- 品牌调色应用于背景、图形和文字，不自动套用到商品主体。
-- 不为了贴合品牌色改变木材颜色、织物颜色、金属颜色或真实表面光泽。
-- 商品颜色校正必须有色卡/可靠拍摄条件或用户授权依据。
-- 不擅自添加品牌标志、认证徽章或合作方 Logo。
+Brand styling applies to:
+- background;
+- copy;
+- graphic shapes;
+- icons;
+- independent props.
 
-## 输出
+It MUST NOT automatically recolor:
+- wood;
+- fabric;
+- metal;
+- painted surfaces;
+- logos;
+- real product highlights / finish.
 
-生成 brand-system.json 和 brand-style-guide.md。所有图片计划引用同一版本号。更新品牌系统时记录变更，避免同一套图混用不同风格版本。
+Product color correction requires a separate evidence / authorization basis.
+
+## MUST NOT
+
+- deform the logo;
+- add certifications / partner logos without evidence;
+- recolor product to match brand palette;
+- use brand styling to hide product-identity mismatches.
+
+## China-commerce typography
+
+For Chinese detail pages:
+- define title, subtitle, body, number, unit, and disclaimer styles;
+- keep mobile readability in mind;
+- ensure fonts are available and appropriately licensed;
+- use programmatic / design-tool text for final copy.
+
+## Outputs
+
+Create:
+- \`brand-system.json\`
+- \`brand-style-guide.md\`
+
+All planned assets SHOULD reference a brand-system version.

@@ -1,53 +1,51 @@
-# 平台图片导出预检
+# Marketplace Export Checklist
 
-## 基本原则
+## Before export
 
-淘宝、天猫、京东、拼多多的图片槽位、类目要求、尺寸、格式、体积和文字规则可能随平台、类目、广告位及时间变化。本参考文件是核对清单，不是平台规范数据库。
+Record:
+- marketplace;
+- product category;
+- image slot;
+- official / seller-backend rule source;
+- verification date;
+- target surface / device if relevant.
 
-**禁止在未核验时硬编码或猜测像素尺寸、文件大小、主图数量和文字占比。**
+## Verify
 
-## 每个平台建立独立配置
+- width;
+- height;
+- aspect ratio;
+- minimum resolution;
+- file format;
+- file size;
+- transparency restrictions;
+- background requirements;
+- text / logo / watermark restrictions;
+- detail-page width / segmentation rules;
+- color mode;
+- category-specific rules;
+- filename conventions.
 
-每次项目导出前，记录：
+## Export operations
 
-- 平台与店铺/类目。
-- 图片槽位：主图、视频封面、SKU 图、详情页、活动图等。
-- 官方/卖家后台规则链接或规则截图。
-- 核验日期与核验人。
-- 图片比例、宽高、格式、文件大小限制。
-- 背景、边框、文字、Logo、水印和促销标识要求。
-- 详情页宽度、单屏高度、切片或长图限制。
-- 透明背景是否允许。
-- 是否有移动端/PC 端差异。
+Allowed:
+- uniform resize;
+- crop;
+- padding;
+- compression;
+- format conversion;
+- naming.
 
-## 平台预检记录模板
+Not allowed:
+- non-uniform product stretch;
+- generative product repair;
+- adding unverified claims;
+- changing SKU identity during export.
 
-| 字段 | 淘宝 | 天猫 | 京东 | 拼多多 |
-|---|---|---|---|---|
-| 店铺类目 | 待填写 | 待填写 | 待填写 | 待填写 |
-| 槽位名称 | 待核验 | 待核验 | 待核验 | 待核验 |
-| 宽 × 高 | 待核验 | 待核验 | 待核验 | 待核验 |
-| 比例 | 待核验 | 待核验 | 待核验 | 待核验 |
-| 格式/体积 | 待核验 | 待核验 | 待核验 | 待核验 |
-| 文字/Logo 规则 | 待核验 | 待核验 | 待核验 | 待核验 |
-| 详情页限制 | 待核验 | 待核验 | 待核验 | 待核验 |
-| 规则来源 | 必填 | 必填 | 必填 | 必填 |
-| 核验日期 | 必填 | 必填 | 必填 | 必填 |
+## China marketplace notes / 中国电商
 
-## 导出步骤
+淘宝、天猫、京东、拼多多的规则必须按当前类目和卖家后台核验。
 
-1. 用户选择平台、店铺类目和图片槽位。
-2. 查找当前卖家后台或官方帮助文档的要求；若无法访问，要求用户提供后台截图/规则。
-3. 将核验结果写入项目的 platform profile，不写入公共 Skill 仓库。
-4. 从 master 图片生成平台版本：裁切、留白、缩放、压缩；不得拉伸商品。
-5. 检查文件尺寸、格式、大小、比例和命名。
-6. 检查裁切是否切掉商品、卖点文字或必要安全信息。
-7. QA 通过后交付用户手动上传。
+用户指定的“4:9”“1:1”等设计比例可以作为交付要求，但不能自动解释为所有平台的统一官方规范。
 
-## 状态定义
-
-- VERIFIED：规则来源与核验日期齐全，导出参数匹配。
-- NEEDS_REVIEW：有规则但部分字段未核验。
-- BLOCKED：无可靠规则来源或文件不符合要求。
-
-任何平台均不得仅凭通用模板宣称合规。
+如果平台规则不完整，使用 \`NEEDS_REVIEW\` 或 \`BLOCKED\`，不要声称已合规。

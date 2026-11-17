@@ -1,81 +1,95 @@
 ---
 name: lifestyle-scene-composite
-description: 为电商商品制作有尺度依据的生活方式场景图：先规划相机、接触平面和参照物，再生成空场景并合成真实商品像素，避免商品大小、透视和结构失真。
+description: Build product lifestyle scenes by generating or sourcing an empty environment, calibrating scale and perspective, then compositing the authoritative product pixels without generative redraw.
 ---
 
 # Lifestyle Scene Composite
 
-## 目标
+## Objective
 
-创建真实商品的生活方式场景图。AI 主要生成环境、空间、非商品道具和光氛围；真实商品主体来自用户当前 SKU 的照片或可信 CAD/3D 资产。**必须先完成尺度与透视规划，再生成/合成场景。**
+Place a real SKU into a believable lifestyle environment without changing the product.
 
-## 前置条件
+## Required inputs
 
-必须读取：
-- product-identity.json：产品轮廓、结构、权威视角和锁定区。
-- product-dimensions.json：已验证物理尺寸、轴定义、测量状态和来源。
-- scale-calibration.json：场景坐标、相机、接触平面、参照物和校准状态。
-- product-reference-audit：可用商品视角与缺失素材。
+- \`product-identity.json\`
+- \`product-dimensions.json\`
+- \`scale-calibration.json\`
+- authoritative product view or verified CAD/3D
+- source audit
 
-缺少尺寸或尺度证据时，不得把输出标为比例准确。可制作不含强尺度暗示的氛围概念图，但必须标注 SCALE_UNVERIFIED。
+## Correct pipeline
 
-## 工作流程
+\`\`\`text
+1. select a supported product view
+2. plan contact plane + scale + camera
+3. generate EMPTY scene
+4. create product alpha mask
+5. composite ORIGINAL PRODUCT RGB
+6. add independent contact / cast shadows
+7. run identity + scale + composite QA
+\`\`\`
 
-### 1. 选择匹配的产品视角
-- 选择与目标场景相机方向、产品接触面和可见侧面最接近的真实照片。
-- 记录源图相机高度、俯仰、方位和透视特征（未知则明确未知）。
-- 单张正面图不能提供真实背面/侧面；需要补拍或可信 CAD/3D。
-- 若视角明显不匹配，不用大幅透视变形来迁就背景。
+## Empty scene generation
 
-### 2. 规划场景尺度
-- 从 product-dimensions.json 读取产品真实长宽高及轴定义。
-- 从 scale-calibration.json 读取场景平面、产品锚点、接触点、参照物和相机投影。
-- 只有尺寸已知且处于可比较平面/深度的参照物才能承担尺度校准。
-- 不把 AI 生成的桌子、沙发、门框或人物默认视为标准尺寸。
-- 对透视场景，考虑深度引起的投影变化；不可对所有物体使用同一像素缩放系数。
-- 记录尺度状态：METRICALLY_GROUNDED / VISUALLY_APPROXIMATED / SCALE_UNVERIFIED。
+Background generation MAY create:
+- room;
+- floor / table / wall;
+- non-product props;
+- lighting;
+- negative space.
 
-### 3. 生成空场景
-Prompt 应明确：
-- 空间类型、使用环境和风格。
-- 相机位置、高度、方向、焦距观感和画幅。
-- 地面/桌面/墙面接触平面、消失点和光源方向。
-- 产品占位框、接触点、朝向和预留留白。
-- 参照物及其尺寸/位置（仅在已知时）。
-- 道具清单；不得遮挡商品身份关键部位。
-- 负面约束：no target product, no similar product, no duplicate product, no text, no logo。
+Prompt SHOULD include:
+- camera direction;
+- perspective;
+- contact plane;
+- expected product placement area;
+- lighting direction;
+- negative constraints such as:
+  \`no target product, no product duplicate, no similar product, no text, no logo\`.
 
-优先在真实单位的 3D 场景中布置产品占位和参照物。纯 2D 生图时，将比例状态标记为视觉近似，除非有可靠的平面/相机标定证据。
+## MUST
 
-### 4. 分割与合成真实商品
-- 分割模型只生成 Alpha Mask；商品 RGB 必须来自原始照片。
-- 检查孔洞、镂空、细杆、透明件、浅色边缘和木纹边界。
-- 商品只允许整体等比缩放、平移和合理旋转；不能拉伸、液化或重绘身份关键区。
-- 产品视角与背景不匹配时，重做背景或换用正确视角；不要扭曲商品适配场景。
-- 仅在商品后方建立独立接触阴影层，不覆盖商品 RGB。
+- use a source product view compatible with the scene camera;
+- preserve product geometry;
+- place with uniform scaling;
+- align contact plane and gravity;
+- keep product and scene shadows separate;
+- record scale state.
 
-### 5. 处理环境光和接触关系
-- 对齐产品与场景的接触平面、重力方向、投影方向和遮挡顺序。
-- 接触阴影应对应真实支撑点；悬挂产品应有可信固定方式。
-- 背景中的同类道具不能被误认为随商品售卖的配件。
-- 商品大小不能只凭“视觉好看”任意调整；必须服从尺度校准方案。
+## MUST NOT
 
-### 6. 质检
-检查：
-- 产品轮廓、部件、孔位、纹理和颜色是否保持。
-- 产品与地面/桌面/墙面接触是否真实。
-- 商品与已知参照物的比例是否符合尺度方案。
-- 透视、消失点、相机高度和光向是否协调。
-- 是否出现重复商品、虚构配件或不合理道具。
-- 输出图是否清楚标注尺度验证等级。
+- generate the product together with the scene when source-pixel fidelity is required;
+- distort product perspective to fit the background;
+- use AI furniture as an undocumented metric reference;
+- redraw product texture / hardware / supports;
+- claim accurate real-world scale when \`SCALE_UNVERIFIED\`.
 
-## 输出
+## View mismatch
 
-保存：
-- scene-brief.md 与空场景 Prompt。
-- 空场景原图、源商品图、Mask、cutout、独立阴影层和合成图。
-- scale-calibration.json 及尺度规划草图。
-- 生成工具/模型、参数、时间、尺寸和版本记录。
-- lifestyle-qa.md：身份、尺度、透视、接触点、光影、边缘和限制。
+If the product source view does not match the scene:
+1. regenerate / change the background;
+2. use another verified source view;
+3. use verified CAD/3D.
 
-默认 QA 状态为 REVIEW，等待人工复核。若没有尺寸或参照证据，禁止写“真实比例”“精准尺寸场景”等表述。
+Do not warp the product to fake a new camera view.
+
+## Output
+
+Save:
+- scene brief;
+- empty background;
+- source product;
+- mask;
+- cutout;
+- shadow layers;
+- composite;
+- scale-calibration reference;
+- provenance record;
+- \`lifestyle-qa.md\`.
+
+## Gate
+
+A scene can be visually attractive and still fail.
+
+Set \`FAIL\` when product identity changes.
+Set \`REVIEW\` when visual placement is plausible but metric scale is not grounded.

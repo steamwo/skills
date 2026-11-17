@@ -1,141 +1,124 @@
 ---
 name: wood-product-fidelity
-description: 为无漆原木家居/日用品制作完整电商产品图素材。适用于淘宝、天猫、京东、拼多多；从真实商品照片规划主图、场景图、卖点图、细节图、规格图和详情页。以木纹、结构、颜色和无漆质感保真为硬性约束。可在 Claude Code、Codex、Cursor 中使用。
+description: Enforce fidelity-first production for real wood e-commerce products, preserving source wood grain, knots, joints, hardware, color, surface appearance, and geometry while using AI primarily for empty scenes, people, props, and layout.
 ---
 
-# Wood Product Fidelity｜原木电商产品图
+# Wood Product Fidelity
 
-## 核心目标
+## Objective
 
-本 Skill 的最终目标是**生产可用于电商商品详情页与商品展示的产品图片素材**，不是单纯抠图，也不是只做一张白底图。
+Produce e-commerce visuals for real wood products without turning the product into a generic AI recreation.
 
-产品保真是所有电商图片的硬性质量约束：AI 可以负责视觉策划、背景、场景、版式和图形元素，但不得擅自重绘真实原木产品的木纹、木节、拼缝、孔位、榫卯、倒角、尺寸比例或天然色差。
+This is a material-specific fidelity layer. It complements the general e-commerce workflow.
 
-适用平台：淘宝、天猫、京东、拼多多。具体图片槽位尺寸、类目规则和文字限制必须以商家当前后台要求为准。
+## Applies to
 
-## 适用范围
+Examples:
+- wooden storage products;
+- trays;
+- furniture;
+- kitchen / household goods;
+- exercise accessories;
+- other products where wood grain and construction are identity-relevant.
 
-- 无漆原木、天然木色的置物架、托盘、桌椅、小家具、厨具及其他家居日用品。
-- 用户提供真实商品照片、SKU 资料和（可选）品牌视觉资料，要求制作电商主图、辅图、场景图、卖点图、细节图、规格图、详情页分屏和详情长图。
-- 本 Skill 是 Agent 指令、参考规范与辅助脚本集合；**不自带图像生成模型**，也不自动调用付费 API。
+## Core rule
 
-## 交付目标：一套电商产品图
+If a real product photograph is available:
 
-收到商品资料后，先按商品实际情况制定图片清单。默认建议规划以下素材，不代表所有类目都必须使用相同数量：
+**MUST use source product pixels as the default.**
 
-1. **主图**：干净、清楚地展示真实商品主体；遵循对应平台当前主图要求。
-2. **辅图 / 卖点图**：用真实商品图配合准确的中文文案、图标和版式表达卖点。
-3. **场景图**：将真实商品主体合成到 AI 生成或实拍的家居场景中，展示使用氛围。
-4. **细节图**：木纹、木节、端面、拼接、螺丝、孔位、倒角等，只使用真实照片可支持的细节。
-5. **规格尺寸图**：仅使用商家确认的尺寸、数量、重量、材质和包装数据。
-6. **详情页分屏 / 长图**：按“产品整体—核心卖点—使用场景—材质细节—结构细节—尺寸参数—包装清单”等逻辑编排；缺乏证据的模块不生成虚假内容。
-7. **平台导出**：按淘宝、天猫、京东、拼多多各自当前后台要求分别导出，不能假设一套尺寸适配所有平台。
+Wood grain is product evidence, not decorative texture.
 
-如果用户只提供一张照片，先明确它能支持哪些视图与内容。不要为了凑齐图片数量而编造背面、侧面、端面、内部结构或使用功能；对缺失素材给出补拍清单。
+## MUST preserve
 
-## 开始前：素材盘点
+- wood grain direction;
+- knots and natural variation;
+- end-grain appearance;
+- real color variation;
+- joints;
+- seams;
+- holes;
+- fasteners;
+- chamfers / roundovers;
+- edge profiles;
+- component count;
+- visible thickness / proportions;
+- confirmed finish appearance.
 
-1. 找到用户提供的**真实商品图**。没有照片就先请用户提供；不要用搜索图或模型想象替代。
-2. 记录图片实际包含的商品和构图；不要自行推断用户售卖的是单件、套装或组合装。涉及数量文案时向用户确认。
-3. 确认照片覆盖的视角。单张照片不得用于“还原”未展示的背面、内部或侧面结构。
-4. 收集 SKU 资料：商品名称、木种（若已确认）、表面处理、尺寸、售卖数量、包装清单、真实卖点、品牌与 Logo。未经证实的内容标记为「待确认」。
-5. 默认使用**像素保真路线**；只有经用户明确同意才探索重绘商品本体。重绘结果只能作为创意预览，不能自动标为真实商品图。
+## MUST NOT
 
-## 生产流程
+- smooth away natural variation just to make the wood “premium”;
+- clone or invent grain;
+- change end grain;
+- replace real screws / joints with cleaner AI geometry;
+- infer wood species from appearance alone;
+- convert an unconfirmed matte / raw appearance into an oil / lacquer / wax claim;
+- infer “food safe”, “zero formaldehyde”, “eco certified”, or similar claims from visual appearance;
+- generatively redraw the full product and mark it as fidelity-preserved.
 
-### 阶段 A：产品真实性底稿
+## Production route
 
-- 保留原始照片，不覆盖、不修改源文件。
-- 抠图得到 Alpha Mask；检查镂空、细杆、边缘和木色与背景相近的区域。
-- 将商品主体 RGB 与 Mask 分离保存。
-- 建立产品事实清单：可见结构、已确认参数、未知信息、禁止生成的区域。
+\`\`\`text
+real wood product photo
+→ reference audit
+→ wood-specific identity lock
+→ reviewed alpha mask
+→ ORIGINAL RGB cutout
+→ empty generated scene
+→ scale-aware composite
+→ independent text / graphics
+→ wood fidelity QA
+\`\`\`
 
-### 阶段 B：电商图片策划
+## Detail images
 
-先输出一份图片清单，逐张写明：
-- 图片用途（主图、辅图、场景、细节、规格、详情分屏）。
-- 画面构图与商品占比。
-- 所需真实照片或商品资料。
-- 可以由 AI 生成的背景、道具和装饰。
-- 必须由程序排版的中文文案、尺寸和图标。
-- 该图的保真风险与验收点。
+Wood detail graphics SHOULD use:
+- real high-resolution crops; or
+- additional real macro photos.
 
-先向用户展示策划；如果涉及付费生图调用，先确认预算和调用次数。
+Do not “AI enhance” missing texture into new grain / knots.
 
-### 阶段 C：生成与合成
+If detail resolution is insufficient, request another photo instead of hallucinating detail.
 
-- 主图、卖点图和细节图：优先使用真实商品像素，不重绘商品主体。
-- 场景图：AI 只生成**不含商品本体**的空场景，再将真实商品抠图合成；透视、地面/桌面、视角必须兼容。
-- 细节图：从真实高分辨率原图裁切，必要时要求补拍微距。
-- 规格图：由真实参数和程序化排版生成，不让图像模型猜尺寸或生成错字。
-- 详情页：将已通过检查的图片、真实卖点和排版模块组合成分屏与长图。
-- 不对整张商品照片直接使用 img2img 或扩散模型重绘，除非用户明确要求创意预览并接受商品失真风险。
+## Scene images
 
-### 阶段 D：质检与平台导出
+AI SHOULD generate the environment without the target wood product.
 
-逐张检查商品外观、木纹、结构、色彩、文案、尺寸、文件格式和平台槽位要求。质检不通过的图片标记为需返工，不得自动上架。
+Avoid confusing background props that visually resemble the product or could be mistaken as included items.
 
-## 立即可执行的基础处理（1 张图）
+Lighting MAY be matched through background / shadow design, but product surface color and grain SHOULD remain source-based.
 
-仓库根目录中执行（Python 3.11+）：
+## Product claims
 
-```bash
-python -m pip install -r wood-product-fidelity/requirements.txt
-python wood-product-fidelity/scripts/render.py --input "真实照片.jpg" --output "output/sku001"
-```
+Use only evidence-backed:
+- species;
+- finish;
+- dimensions;
+- weight;
+- load capacity;
+- certifications;
+- included items.
 
-基础脚本当前生成：
-- `product-cutout.png`：真实 RGB 像素加抠图 Alpha。
-- `mask.png`：自动分割结果，需要手工确认镂空与边缘。
-- `01-white.png`：白底主图草稿。
-- `02-neutral.png`：中性背景展示图草稿。
-- `qa-report.json`：像素合成检查和待人工复核事项。
+Visible wood appearance alone is not proof of these facts.
 
-如果已使用生图工具制作**没有该商品**的场景背景，另加：
+## China marketplace notes / 中国电商
 
-```bash
-python wood-product-fidelity/scripts/render.py --input "真实照片.jpg" --background "空场景.png" --output "output/sku001"
-```
+原木类商品详情页常见“材质、木纹、结构、尺寸、使用场景”模块，但这些模块必须建立在真实商品资料上。
 
-还会输出 `03-scene.png`。注意：基础脚本是整套电商图生产的**保真底层工具**，不是一键完成全部主图、卖点图和详情页的成品系统。后续应在 Agent 工作流中调用它，再逐步完成图片策划、版式、详情页和平台导出。
+- 木纹特写：用真实裁切 / 补拍。
+- 木种：商家确认或文档支持。
+- 尺寸：只用已确认规格。
+- “环保”“无甲醛”“食品级”等词：必须有证据，不能根据原木外观推断。
+- 中文文案、尺寸线和参数表由排版工具制作。
 
-### 如果调用失败
+## QA
 
-- `No module named rembg`：根据 requirements 安装依赖。
-- 首次运行可能需要从网络下载分割模型，失败时检查网络和依赖。
-- 若商品主体镂空、浅木色与白墙接近、细杆交错，自动 Mask 可能严重错误。**暂停合成，修正 Mask 或使用用户手工抠图透明 PNG**，不能仅凭通过自动脚本就判定保真。
-- 有现成透明 PNG 时，可将其直接作为 `--input`，脚本保留已有 Alpha，不调用 rembg。
+A wood-product image is \`FAIL\` if:
+- grain / hardware / geometry is materially regenerated;
+- a generated lookalike replaces the real product;
+- finish / species claims are invented;
+- source-product details change across images.
 
-## 场景图的正确生成方式
+## Tool note
 
-**双轨工作流：** A 轨保留实物 RGB + Alpha Mask；B 轨只生成无商品本体的场景；最后合成。
-
-如果 Agent 已配置图像生成能力，可要求：
-> 请为这件原木商品生成一张适合电商场景图的室内空背景，不要出现商品本体或相似木制品。保留主体摆放空间，光线、视角、地平面必须兼容真实商品照片。
-
-将背景保存为本地图片，然后运行 `render.py --background`。木头主体内部的高光、色彩、纹理原则上保持实物照片。
-
-## 详情图与卖点图
-
-- 卖点图：用通过质检的产品 PNG + 程序化中文文字及图标排版；所有描述须由商家提供。
-- 木纹特写：只使用真实高像素局部裁切或另拍微距；不得“AI 放大”成不存在的木节或纹路。
-- 结构图：使用真实细节照片，孔位、榫卯、板材数量、厚度、结构不能补画。
-- 规格图：只使用用户确认的参数。
-- 详情页：按真实卖点组织模块，不为了凑版面虚构功能、材质或认证。
-- 不足的视角：要求补拍；绝不虚构侧面、背面、端面。
-- 生成主图/详情后检查对应卖家后台的最新类目和图片规范，**不宣称自动合规**。
-
-## 质检顺序（必须）
-
-1. 查看 `mask.png` 和 `product-cutout.png`，检查孔洞、木条缝隙、边缘、透明部位。
-2. 查看每张电商成品图，确认角度、比例、木纹、色彩、无漆哑光质感没有被修改或误裁。
-3. 阅读 `qa-report.json`。其中只证明完全不透明的主体区域在程序合成时没有被覆盖；**不代表抠图、结构、光照或平台合规自动通过**。
-4. 对背景接触阴影、比例、卖点文案、木种与规格做人工核验。
-5. 检查主图、辅图、场景图、细节图、规格图和详情页是否构成完整且信息一致的商品展示。
-6. 不允许把未经审核的生成文件直接自动上传至电商后台。
-
-## 推荐 Agent 执行话术
-
-> 使用 wood-product-fidelity Skill 为这件无漆原木商品制作电商产品图套图。先盘点真实照片与 SKU 信息，再给我一份主图、辅图、场景图、细节图、规格图和详情页分屏的图片策划。所有图片必须保留真实木纹、天然色差、孔位、拼缝和结构；AI 负责背景与视觉排版，不得重绘商品本体。先完成基础白底图和场景合成样张，检查通过后再扩展整套图。缺少真实视角或参数时列出补拍/补资料清单，不要编造。
-
-更详细的操作、材质要求见 `README.md` 与 `references/wood-rules.md`。
+The existing \`scripts/render.py\` can support cutout / simple background compositing. It is a fidelity utility, not a substitute for the full orchestrated workflow.
