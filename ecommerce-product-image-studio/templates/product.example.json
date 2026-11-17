@@ -1,0 +1,65 @@
+{
+  "sku": "WOOD-001",
+  "product_name": "待填写商品名称",
+  "category": "home_and_living",
+  "sale_unit": {
+    "type": "unknown",
+    "quantity": null,
+    "included_items": [],
+    "evidence": null
+  },
+  "material": {
+    "primary": "wood",
+    "species": {
+      "value": null,
+      "status": "unknown",
+      "evidence": null
+    },
+    "surface_finish": {
+      "value": "unpainted",
+      "status": "user_confirmed",
+      "evidence": "用户确认：原木制品，无漆"
+    },
+    "grain_direction": "preserve_from_reference",
+    "surface_gloss": "preserve_from_reference"
+  },
+  "dimensions": {
+    "length_mm": null,
+    "width_mm": null,
+    "height_mm": null,
+    "status": "unknown",
+    "evidence": null
+  },
+  "claims": [],
+  "product_identity": {
+    "must_preserve": [
+      "outer silhouette",
+      "proportions",
+      "component count",
+      "joint positions",
+      "holes and fasteners",
+      "edge profiles",
+      "wood grain",
+      "knots and natural variation",
+      "surface finish"
+    ],
+    "must_not_invent": [
+      "unseen back or bottom construction",
+      "wood species",
+      "dimensions",
+      "load capacity",
+      "certifications",
+      "health or environmental claims"
+    ]
+  },
+  "reference_images": [
+    {
+      "file": "input/front.jpg",
+      "view": "front_or_three_quarter",
+      "resolution": null,
+      "supports": ["visible silhouette", "visible grain", "visible hardware"],
+      "limitations": ["does not prove unseen sides or internal construction"]
+    }
+  ],
+  "platform_targets": ["taobao", "tmall", "jd", "pdd"]
+}
