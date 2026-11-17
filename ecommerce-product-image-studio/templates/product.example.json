@@ -6,29 +6,49 @@
     "type": "unknown",
     "quantity": null,
     "included_items": [],
-    "evidence": null
+    "evidence": []
   },
   "material": {
     "primary": "wood",
     "species": {
       "value": null,
       "status": "unknown",
-      "evidence": null
+      "evidence": []
     },
     "surface_finish": {
-      "value": "unpainted",
-      "status": "user_confirmed",
-      "evidence": "用户确认：原木制品，无漆"
+      "value": null,
+      "status": "unknown",
+      "evidence": []
     },
     "grain_direction": "preserve_from_reference",
     "surface_gloss": "preserve_from_reference"
   },
   "dimensions": {
+    "unit": "mm",
     "length_mm": null,
     "width_mm": null,
     "height_mm": null,
+    "weight_g": null,
     "status": "unknown",
-    "evidence": null
+    "measurement_method": "unknown",
+    "measurement_state": "assembled",
+    "axis_definition": {
+      "length": "按商品主视图定义的左右/主方向，需按当前 SKU 确认",
+      "width": "前后/深度方向，需按当前 SKU 确认",
+      "height": "支撑平面至最高点，需按当前 SKU 确认"
+    },
+    "tolerance_mm": null,
+    "evidence": [],
+    "notes": []
+  },
+  "packaging_dimensions": {
+    "unit": "mm",
+    "length_mm": null,
+    "width_mm": null,
+    "height_mm": null,
+    "weight_g": null,
+    "status": "unknown",
+    "evidence": []
   },
   "claims": [],
   "product_identity": {
@@ -49,7 +69,8 @@
       "dimensions",
       "load capacity",
       "certifications",
-      "health or environmental claims"
+      "health or environmental claims",
+      "sale quantity or included accessories"
     ]
   },
   "reference_images": [
@@ -57,8 +78,15 @@
       "file": "input/front.jpg",
       "view": "front_or_three_quarter",
       "resolution": null,
-      "supports": ["visible silhouette", "visible grain", "visible hardware"],
-      "limitations": ["does not prove unseen sides or internal construction"]
+      "supports": [
+        "visible silhouette",
+        "visible grain",
+        "visible hardware"
+      ],
+      "limitations": [
+        "does not prove unseen sides or internal construction",
+        "does not establish full 3D dimensions without a scale reference"
+      ]
     }
   ],
   "platform_targets": ["taobao", "tmall", "jd", "pdd"]

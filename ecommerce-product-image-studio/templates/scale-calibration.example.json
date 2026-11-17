@@ -1,0 +1,59 @@
+{
+  "sku": "WOOD-001",
+  "status": "SCALE_UNVERIFIED",
+  "unit": "mm",
+  "product_dimension_source": "../product.json#/dimensions",
+  "scene": {
+    "scene_file": null,
+    "scene_type": "living_room",
+    "coordinate_system": {
+      "origin": "product_ground_contact_point",
+      "x_axis": "left_to_right",
+      "y_axis": "front_to_back",
+      "z_axis": "vertical",
+      "unit": "mm"
+    },
+    "contact_planes": [
+      {
+        "name": "floor",
+        "type": "ground_plane",
+        "height_mm": 0,
+        "evidence": "scene_design_reference_or_3D_scene"
+      }
+    ]
+  },
+  "camera": {
+    "projection": "unknown",
+    "camera_height_mm": null,
+    "yaw_deg": null,
+    "pitch_deg": null,
+    "roll_deg": null,
+    "focal_length_mm": null,
+    "field_of_view_deg": null,
+    "vanishing_points": [],
+    "known_parameters": [],
+    "unknown_parameters": []
+  },
+  "reference_objects": [],
+  "product_placement": {
+    "anchor": "ground_contact_point",
+    "rotation_deg": null,
+    "uniform_scale_only": true,
+    "position_mm": null,
+    "validation": "not_checked"
+  },
+  "person_scale": {
+    "applicable": false,
+    "height_mm": null,
+    "status": "unknown",
+    "evidence": []
+  },
+  "method": "unknown",
+  "assumptions": [],
+  "uncertainties": [],
+  "limitations": [
+    "A single unscaled photograph cannot establish complete 3D dimensions.",
+    "Visual plausibility is not metric verification."
+  ],
+  "approval_required": true
+}

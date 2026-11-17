@@ -1,53 +1,70 @@
 ---
 name: ecommerce-gallery-planner
-description: 为淘宝、天猫、京东、拼多多商品策划主图、辅图、场景图、卖点图、细节图、规格图和详情页内容，输出可执行的图片清单。
+description: 根据已核实的 SKU 事实、物理尺寸、平台槽位和购买决策路径，规划多张差异化电商主图、场景/人物图、尺寸规格图、材质细节图、包装图和详情页模块。
 ---
 
 # Ecommerce Gallery Planner
 
 ## 目标
 
-把商品事实和购买决策路径转化为一套完整图片计划。先规划再制作，不机械套用固定张数。
+把商品事实、产品身份、物理尺寸和购买决策路径转化为可执行的完整图片计划。规划的是一套有明确分工的图片，不是同一张图反复换背景。
 
-## 输入
+## 必需输入
 
-- product.json 与 product-identity.json。
-- 素材审查报告和缺失素材清单。
-- 品牌视觉配置（如有）。
-- 目标平台、店铺类目和图片槽位。
-- 用户确认的商品卖点、尺寸、包装和价格信息（如需要）。
+- product.json、product-identity.json、product-dimensions.json。
+- product-reference-audit 的素材审查、证据矩阵和缺失素材清单。
+- scale-calibration.json（任何比例型场景图/人物图必须有）。
+- brand.json（如有）。
+- 目标平台、店铺类目、广告位和当前图片槽位规则。
 
-## 推荐内容模块
+## 基准图片组
 
-1. 主图：一眼识别商品，真实主体清晰。
-2. 核心卖点图：只呈现已证实的功能/特点。
-3. 使用场景图：真实商品放入兼容的生活环境。
-4. 材质细节图：来自真实照片的木纹、纹理、表面处理特写。
-5. 结构细节图：孔位、接缝、五金、连接和边缘。
-6. 尺寸规格图：只使用已确认参数和单位。
-7. 包装/配件图：准确展示真实售卖内容。
-8. 详情页模块：按购买决策顺序组织信息。
-9. 对比图：仅在对比依据可靠且表达公平时制作。
+先核验目标平台当前主图槽位和详情页要求，再确定数量。未指定平台时规划通用母版，不宣称符合任何平台槽位。通常应覆盖以下不同用途：
 
-## 每张图的计划字段
+| 图片角色 | 内容与验收重点 |
+|---|---|
+| 01 首图/核心主图 | 一眼识别商品；主体清晰；商品本体真实 |
+| 02 其他主图视角 | 展示结构/侧面/背面；必须有对应实拍或可靠 CAD/3D |
+| 03 核心卖点图 | 只呈现已证实的功能、材质或差异 |
+| 04 生活场景图 | 产品进入真实用途环境；比例和透视经过校准 |
+| 05 人物使用场景图 | 仅在使用逻辑适用时制作；人物尺度、动作和接触合理 |
+| 06 尺寸规格图 | 使用已确认尺寸、单位、轴定义和测量口径 |
+| 07 材质/结构细节图 | 真实细节来源；不补造木纹、孔位或工艺 |
+| 08 包装/配件/售卖清单图 | 只按当前 SKU 和包装证据呈现 |
+| 09 详情页模块 | 商品整体、价值点、场景、细节、尺寸、包装/注意事项 |
 
-- id、role、platform、slot、output_path。
-- purpose、headline、body_copy、evidence_sources。
-- source_images、required_missing_assets。
-- composition、camera_view、background、lighting、props、negative_space。
-- product_pixel_policy、generation_method、aspect_ratio_source。
+以上是内容角色，不是每个商品都必须凑齐九张。每个 SKU 至少应规划多张彼此不同的主图/展示图；若某角色缺少证据，应标记 BLOCKED/NOT_APPLICABLE，并说明补充资料，不得虚构填充。
+
+## 图片计划字段
+
+每张图片记录：
+- id、sku、role、platform、slot、output_path、priority。
+- purpose、target_question、headline、body_copy、evidence_sources。
+- source_images、source_view、required_missing_assets。
+- composition、camera_view、camera_height、lens_look、perspective、background、lighting、props、negative_space。
+- product_pixel_policy、product_pose、product_anchor、contact_plane。
+- scale_status、scale_calibration_ref、reference_objects、person_ref（如适用）。
+- generation_method、layer_plan、text_overlay_plan、aspect_ratio_source。
 - risks、acceptance_criteria、status。
 
-## 策划原则
+## 规划规则
 
-- 一张图只承担一个主要信息任务。
-- 不把未知参数写进文案，不编造卖点。
-- 不为了凑张数重复相同内容。
-- 不同平台的图槽位和尺寸需单独核验。
-- 细节图不得用 AI 创造源图不存在的纹理。
-- 套装、配件和数量必须有 SKU/包装资料支持。
-- 图片文字应在生图后单独排版。
+1. 一张图只承担一个主要购买决策任务；不要重复信息。
+2. 首图先让用户识别商品，不堆叠未经证实的卖点。
+3. 其他视角必须有同 SKU 的实拍或可信 CAD/3D 支持；不能让模型猜背面。
+4. 场景图必须先有尺寸/尺度计划。尺寸未知时标记 SCALE_UNVERIFIED，不用门、沙发、人物等制造“看似准确”的比例。
+5. 人物图必须说明人物动作、身高依据/估算状态、接触点和遮挡关系。
+6. 尺寸图只用 product-dimensions.json 中可核实的数值；未知轴不画数字。
+7. 包装、配件、数量和套装内容必须来自 SKU/包装证据。
+8. 每个卖点对应一个 evidence_source；没有证据就删去或标记待确认。
+9. 平台像素尺寸、格式、体积和槽位按当期官方/卖家后台核验，不硬编码。
+10. 每张图指定 identity gate、scale gate、copy gate 和最终验收标准。
 
 ## 输出
 
-生成 image-plan.json 和 plan-summary.md。标明哪些图可以立即制作、哪些图需要补拍、哪些图需要用户确认。先展示计划，得到确认后再批量制作。
+- image-plan.json：机器可读的逐图计划。
+- plan-summary.md：图片列表、用途、优先级、数量和制作顺序。
+- blocked-assets.md：因缺少视角、尺寸、人物参考、包装或卖点证据而不能制作的图片。
+- copy-deck.md：最终文案与事实来源。
+
+先展示计划、风险和缺失素材。得到确认后批量制作；用户已明确要求直接执行时，先做代表性样张并执行 QA。
