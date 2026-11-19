@@ -27,6 +27,7 @@ Exact source pixels are not the default objective for every asset.
 Read:
 - task input / intake;
 - product identity;
+- real-world scale contract;
 - reference generation contract;
 - platform commerce style contract + profiles;
 - commercial scene router;
@@ -54,6 +55,8 @@ Create one concise \`PRODUCT IDENTITY LOCK\` and reuse it verbatim across the se
 ## Stage 3 — Variant / dimension model
 
 Build variant matrix and dimension records where needed.
+
+When verified physical dimensions exist for a scale-bearing scene, create a `REAL-WORLD SCALE LOCK` from those dimensions and relevant human / scene references.
 
 Unknown facts stay unknown.
 
@@ -111,7 +114,10 @@ For each generative asset, define:
 - props;
 - person action;
 - platform style;
-- scale reference where relevant.
+- scale reference where relevant;
+- `REAL-WORLD SCALE LOCK` when verified dimensions and scale-bearing context exist.
+
+Product occupancy is a composition target. It MUST NOT override verified real-world physical scale.
 
 ## Stage 9 — Generate candidates
 
@@ -133,7 +139,7 @@ one axis at a time.
 
 Rank candidates on commercial and factual dimensions.
 
-Reject hard identity / claim / anatomy failures.
+Reject hard identity / claim / anatomy / verified-scale failures.
 
 For a failed asset:
 - output targeted repair sentences;
@@ -177,6 +183,7 @@ A complete task means the requested final derivatives are actually accessible to
 - scene is physically implausible;
 - required text is wrong;
 - claim or dimension is invented;
+- verified product dimensions contradict apparent person / scene scale;
 - wrong variant appears;
 - person/product interaction is broken.
 
