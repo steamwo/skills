@@ -24,6 +24,7 @@ Each scene record SHOULD contain:
 - \`product_occupancy\`
 - \`props\`
 - \`scale_reference\`
+- \`real_world_scale_lock\` when activated
 - \`platform_style_profile\`
 - \`identity_lock_version\`
 
@@ -67,9 +68,22 @@ Camera at low three-quarter angle near floor level.
 Soft side daylight through a window, realistic contact shadows.
 The product remains a clear hero and occupies roughly 30–45% of the useful frame.
 Only a yoga mat, towel and one small dumbbell pair as supporting props.
+If verified dimensions exist, calibrate the bars against the athlete's hands / forearms and preserve those dimensions; do not enlarge them for prominence.
 No extra bars, no alternate handle design, no text.
 \`\`\`
 
+## Real-world scale routing
+
+For person-use or other scale-bearing scenes, read \`real-world-scale-contract.md\`.
+
+When verified dimensions exist:
+- inject the \`REAL-WORLD SCALE LOCK\` into the scene prompt;
+- name the relevant human / scene scale cue;
+- keep paired or repeated units at one consistent physical scale;
+- preserve contact plane and anchor geometry;
+- reject a composition that achieves salience by making the product physically too large.
+
+\`product_occupancy\` and \`real_world_scale\` are independent. A product can occupy a large part of the frame because the camera is close, but its apparent size relative to the person / scene must still agree with verified dimensions.
 ## Product occupancy heuristics
 
 Use as starting points:
