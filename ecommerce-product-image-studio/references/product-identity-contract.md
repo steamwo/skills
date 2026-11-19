@@ -61,6 +61,21 @@ Track evidence for:
 - certification;
 - function claims.
 
+## Real-world scale identity
+
+Verified dimensions are part of product identity when an asset contains a person or another useful scale-bearing reference.
+
+When relevant dimensions are `user_confirmed` or `document_verified`:
+- preserve them as a `REAL-WORLD SCALE LOCK`;
+- calibrate the product against hands, body parts, furniture, architecture, or other scene references as appropriate;
+- preserve one uniform physical scale across repeated / paired units;
+- do not enlarge the product merely to increase visual prominence;
+- treat perspective as projected appearance, not permission to change physical size.
+
+Visible proportions without metric evidence can guide qualitative consistency but MUST NOT be promoted into verified dimensions.
+
+See `real-world-scale-contract.md`.
+
 ## Product pixel contract
 
 When the user supplies an authoritative real product photo:
