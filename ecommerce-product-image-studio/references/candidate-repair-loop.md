@@ -44,6 +44,7 @@ Score separately:
 - \`platform_style_fit\`
 - \`lighting_realism\`
 - \`person_interaction\` when applicable
+- \`real_world_scale_fidelity\` when verified dimensions / scale references apply
 - \`text_readability\` when applicable
 - \`claim_truth\`
 
@@ -56,7 +57,8 @@ QA SHOULD output 1–3 specific repair instructions that can be appended to the 
 Examples:
 - product drift → restate exact geometry / component details;
 - scene too busy → reduce props and simplify background;
-- product too small → enforce occupancy / sharpest-element instruction;
+- product too small in frame → enforce occupancy / sharpest-element instruction without changing physical scale;
+- product too large / small relative to person → restate the verified dimensions, name the body scale reference, require uniform scaling, and explicitly forbid enlarging the product for prominence;
 - lighting conflict → specify one dominant light direction;
 - person contact wrong → specify exact hand / foot / support contact;
 - platform mismatch → append the relevant platform style lock;
