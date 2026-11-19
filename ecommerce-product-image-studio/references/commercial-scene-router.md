@@ -84,6 +84,7 @@ When verified dimensions exist:
 - reject a composition that achieves salience by making the product physically too large.
 
 \`product_occupancy\` and \`real_world_scale\` are independent. A product can occupy a large part of the frame because the camera is close, but its apparent size relative to the person / scene must still agree with verified dimensions.
+
 ## Product occupancy heuristics
 
 Use as starting points:
