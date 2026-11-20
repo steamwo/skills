@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "asset_id": "joint-detail-01",
+  "fidelity_mode": "REFERENCE_GENERATE",
+  "reference_ids": [
+    "reference-angle-02",
+    "reference-screw-03"
+  ],
+  "buyer_question": "How is the handle connected to the base?",
+  "asset_role": "identity-critical joint detail",
+  "shot": {
+    "camera": "close three-quarter detail view from slightly above",
+    "lighting": "soft directional daylight from camera-left",
+    "composition": "show one handle-to-base connection clearly; keep the screw and circular end grain visible",
+    "environment": "clean warm neutral studio surface",
+    "product_occupancy": "joint occupies about 70 percent of the useful frame",
+    "props": []
+  },
+  "hard_negatives": [
+    "do not place a screw in the circular end-grain face",
+    "do not merge the cylindrical handle into the triangular base"
+  ],
+  "repair_sentences": []
+}
