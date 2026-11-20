@@ -1,347 +1,265 @@
 ---
 name: ecommerce-product-image-studio
-description: Orchestrate a conversion-first ecommerce visual production system from real SKU references using identity and critical-geometry locks, approved semantic masters, evidence-bound copy, deterministic layout, platform style profiles, candidate repair, SKU variants, QA, and accountable delivery.
+description: Create commercially strong ecommerce product images from real SKU references with a lightweight workflow: understand the product, protect critical details, direct the image model with short visual prompts, write evidence-based copy, plan multi-image sets, and run simple visual QA.
 ---
 
 # Ecommerce Product Image Studio
 
 ## Objective
 
-Produce a **commercially strong, platform-aware, same-SKU image set** while remaining reliable on weaker models.
+Produce **commercially strong, same-SKU ecommerce images** without turning the workflow into a large agent system.
 
-Priority order:
-1. same-SKU identity;
-2. critical geometry / construction truth;
-3. truthful product facts and copy;
-4. buyer-decision / conversion job;
-5. platform commerce style fit;
-6. natural commercial photography;
-7. variant correctness;
-8. campaign consistency;
-9. efficient reuse / derivatives;
-10. official platform compliance.
+This skill is the main controller. Do not require other skills unless the user explicitly needs a specialized workflow.
 
-Exact source pixels are not the default objective for every asset, but identity-critical detail proof may require source pixels.
+Priority:
+1. product must still be the same SKU;
+2. critical visible construction must be correct;
+3. facts and copy must be truthful;
+4. the image should sell the product well;
+5. the set should feel visually coherent.
 
-## Execution model
+## Core idea
 
-Treat this skill as a **gated state machine**, not a long free-form prompt.
+Use the controller model as a **visual director**, not as a rules engine.
 
-Each stage produces a small durable artifact. A downstream stage MUST NOT silently invent missing upstream facts.
+The controller should:
+- inspect the real product references;
+- understand what visually defines the SKU;
+- decide what each image should communicate;
+- write a short, natural image prompt;
+- check the result;
+- repair only the failed detail.
 
-For weak-model execution:
-- prefer structured records over prose memory;
-- the controller outputs a small `prompt-job.json`, not a free-form image prompt;
-- compile the final image prompt with `scripts/prompt_compiler.py`;
-- keep stable locks outside the dynamic job and reuse them verbatim;
-- generate one visual job at a time;
-- approve semantic masters before layout;
-- separate copy generation from image generation;
-- repair the smallest failed asset/region;
-- never let a final collage become the first place product geometry is evaluated.
+Do not force the controller to produce large schemas, long state-machine records, or compiler-ready prompt fragments.
 
-## Required contracts
+## Step 1 — Make a short product brief
 
-Read:
-- task input / intake;
-- product identity;
-- critical geometry lock;
-- real-world scale contract;
-- reference generation contract;
-- platform commerce style contract + profiles;
-- commercial scene router;
-- buyer decision framework;
-- variant matrix;
-- campaign / brand visual system;
-- semantic master contract;
-- evidence-bound copy guard;
-- deterministic grid layout contract;
-- candidate repair loop;
-- output profile / detail module;
-- QA gates;
-- execution state / delivery gate.
+Study all authoritative product photos.
 
-## Stage 0 — Execution preflight
+Create a compact internal brief with only:
 
-Verify:
-- authoritative references are readable;
-- required generation/edit/layout tools exist;
-- output destination works;
-- requested platform/profile facts are known when needed.
+### Product
+- what the product is;
+- visible components;
+- visible material / finish;
+- important proportions;
+- visible hardware / joints.
 
-Write `execution-preflight.json`.
+### Critical details
+List only the details that would make the generated product visibly wrong if changed.
 
-Blocked capability = downgrade explicitly or mark affected assets `BLOCKED`. Do not silently switch fidelity routes.
+Write them as simple spatial facts when useful.
 
-## Stage 1 — Intake / evidence
+Example:
 
-Separate:
-- explicit user intent;
-- product evidence;
-- platform selection;
-- verified claims / dimensions.
+```text
+- cylindrical handle sits horizontally above two triangular wooden bases
+- handle and bases remain visibly separate parts
+- recessed metal screw is on the TOP surface of the handle near each end
+- screw axis is approximately vertical to the floor
+- screw is NOT in the circular end-grain face
+- black anti-slip pads remain under the bases
+```
 
-Write `task-input.json` and evidence records.
-
-## Stage 2 — Product identity lock
-
-Study all authoritative current-SKU photos.
-
-Create one concise `PRODUCT IDENTITY LOCK` and reuse it verbatim across the set.
-
-The lock describes:
-- components;
-- silhouette;
-- proportions;
-- visible material appearance;
-- hardware/features;
-- must-not-change details.
-
-## Stage 3 — Critical geometry lock
-
-Read `references/critical-geometry-lock.md`.
-
-Activate when joints, fasteners, holes, ports, cradles, supports, interfaces, component orientation, or other spatial relationships are identity-critical.
-
-Create one concise `CRITICAL GEOMETRY LOCK` from evidence.
-
-This lock describes **relationships**, for example:
-- screw on top surface of handle;
-- screw axis vertical to floor;
-- handle rests in base cradle;
-- screw must not move to end-grain face.
-
-A visible violation of a locked relation is `FAIL`, even if the image is attractive.
-
-## Stage 4 — Variant / dimension model
-
-Build variant matrix and dimension records where needed.
-
-When verified physical dimensions exist for a scale-bearing scene, create a `REAL-WORLD SCALE LOCK` from those dimensions and relevant human / scene references.
-
-Unknown facts stay unknown.
-
-## Stage 5 — Platform + campaign style locks
-
-If platform is specified, load its heuristic style profile and create `PLATFORM COMMERCE STYLE LOCK`.
-
-Create one stable `CAMPAIGN STYLE LOCK`:
-- palette;
-- light family;
-- background family;
-- camera family;
-- grade;
-- typography mood;
-- prop density;
-- hard avoids.
-
-These locks guide style; they do not authorize product changes or unsupported claims.
-
-## Stage 6 — Buyer-decision / asset plan
-
-Plan by purchase questions, not image count.
-
-Each asset gets one dominant job.
-
-Before adding decorative variants, cover high-impact unanswered questions such as:
-- recognition;
-- material / construction;
-- usage;
-- fit / scale;
-- variant choice;
-- dimensions;
+### Confirmed facts
+Only user-confirmed or document-supported facts such as:
+- sizes;
+- finish;
 - included items;
-- risk reduction.
+- material name;
+- claims.
 
-## Stage 7 — Semantic master plan
+### Do not invent
+Keep a short list of unknown or risky claims.
 
-Read `references/semantic-master-contract.md`.
+Examples:
+- load capacity;
+- certifications;
+- wood species;
+- 0 VOC / zero formaldehyde;
+- medical / ergonomic benefits;
+- safety guarantees;
+- training outcomes.
 
-Plan independently QA-able visual masters such as:
-- hero;
-- size / variant visual;
-- material crop;
-- joint / hardware detail;
-- contact / anti-slip detail;
-- lifestyle/person-use scene.
+The brief should be short enough to stay visually useful.
 
-Default rule: **no final marketing text inside generated semantic masters**.
+## Step 2 — Plan the image set
 
-For a six-grid/detail board, define the six jobs first. Do not ask an image model to invent the final six-panel board in one pass.
+Plan images by buyer question, not by fixed image count.
 
-## Stage 8 — Fidelity route per master
+Typical jobs:
+- hero — what is this?
+- feature/detail — why is this construction/material worth noticing?
+- variant/size — which option should I choose?
+- lifestyle — how is it used?
+- infographic/grid — what are the main purchase reasons at a glance?
 
-Choose:
+For a multi-image set, avoid near-duplicate shots.
 
-```text
-REFERENCE_GENERATE   ← default for many hero / scene / in-use assets
-REFERENCE_EDIT
-SOURCE_PRODUCT_PIXEL / STRICT_PIXEL_COMPOSITE
-VERIFIED_CAD_3D
-CONCEPT_ONLY
-```
+For a six-grid, a useful starting structure is:
 
-Use stricter routes for:
-- logos / packaging text;
-- exact labels;
-- precision interfaces;
-- identity-critical joint/hardware detail that repeatedly drifts;
-- material proof where generated texture would become false evidence.
+1. hero / product recognition;
+2. size or variant choice;
+3. material / finish;
+4. construction / joint;
+5. functional visible detail;
+6. lifestyle / usage.
 
-Do not default to segmentation for every asset.
+Adjust to the actual product.
 
-## Stage 9 — Compile prompt
+## Step 3 — Write natural image prompts
 
-For weak-model execution, the controller MUST NOT write the final natural-language image prompt.
+Read `references/visual-director-playbook.md`.
 
-Instead:
-1. output `prompt-job.json` using `references/prompt-job.schema.json`;
-2. load stable locks from a separate prompt-lock record;
-3. run `scripts/prompt_compiler.py`;
-4. send the compiled prompt plus authoritative reference images to the image model.
+Prompts should be **short, visual, and specific**.
 
-The compiler injects stable blocks in this order:
+Preferred structure:
 
 ```text
-PRODUCT IDENTITY LOCK
-CRITICAL GEOMETRY LOCK (when activated)
-REAL-WORLD SCALE LOCK (when activated)
-CAMPAIGN STYLE LOCK
-PLATFORM COMMERCE STYLE LOCK
-ASSET JOB / BUYER QUESTION
-SHOT / SCENE
-PRESERVE
-MUST NOT
-TARGETED REPAIR (when present)
+Use the exact product shown in the reference images as the only product prototype.
+
+Keep:
+{3–7 most important product details}
+
+Create:
+{commercial shot / scene / composition}
+
+Lighting:
+{simple lighting direction}
+
+Do not:
+{the few likely failure modes}
 ```
 
-Weak-model rule: do not paraphrase stable locks between candidates and do not bypass the compiler with a handwritten prompt.
+Do not turn every prompt into a large specification document.
 
-## Stage 10 — Generate candidates
+Do not repeat every known fact if it does not affect the visible image.
 
-For important hero / lifestyle / person assets, generate 2–3 candidates when budget allows.
+## Step 4 — Generate one visual job at a time
 
-Keep identity, critical geometry, scale, campaign and platform locks stable.
+For important hero / lifestyle images, generate 1–3 candidates when useful.
 
-Vary one creative axis at a time:
+Keep the product brief stable.
+
+Vary only what helps:
 - camera;
 - scene;
-- action;
 - light;
-- placement.
+- person action;
+- composition.
 
-## Stage 11 — Semantic master QA / repair
+For identity-critical close-ups, prefer the reference view that best proves the detail.
 
-Run identity, critical-geometry, facts, scale, interaction and material QA **before layout**.
+If a real crop already shows the detail well, use it rather than asking the image model to reinvent it.
 
-Reject hard failures.
+## Step 5 — Simple visual QA
 
-For a failed asset:
-- identify the exact failed relation/region;
-- output 1–3 targeted repair sentences;
-- regenerate only that asset;
-- preserve all approved geometry.
+After generation, compare directly against the authoritative references.
 
-After bounded retries, escalate fidelity mode rather than endlessly redrawing the same detail.
+Check only:
 
-Only `APPROVED` masters may enter final information layout.
+### Product identity
+- same silhouette / component count;
+- same important proportions;
+- same visible material appearance.
 
-## Stage 12 — Copy guard
+### Critical details
+- hardware is in the correct place;
+- joint / support relationship is correct;
+- holes / ports / fasteners did not move;
+- separate parts did not merge.
 
-Read `references/copy-guard-contract.md`.
+### Scene
+- product scale is believable;
+- person contact is plausible;
+- props do not imply included accessories.
 
-Create an approved copy deck from evidence-backed facts.
+### Copy
+- numbers / units are correct;
+- no unsupported claims appeared;
+- Chinese text is readable when text is part of the generated image.
 
-The copy model MUST NOT:
-- invent new product outcomes;
-- strengthen user wording into safety/environmental/certification claims;
-- change verified dimensions;
-- add load capacity, medical, ergonomic, posture, performance or chemical claims without evidence.
+Any obvious critical-detail error = reject that image.
 
-Exact/repeated Chinese, numbers and units should be rendered deterministically.
+## Step 6 — Repair only the failed point
 
-## Stage 13 — Deterministic layout
+Use one short repair instruction.
 
-Read `references/deterministic-grid-layout-contract.md`.
+Example:
 
-Compose approved masters + approved copy using deterministic layout tooling.
+```text
+Keep the entire approved image unchanged except the screw placement:
+move the visible screw to the top surface of the cylindrical handle near the end;
+the screw axis is vertical to the floor;
+do not place the screw in the circular end-grain face.
+```
 
-For a six-grid / multi-panel board:
-- map each cell to one approved master;
-- map every text block to approved copy IDs;
-- use crop/contain only; never warp product geometry;
-- repair a failed cell independently;
-- do not regenerate the whole board to fix one panel.
+If the same identity-critical detail fails twice:
+- use a better reference view;
+- switch to edit mode / source crop;
+- or avoid using a generated close-up as factual proof.
 
-`scripts/render_infographic_grid.py` is a baseline deterministic renderer.
+Do not keep making the prompt longer.
 
-## Stage 14 — Derivatives
+## Step 7 — Copy and six-grid
 
-Reuse approved semantic masters across:
-- platform;
-- mobile / web;
-- language;
-- crop / surface
+This skill owns the copy and grid planning. A separate copy/layout skill is not required.
 
-when dependencies remain valid.
+Write copy from confirmed facts and visible product evidence.
 
-A different profile may require a redesigned layout rather than mechanical resizing.
+Good ecommerce copy is usually:
+- short;
+- concrete;
+- easy to scan;
+- specific to one panel.
 
-## Stage 15 — Platform compliance
+For Chinese six-grid images:
+- title: usually 4–10 Chinese characters;
+- subtitle: optional, usually one short line;
+- use verified dimensions exactly;
+- do not invent stronger claims to make the layout feel fuller.
 
-Verify current official marketplace rules separately from style heuristics.
+Example:
+- `原生木材纹理`
+- `环保无漆` only when user-confirmed
+- `四种长度可选`
+- `20 / 25 / 30 / 40 cm`
+- `连接结构细节`
+- `底部防滑脚垫`
+- `居家训练场景`
 
-A design preset is not automatically a verified compliance profile.
+For final six-grid assembly:
+- prefer any native design/compositing capability already available in the environment;
+- use approved product images as the visual sources;
+- do not require Python, Node, or a particular design application;
+- if exact text is important, prefer a deterministic/native text layer over asking the image model to redraw the product and typography together.
 
-## Stage 16 — Delivery
+If only image generation is available, a generated six-grid may be used as a visual concept, but exact factual copy and identity-critical details must still be checked carefully.
 
-Deliver:
-- accepted assets;
-- approved locks;
-- copy deck;
-- prompts/manifests where useful;
-- QA and repair history;
-- final derivatives.
+## Few-shot principle
 
-A complete task means requested final derivatives are actually accessible and every delivered asset is QA-accounted.
+For weaker controller models, examples are more useful than extra contracts.
 
-## Weak-model invariants
-
-When execution quality is uncertain, enforce these invariants:
-
-1. facts come from evidence tables, not prose improvisation;
-2. critical geometry is represented as explicit subject–relation–object rules;
-3. semantic masters contain one visual job;
-4. final text comes from approved copy deck;
-5. final multi-panel layouts are deterministic;
-6. a hard identity/geometry/fact failure cannot be averaged away;
-7. retries modify only failed instructions/regions;
-8. layout never creates a new unreviewed product rendering;
-9. weak controllers emit structured prompt jobs, not final image prompts;
-10. final image prompts are compiler output from stable locks + bounded job fields.
+Imitate the prompt patterns in `references/visual-director-playbook.md`:
+- preserve the actual SKU;
+- name only the critical product details;
+- describe the desired commercial image naturally;
+- keep negatives short;
+- let the image model handle photography.
 
 ## Failure conditions
 
-`FAIL` when:
-- product is recognisably another SKU;
-- a critical geometry relation is contradicted;
-- scene is physically implausible;
-- required text differs from approved exact copy;
-- a claim or dimension is invented;
-- verified product dimensions contradict apparent person / scene scale;
-- wrong variant appears;
-- person/product interaction is broken;
-- final layout uses an unapproved semantic master;
-- a factual detail board contains AI-invented construction presented as proof.
+Reject when:
+- the product is visibly another SKU;
+- a critical hardware / joint / connection detail is wrong;
+- a verified size or fact is wrong;
+- unsupported customer-facing claims appear;
+- a person interacts with the product implausibly.
 
-`REVIEW` when:
-- scene is commercially weak;
-- platform style fit is weak;
-- scale is only visually approximate;
-- product identity is plausible but not confidently verifiable.
+Do not reject merely because source pixels differ when the product is still clearly the same SKU.
 
 ## Core principle
 
-Use image generation for **commercial photography**, structured locks for **product truth**, evidence-bound copy for **claims**, and deterministic tools for **final information layout**.
+**Give the image model a good visual brief, not a legal contract.**
 
-Do not force one model call to solve all four jobs at once.
+Protect the few details that define the real product, then leave enough freedom for the image model to create strong commercial photography.
