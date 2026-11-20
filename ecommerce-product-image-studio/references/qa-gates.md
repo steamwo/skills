@@ -52,11 +52,17 @@ If an authoritative photo existed and the production asset is a generated redraw
 ## Gate 5 — Scale / perspective
 
 - scale calibration is referenced;
+- \`REAL-WORLD SCALE LOCK\` is present when verified dimensions and scale-bearing context exist;
+- verified dimensions remain plausible relative to the selected human / scene scale references;
 - contact plane and anchor are coherent;
 - camera / projection assumptions are recorded;
 - product is uniformly scaled;
+- repeated / paired units use one consistent physical scale;
 - geometry is not warped;
+- product occupancy did not override verified physical scale;
 - metric claims match the scale state.
+
+If verified dimensions materially contradict apparent person / scene scale, result = \`FAIL\`, not merely \`REVIEW\`.
 
 ## Gate 6 — Prompt traceability
 
@@ -73,6 +79,7 @@ For generated background / person assets:
 - occlusion order is correct;
 - person does not pass through product;
 - product geometry remains unchanged;
+- when verified dimensions exist, product size relative to hands / body agrees with the \`REAL-WORLD SCALE LOCK\`;
 - no unverified load / safety / ergonomic claim is implied.
 
 ## Gate 8 — Material / compositing

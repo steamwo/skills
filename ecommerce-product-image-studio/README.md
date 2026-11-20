@@ -46,7 +46,10 @@ Every scene defines:
 - lighting;
 - product occupancy;
 - relevant props;
-- scale reference when useful.
+- scale reference when useful;
+- \`REAL-WORLD SCALE LOCK\` when verified dimensions meet scale-bearing context.
+
+Read \`references/real-world-scale-contract.md\` for the distinction between frame occupancy and physical product scale.
 
 ## Candidate / repair
 
@@ -64,6 +67,7 @@ Use:
 - PRODUCT IDENTITY LOCK
 - CAMPAIGN STYLE LOCK
 - PLATFORM COMMERCE STYLE LOCK
+- REAL-WORLD SCALE LOCK when activated
 
 Keep them stable across the set.
 
