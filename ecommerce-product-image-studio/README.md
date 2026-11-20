@@ -1,174 +1,100 @@
 # E-commerce Product Image Studio
 
-The orchestrator for conversion-first, same-SKU ecommerce visual production.
+A lightweight visual-director skill for producing same-SKU ecommerce images from real product references.
 
-The workflow is designed to remain predictable even when the executing model is weaker: product truth is represented as stable structured locks, visual jobs are generated independently, and final information graphics are assembled deterministically.
+## Why this version is intentionally simple
 
-## Default production route
+The controller model does not need to run a large state machine.
+
+The practical workflow is:
 
 ```text
-authoritative product photos
-→ PRODUCT IDENTITY LOCK
-→ CRITICAL GEOMETRY LOCK (when needed)
-→ variant / scale records
-→ platform + campaign style locks
-→ buyer-decision asset plan
-→ single-job semantic masters
-→ candidate QA / targeted repair
-→ approved copy deck
-→ deterministic infographic / grid layout
-→ derivatives / export / delivery
+real product photos
+→ short product brief
+→ identify 3–7 critical visible details
+→ plan a small set of buyer-focused images
+→ write short natural visual prompts
+→ generate
+→ compare against references
+→ repair only failed details
+→ write concise evidence-based copy
+→ assemble the final grid with whatever native layout capability is available
 ```
 
-Do not ask one image-model call to simultaneously reconstruct the product, create six panels, write Chinese copy, draw dimensions and invent marketing hierarchy.
+The image model does the photography.
+The controller provides visual direction and protects product truth.
 
-## Stable locks
+## No required runtime
 
-Use:
-- PRODUCT IDENTITY LOCK
-- CRITICAL GEOMETRY LOCK when construction relationships matter
-- REAL-WORLD SCALE LOCK when activated
-- CAMPAIGN STYLE LOCK
-- PLATFORM COMMERCE STYLE LOCK
+Core use requires:
+- no Python;
+- no Node;
+- no prompt compiler;
+- no mandatory JSON pipeline;
+- no mandatory sub-skill chain.
 
-Keep stable locks verbatim across candidates.
+Existing scripts and specialized skills in the repository remain optional utilities for users who need them.
 
-## Fidelity modes
+## What the controller should preserve
 
-- `REFERENCE_GENERATE` — commercial photography route
-- `REFERENCE_EDIT` — controlled edit of useful source image
-- `SOURCE_PRODUCT_PIXEL / STRICT_PIXEL_COMPOSITE` — exact identity-critical detail / text / interface route
-- `VERIFIED_CAD_3D` — verified unsupported camera view
-- `CONCEPT_ONLY` — no authoritative visual source
-
-Choose fidelity per semantic asset, not once for the entire project.
-
-## Critical geometry
-
-Read:
-- `references/critical-geometry-lock.md`
-
-Use it for:
+Focus on the small number of visible details that define the SKU:
+- component count;
+- proportions;
 - joints;
-- screws / bolts;
+- screws / fasteners;
 - holes / ports;
-- cradles / supports;
-- component orientation;
-- must-not-change spatial relationships.
+- handle / support relationships;
+- material appearance;
+- variant-specific geometry.
 
-A beautiful image with a wrong locked relation fails.
+Do not bury these in a huge checklist.
 
-## Semantic masters
+## Prompt style
 
-Read:
-- `references/semantic-master-contract.md`
+Use short visual prompts.
 
-Generate and approve clean independent visual masters before making a six-grid/detail board.
+Example pattern:
 
-Typical masters:
-- hero;
-- variants/sizes;
-- material;
-- joint/hardware detail;
-- contact/anti-slip detail;
-- lifestyle.
+```text
+Use the exact product shown in the reference images as the only product prototype.
 
-## Copy guard
+Keep:
+- exact handle and base geometry
+- screw on the top surface of the handle near each end
+- visible natural wood grain
+- black anti-slip pads
 
-Read:
-- `references/copy-guard-contract.md`
+Create a premium clean ecommerce studio shot on white,
+three-quarter camera angle, soft side light, realistic contact shadow,
+product large and clear in frame.
 
-Final ecommerce copy comes from approved facts.
-
-Do not expand “unpainted” into “0 VOC”, or visible structural features into unsupported safety/performance claims.
-
-## Deterministic prompt compiler
-
-For weaker controller models, do not let the controller write the final image prompt.
-
-The controller fills a bounded job record:
-
-```bash
-python ecommerce-product-image-studio/scripts/prompt_compiler.py \
-  --job ecommerce-product-image-studio/templates/prompt-job.example.json \
-  --locks ecommerce-product-image-studio/templates/prompt-locks.example.json \
-  --output output/joint-detail.prompt.txt \
-  --json-output output/joint-detail.request.json
+No text, no extra accessories, no redesign.
 ```
 
-The compiler:
-- validates the fidelity route and required reference IDs;
-- keeps stable locks outside the controller's dynamic output;
-- injects locks in a fixed order;
-- automatically adds standard preserve / must-not rules;
-- appends only bounded targeted repairs;
-- produces an API-agnostic compiled prompt that can be sent to GPT Image or another reference-image model.
+See `references/visual-director-playbook.md` for more patterns.
 
-The weak controller chooses structured parameters. The compiler writes the prompt.
+## Six-grid / infographic
 
-## Deterministic layout
+The same main skill plans:
+- six visual jobs;
+- short copy;
+- image order;
+- hierarchy.
 
-Read:
-- `references/deterministic-grid-layout-contract.md`
+Use the environment's available native layout/design capability for final assembly.
 
-Use approved masters + approved copy for final multi-panel graphics.
+Exact text/layout does not require a Python implementation.
 
-Baseline renderer:
-```bash
-python ecommerce-product-image-studio/scripts/render_infographic_grid.py \
-  --manifest ecommerce-product-image-studio/templates/six-grid-layout.example.json \
-  --font /path/to/cjk-font.ttf \
-  --output output/six-grid.png
-```
+## QA
 
-The renderer crops/contains images without warping product geometry and renders exact text with an explicitly supplied font.
+Check only what matters:
+1. same SKU;
+2. critical visible details;
+3. factual sizes/copy;
+4. believable use/contact.
 
-## Guard validation
+When one detail fails, repair that detail only.
 
-Examples:
+## Design principle
 
-```bash
-python ecommerce-product-image-studio/scripts/validate_content_guards.py \
-  --geometry-lock ecommerce-product-image-studio/templates/critical-geometry-lock.example.json \
-  --copy-deck ecommerce-product-image-studio/templates/copy-deck.example.json
-```
-
-## Candidate / repair
-
-Important generative masters generally explore 2–3 candidates.
-
-Hard identity/critical-geometry/fact failures are rejected before commercial scoring.
-
-QA failures become targeted repair instructions.
-
-Only failed masters are rerun; deterministic layout is rerendered afterward.
-
-## Platform style profiles
-
-Read:
-- `references/platform-commerce-style-contract.md`
-- `references/platform-style-profiles.json`
-
-Platform style is heuristic creative guidance.
-Official compliance is verified separately.
-
-## Machine-readable examples
-
-- task input
-- variant matrix
-- buyer decision map
-- critical geometry lock
-- semantic master manifest
-- copy deck
-- six-grid layout manifest
-- asset derivation map
-- output profile
-- execution state
-- candidate selection
-- delivery manifest
-- prompt job
-- prompt locks
-
-## Research sources
-
-See repository-level `ECOMMERCE_VISUAL_RESEARCH.md`.
+**Minimal guardrails + strong visual examples > a large orchestration framework for this use case.**
