@@ -6,6 +6,33 @@ Use stable locks for identity and geometry while allowing each semantic master t
 
 A good prompt is not the longest prompt. Weak-model reliability comes from **fixed blocks + narrow asset jobs**.
 
+## Compiler-first rule
+
+When the controller model is weak or capability is uncertain, it MUST output only the structured fields defined by `prompt-job.schema.json`.
+
+Do not ask the controller to author the final image prompt.
+
+Use:
+
+```text
+prompt-job.json
++ prompt-locks.json
+→ scripts/prompt_compiler.py
+→ compiled prompt
+→ image model + authoritative reference images
+```
+
+The dynamic job contains only:
+- asset ID / fidelity route;
+- authoritative reference IDs;
+- buyer question / asset role;
+- camera / lighting / composition;
+- optional environment / occupancy / action / props;
+- bounded hard negatives;
+- at most 1–3 targeted repair sentences.
+
+Stable identity / geometry / scale / campaign / platform locks live outside the dynamic job so a weak controller cannot casually rewrite them.
+
 ## Prompt architecture
 
 For generative semantic masters:
