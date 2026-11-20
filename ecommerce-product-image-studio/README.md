@@ -82,6 +82,30 @@ Final ecommerce copy comes from approved facts.
 
 Do not expand “unpainted” into “0 VOC”, or visible structural features into unsupported safety/performance claims.
 
+## Deterministic prompt compiler
+
+For weaker controller models, do not let the controller write the final image prompt.
+
+The controller fills a bounded job record:
+
+```bash
+python ecommerce-product-image-studio/scripts/prompt_compiler.py \
+  --job ecommerce-product-image-studio/templates/prompt-job.example.json \
+  --locks ecommerce-product-image-studio/templates/prompt-locks.example.json \
+  --output output/joint-detail.prompt.txt \
+  --json-output output/joint-detail.request.json
+```
+
+The compiler:
+- validates the fidelity route and required reference IDs;
+- keeps stable locks outside the controller's dynamic output;
+- injects locks in a fixed order;
+- automatically adds standard preserve / must-not rules;
+- appends only bounded targeted repairs;
+- produces an API-agnostic compiled prompt that can be sent to GPT Image or another reference-image model.
+
+The weak controller chooses structured parameters. The compiler writes the prompt.
+
 ## Deterministic layout
 
 Read:
@@ -142,6 +166,8 @@ Official compliance is verified separately.
 - execution state
 - candidate selection
 - delivery manifest
+- prompt job
+- prompt locks
 
 ## Research sources
 
