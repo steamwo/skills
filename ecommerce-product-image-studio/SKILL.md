@@ -31,7 +31,9 @@ Each stage produces a small durable artifact. A downstream stage MUST NOT silent
 
 For weak-model execution:
 - prefer structured records over prose memory;
-- keep stable locks verbatim;
+- the controller outputs a small `prompt-job.json`, not a free-form image prompt;
+- compile the final image prompt with `scripts/prompt_compiler.py`;
+- keep stable locks outside the dynamic job and reuse them verbatim;
 - generate one visual job at a time;
 - approve semantic masters before layout;
 - separate copy generation from image generation;
@@ -188,9 +190,17 @@ Use stricter routes for:
 
 Do not default to segmentation for every asset.
 
-## Stage 9 — Render prompt
+## Stage 9 — Compile prompt
 
-For generative masters, inject stable blocks in this order:
+For weak-model execution, the controller MUST NOT write the final natural-language image prompt.
+
+Instead:
+1. output `prompt-job.json` using `references/prompt-job.schema.json`;
+2. load stable locks from a separate prompt-lock record;
+3. run `scripts/prompt_compiler.py`;
+4. send the compiled prompt plus authoritative reference images to the image model.
+
+The compiler injects stable blocks in this order:
 
 ```text
 PRODUCT IDENTITY LOCK
@@ -200,10 +210,12 @@ CAMPAIGN STYLE LOCK
 PLATFORM COMMERCE STYLE LOCK
 ASSET JOB / BUYER QUESTION
 SHOT / SCENE
-HARD NEGATIVES
+PRESERVE
+MUST NOT
+TARGETED REPAIR (when present)
 ```
 
-Weak-model rule: do not paraphrase stable locks between candidates.
+Weak-model rule: do not paraphrase stable locks between candidates and do not bypass the compiler with a handwritten prompt.
 
 ## Stage 10 — Generate candidates
 
@@ -304,7 +316,9 @@ When execution quality is uncertain, enforce these invariants:
 5. final multi-panel layouts are deterministic;
 6. a hard identity/geometry/fact failure cannot be averaged away;
 7. retries modify only failed instructions/regions;
-8. layout never creates a new unreviewed product rendering.
+8. layout never creates a new unreviewed product rendering;
+9. weak controllers emit structured prompt jobs, not final image prompts;
+10. final image prompts are compiler output from stable locks + bounded job fields.
 
 ## Failure conditions
 
