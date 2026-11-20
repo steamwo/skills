@@ -2,90 +2,141 @@
 
 The orchestrator for conversion-first, same-SKU ecommerce visual production.
 
-## Default generation route
+The workflow is designed to remain predictable even when the executing model is weaker: product truth is represented as stable structured locks, visual jobs are generated independently, and final information graphics are assembled deterministically.
 
-For most consumer products:
+## Default production route
 
-\`\`\`text
-authoritative product photo
-→ product identity lock
+```text
+authoritative product photos
+→ PRODUCT IDENTITY LOCK
+→ CRITICAL GEOMETRY LOCK (when needed)
+→ variant / scale records
 → platform + campaign style locks
-→ commercial scene / shot brief
-→ reference-image generation or edit
-→ candidate ranking
-→ repair failed asset only
-\`\`\`
+→ buyer-decision asset plan
+→ single-job semantic masters
+→ candidate QA / targeted repair
+→ approved copy deck
+→ deterministic infographic / grid layout
+→ derivatives / export / delivery
+```
 
-Do not start with segmentation unless strict pixel fidelity is actually needed.
-
-## Fidelity modes
-
-- \`REFERENCE_GENERATE\` — default commercial photography route
-- \`REFERENCE_EDIT\` — controlled edit of useful source image
-- \`STRICT_PIXEL_COMPOSITE\` — exact logos / packaging / precision details
-- \`VERIFIED_CAD_3D\` — verified unsupported camera view
-- \`CONCEPT_ONLY\` — no authoritative visual source
-
-## Platform style profiles
-
-Read:
-- \`references/platform-commerce-style-contract.md\`
-- \`references/platform-style-profiles.json\`
-
-Platform style is heuristic creative guidance.
-Official compliance is verified separately.
-
-## Commercial scene routing
-
-Read \`references/commercial-scene-router.md\`.
-
-Every scene defines:
-- buyer question;
-- who / where / action;
-- camera;
-- lighting;
-- product occupancy;
-- relevant props;
-- scale reference when useful;
-- \`REAL-WORLD SCALE LOCK\` when verified dimensions meet scale-bearing context.
-
-Read \`references/real-world-scale-contract.md\` for the distinction between frame occupancy and physical product scale.
-
-## Candidate / repair
-
-Read \`references/candidate-repair-loop.md\`.
-
-Important assets generally explore 2–3 candidates, then rank them.
-
-QA failures become targeted repair instructions.
-
-Only failed assets are rerun.
+Do not ask one image-model call to simultaneously reconstruct the product, create six panels, write Chinese copy, draw dimensions and invent marketing hierarchy.
 
 ## Stable locks
 
 Use:
 - PRODUCT IDENTITY LOCK
+- CRITICAL GEOMETRY LOCK when construction relationships matter
+- REAL-WORLD SCALE LOCK when activated
 - CAMPAIGN STYLE LOCK
 - PLATFORM COMMERCE STYLE LOCK
-- REAL-WORLD SCALE LOCK when activated
 
-Keep them stable across the set.
+Keep stable locks verbatim across candidates.
 
-Change shot-specific instructions per asset.
+## Fidelity modes
 
-## Chinese ecommerce graphics
+- `REFERENCE_GENERATE` — commercial photography route
+- `REFERENCE_EDIT` — controlled edit of useful source image
+- `SOURCE_PRODUCT_PIXEL / STRICT_PIXEL_COMPOSITE` — exact identity-critical detail / text / interface route
+- `VERIFIED_CAD_3D` — verified unsupported camera view
+- `CONCEPT_ONLY` — no authoritative visual source
 
-Use one-screen-one-job.
+Choose fidelity per semantic asset, not once for the entire project.
 
-Short copy + explicit zones + thumbnail review generally work better than dense poster-style layouts.
+## Critical geometry
 
-Move exact final text to deterministic typography when the image model is unreliable.
+Read:
+- `references/critical-geometry-lock.md`
+
+Use it for:
+- joints;
+- screws / bolts;
+- holes / ports;
+- cradles / supports;
+- component orientation;
+- must-not-change spatial relationships.
+
+A beautiful image with a wrong locked relation fails.
+
+## Semantic masters
+
+Read:
+- `references/semantic-master-contract.md`
+
+Generate and approve clean independent visual masters before making a six-grid/detail board.
+
+Typical masters:
+- hero;
+- variants/sizes;
+- material;
+- joint/hardware detail;
+- contact/anti-slip detail;
+- lifestyle.
+
+## Copy guard
+
+Read:
+- `references/copy-guard-contract.md`
+
+Final ecommerce copy comes from approved facts.
+
+Do not expand “unpainted” into “0 VOC”, or visible structural features into unsupported safety/performance claims.
+
+## Deterministic layout
+
+Read:
+- `references/deterministic-grid-layout-contract.md`
+
+Use approved masters + approved copy for final multi-panel graphics.
+
+Baseline renderer:
+```bash
+python ecommerce-product-image-studio/scripts/render_infographic_grid.py \
+  --manifest ecommerce-product-image-studio/templates/six-grid-layout.example.json \
+  --font /path/to/cjk-font.ttf \
+  --output output/six-grid.png
+```
+
+The renderer crops/contains images without warping product geometry and renders exact text with an explicitly supplied font.
+
+## Guard validation
+
+Examples:
+
+```bash
+python ecommerce-product-image-studio/scripts/validate_content_guards.py \
+  --geometry-lock ecommerce-product-image-studio/templates/critical-geometry-lock.example.json \
+  --copy-deck ecommerce-product-image-studio/templates/copy-deck.example.json
+```
+
+## Candidate / repair
+
+Important generative masters generally explore 2–3 candidates.
+
+Hard identity/critical-geometry/fact failures are rejected before commercial scoring.
+
+QA failures become targeted repair instructions.
+
+Only failed masters are rerun; deterministic layout is rerendered afterward.
+
+## Platform style profiles
+
+Read:
+- `references/platform-commerce-style-contract.md`
+- `references/platform-style-profiles.json`
+
+Platform style is heuristic creative guidance.
+Official compliance is verified separately.
 
 ## Machine-readable examples
 
 - task input
 - variant matrix
 - buyer decision map
+- critical geometry lock
+- semantic master manifest
+- copy deck
+- six-grid layout manifest
 - asset derivation map
 - output profile
 - execution state
@@ -94,4 +145,4 @@ Move exact final text to deterministic typography when the image model is unreli
 
 ## Research sources
 
-See the repository-level \`ECOMMERCE_VISUAL_RESEARCH.md\`.
+See repository-level `ECOMMERCE_VISUAL_RESEARCH.md`.
