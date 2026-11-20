@@ -1,198 +1,265 @@
 ---
 name: ecommerce-product-image-studio
-description: Orchestrate a conversion-first ecommerce visual production system from real SKU references using product identity locks, platform commerce style profiles, reference-image generation, commercial scene routing, candidate ranking/repair, SKU variants, responsive derivatives, QA, and accountable delivery.
+description: Create commercially strong ecommerce product images from real SKU references with a lightweight workflow: understand the product, protect critical details, direct the image model with short visual prompts, write evidence-based copy, plan multi-image sets, and run simple visual QA.
 ---
 
 # Ecommerce Product Image Studio
 
 ## Objective
 
-Produce a **commercially strong, platform-aware, same-SKU image set**.
+Produce **commercially strong, same-SKU ecommerce images** without turning the workflow into a large agent system.
 
-Priority order:
-1. same-SKU identity;
-2. truthful product facts;
-3. buyer-decision / conversion job;
-4. platform commerce style fit;
-5. natural commercial photography;
-6. variant correctness;
-7. campaign consistency;
-8. efficient reuse / derivatives;
-9. official platform compliance.
+This skill is the main controller. Do not require other skills unless the user explicitly needs a specialized workflow.
 
-Exact source pixels are not the default objective for every asset.
+Priority:
+1. product must still be the same SKU;
+2. critical visible construction must be correct;
+3. facts and copy must be truthful;
+4. the image should sell the product well;
+5. the set should feel visually coherent.
 
-## Required contracts
+## Core idea
 
-Read:
-- task input / intake;
-- product identity;
-- real-world scale contract;
-- reference generation contract;
-- platform commerce style contract + profiles;
-- commercial scene router;
-- buyer decision framework;
-- variant matrix;
-- campaign / brand visual system;
-- candidate repair loop;
-- output profile / detail module;
-- execution state / delivery gate.
+Use the controller model as a **visual director**, not as a rules engine.
 
-## Stage 1 — Intake / evidence
+The controller should:
+- inspect the real product references;
+- understand what visually defines the SKU;
+- decide what each image should communicate;
+- write a short, natural image prompt;
+- check the result;
+- repair only the failed detail.
 
-Separate:
-- explicit user intent;
-- product evidence;
-- platform selection;
-- verified claims / dimensions.
+Do not force the controller to produce large schemas, long state-machine records, or compiler-ready prompt fragments.
 
-## Stage 2 — Product identity lock
+## Step 1 — Make a short product brief
 
 Study all authoritative product photos.
 
-Create one concise \`PRODUCT IDENTITY LOCK\` and reuse it verbatim across the set.
+Create a compact internal brief with only:
 
-## Stage 3 — Variant / dimension model
+### Product
+- what the product is;
+- visible components;
+- visible material / finish;
+- important proportions;
+- visible hardware / joints.
 
-Build variant matrix and dimension records where needed.
+### Critical details
+List only the details that would make the generated product visibly wrong if changed.
 
-When verified physical dimensions exist for a scale-bearing scene, create a `REAL-WORLD SCALE LOCK` from those dimensions and relevant human / scene references.
+Write them as simple spatial facts when useful.
 
-Unknown facts stay unknown.
+Example:
 
-## Stage 4 — Platform commerce style
+```text
+- cylindrical handle sits horizontally above two triangular wooden bases
+- handle and bases remain visibly separate parts
+- recessed metal screw is on the TOP surface of the handle near each end
+- screw axis is approximately vertical to the floor
+- screw is NOT in the circular end-grain face
+- black anti-slip pads remain under the bases
+```
 
-If platform is specified, load its heuristic style profile.
+### Confirmed facts
+Only user-confirmed or document-supported facts such as:
+- sizes;
+- finish;
+- included items;
+- material name;
+- claims.
 
-Create \`PLATFORM COMMERCE STYLE LOCK\`.
+### Do not invent
+Keep a short list of unknown or risky claims.
 
-Do not confuse this with official compliance rules.
+Examples:
+- load capacity;
+- certifications;
+- wood species;
+- 0 VOC / zero formaldehyde;
+- medical / ergonomic benefits;
+- safety guarantees;
+- training outcomes.
 
-## Stage 5 — Campaign style lock
+The brief should be short enough to stay visually useful.
 
-Create one stable campaign block:
-- palette;
-- light family;
-- background family;
-- camera family;
-- grade;
-- typography mood;
-- prop density;
-- hard avoids.
+## Step 2 — Plan the image set
 
-Use selective injection by asset type.
+Plan images by buyer question, not by fixed image count.
 
-## Stage 6 — Buyer-decision / asset plan
+Typical jobs:
+- hero — what is this?
+- feature/detail — why is this construction/material worth noticing?
+- variant/size — which option should I choose?
+- lifestyle — how is it used?
+- infographic/grid — what are the main purchase reasons at a glance?
 
-Plan the set by purchase questions and platform conversion mix.
+For a multi-image set, avoid near-duplicate shots.
 
-Each asset gets one dominant job.
+For a six-grid, a useful starting structure is:
 
-## Stage 7 — Fidelity route per asset
+1. hero / product recognition;
+2. size or variant choice;
+3. material / finish;
+4. construction / joint;
+5. functional visible detail;
+6. lifestyle / usage.
 
-Choose:
+Adjust to the actual product.
 
-\`\`\`text
-REFERENCE_GENERATE   ← default for most hero / scene / in-use / detail photography
-REFERENCE_EDIT
-STRICT_PIXEL_COMPOSITE
-VERIFIED_CAD_3D
-CONCEPT_ONLY
-\`\`\`
+## Step 3 — Write natural image prompts
 
-Do not default to segmentation.
+Read `references/visual-director-playbook.md`.
 
-Use strict-pixel only when exact source details require it.
+Prompts should be **short, visual, and specific**.
 
-## Stage 8 — Commercial shot / scene router
+Preferred structure:
 
-For each generative asset, define:
-- story;
-- camera;
-- lighting;
-- product occupancy;
-- props;
-- person action;
-- platform style;
-- scale reference where relevant;
-- `REAL-WORLD SCALE LOCK` when verified dimensions and scale-bearing context exist.
-
-Product occupancy is a composition target. It MUST NOT override verified real-world physical scale.
-
-## Stage 9 — Generate candidates
-
-For important hero / lifestyle / person assets, generate 2–3 candidates when budget allows.
+```text
+Use the exact product shown in the reference images as the only product prototype.
 
 Keep:
-- product identity block stable;
-- campaign/platform style stable.
+{3–7 most important product details}
 
-Vary:
+Create:
+{commercial shot / scene / composition}
+
+Lighting:
+{simple lighting direction}
+
+Do not:
+{the few likely failure modes}
+```
+
+Do not turn every prompt into a large specification document.
+
+Do not repeat every known fact if it does not affect the visible image.
+
+## Step 4 — Generate one visual job at a time
+
+For important hero / lifestyle images, generate 1–3 candidates when useful.
+
+Keep the product brief stable.
+
+Vary only what helps:
 - camera;
 - scene;
-- action;
-- light
+- light;
+- person action;
+- composition.
 
-one axis at a time.
+For identity-critical close-ups, prefer the reference view that best proves the detail.
 
-## Stage 10 — Candidate QA / repair
+If a real crop already shows the detail well, use it rather than asking the image model to reinvent it.
 
-Rank candidates on commercial and factual dimensions.
+## Step 5 — Simple visual QA
 
-Reject hard identity / claim / anatomy / verified-scale failures.
+After generation, compare directly against the authoritative references.
 
-For a failed asset:
-- output targeted repair sentences;
-- append them to that asset prompt;
-- regenerate only that asset.
+Check only:
 
-Do not restart the whole set.
+### Product identity
+- same silhouette / component count;
+- same important proportions;
+- same visible material appearance.
 
-## Stage 11 — Detail modules / text
+### Critical details
+- hardware is in the correct place;
+- joint / support relationship is correct;
+- holes / ports / fasteners did not move;
+- separate parts did not merge.
 
-Use one-screen-one-job.
+### Scene
+- product scale is believable;
+- person contact is plausible;
+- props do not imply included accessories.
 
-Short Chinese copy can be generated when the model is reliable; exact / repeated copy should be rendered deterministically if necessary.
+### Copy
+- numbers / units are correct;
+- no unsupported claims appeared;
+- Chinese text is readable when text is part of the generated image.
 
-For gallery images, test thumbnail readability.
+Any obvious critical-detail error = reject that image.
 
-## Stage 12 — Derivatives
+## Step 6 — Repair only the failed point
 
-Reuse approved semantic masters across:
-- platform;
-- mobile / web;
-- language;
-- crop / surface
+Use one short repair instruction.
 
-when dependencies remain valid.
+Example:
 
-## Stage 13 — Platform compliance
+```text
+Keep the entire approved image unchanged except the screw placement:
+move the visible screw to the top surface of the cylindrical handle near the end;
+the screw axis is vertical to the floor;
+do not place the screw in the circular end-grain face.
+```
 
-Verify current official marketplace rules separately from style heuristics.
+If the same identity-critical detail fails twice:
+- use a better reference view;
+- switch to edit mode / source crop;
+- or avoid using a generated close-up as factual proof.
 
-## Stage 14 — Delivery
+Do not keep making the prompt longer.
 
-Deliver accepted assets, prompts / manifests where useful, QA and repair history.
+## Step 7 — Copy and six-grid
 
-A complete task means the requested final derivatives are actually accessible to the user.
+This skill owns the copy and grid planning. A separate copy/layout skill is not required.
+
+Write copy from confirmed facts and visible product evidence.
+
+Good ecommerce copy is usually:
+- short;
+- concrete;
+- easy to scan;
+- specific to one panel.
+
+For Chinese six-grid images:
+- title: usually 4–10 Chinese characters;
+- subtitle: optional, usually one short line;
+- use verified dimensions exactly;
+- do not invent stronger claims to make the layout feel fuller.
+
+Example:
+- `原生木材纹理`
+- `环保无漆` only when user-confirmed
+- `四种长度可选`
+- `20 / 25 / 30 / 40 cm`
+- `连接结构细节`
+- `底部防滑脚垫`
+- `居家训练场景`
+
+For final six-grid assembly:
+- prefer any native design/compositing capability already available in the environment;
+- use approved product images as the visual sources;
+- do not require Python, Node, or a particular design application;
+- if exact text is important, prefer a deterministic/native text layer over asking the image model to redraw the product and typography together.
+
+If only image generation is available, a generated six-grid may be used as a visual concept, but exact factual copy and identity-critical details must still be checked carefully.
+
+## Few-shot principle
+
+For weaker controller models, examples are more useful than extra contracts.
+
+Imitate the prompt patterns in `references/visual-director-playbook.md`:
+- preserve the actual SKU;
+- name only the critical product details;
+- describe the desired commercial image naturally;
+- keep negatives short;
+- let the image model handle photography.
 
 ## Failure conditions
 
-\`FAIL\` when:
-- product is recognisably another SKU;
-- scene is physically implausible;
-- required text is wrong;
-- claim or dimension is invented;
-- verified product dimensions contradict apparent person / scene scale;
-- wrong variant appears;
-- person/product interaction is broken.
+Reject when:
+- the product is visibly another SKU;
+- a critical hardware / joint / connection detail is wrong;
+- a verified size or fact is wrong;
+- unsupported customer-facing claims appear;
+- a person interacts with the product implausibly.
 
-\`REVIEW\` when:
-- scene is commercially weak;
-- platform style fit is weak;
-- scale is only visually approximate;
-- product identity is plausible but not confidently verifiable.
+Do not reject merely because source pixels differ when the product is still clearly the same SKU.
 
 ## Core principle
 
-A natural reference-rendered scene with the correct product is often better ecommerce output than a technically perfect cutout pasted into a weak artificial background.
+**Give the image model a good visual brief, not a legal contract.**
+
+Protect the few details that define the real product, then leave enough freedom for the image model to create strong commercial photography.

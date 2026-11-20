@@ -1,97 +1,100 @@
 # E-commerce Product Image Studio
 
-The orchestrator for conversion-first, same-SKU ecommerce visual production.
+A lightweight visual-director skill for producing same-SKU ecommerce images from real product references.
 
-## Default generation route
+## Why this version is intentionally simple
 
-For most consumer products:
+The controller model does not need to run a large state machine.
 
-\`\`\`text
-authoritative product photo
-→ product identity lock
-→ platform + campaign style locks
-→ commercial scene / shot brief
-→ reference-image generation or edit
-→ candidate ranking
-→ repair failed asset only
-\`\`\`
+The practical workflow is:
 
-Do not start with segmentation unless strict pixel fidelity is actually needed.
+```text
+real product photos
+→ short product brief
+→ identify 3–7 critical visible details
+→ plan a small set of buyer-focused images
+→ write short natural visual prompts
+→ generate
+→ compare against references
+→ repair only failed details
+→ write concise evidence-based copy
+→ assemble the final grid with whatever native layout capability is available
+```
 
-## Fidelity modes
+The image model does the photography.
+The controller provides visual direction and protects product truth.
 
-- \`REFERENCE_GENERATE\` — default commercial photography route
-- \`REFERENCE_EDIT\` — controlled edit of useful source image
-- \`STRICT_PIXEL_COMPOSITE\` — exact logos / packaging / precision details
-- \`VERIFIED_CAD_3D\` — verified unsupported camera view
-- \`CONCEPT_ONLY\` — no authoritative visual source
+## No required runtime
 
-## Platform style profiles
+Core use requires:
+- no Python;
+- no Node;
+- no prompt compiler;
+- no mandatory JSON pipeline;
+- no mandatory sub-skill chain.
 
-Read:
-- \`references/platform-commerce-style-contract.md\`
-- \`references/platform-style-profiles.json\`
+Existing scripts and specialized skills in the repository remain optional utilities for users who need them.
 
-Platform style is heuristic creative guidance.
-Official compliance is verified separately.
+## What the controller should preserve
 
-## Commercial scene routing
+Focus on the small number of visible details that define the SKU:
+- component count;
+- proportions;
+- joints;
+- screws / fasteners;
+- holes / ports;
+- handle / support relationships;
+- material appearance;
+- variant-specific geometry.
 
-Read \`references/commercial-scene-router.md\`.
+Do not bury these in a huge checklist.
 
-Every scene defines:
-- buyer question;
-- who / where / action;
-- camera;
-- lighting;
-- product occupancy;
-- relevant props;
-- scale reference when useful;
-- \`REAL-WORLD SCALE LOCK\` when verified dimensions meet scale-bearing context.
+## Prompt style
 
-Read \`references/real-world-scale-contract.md\` for the distinction between frame occupancy and physical product scale.
+Use short visual prompts.
 
-## Candidate / repair
+Example pattern:
 
-Read \`references/candidate-repair-loop.md\`.
+```text
+Use the exact product shown in the reference images as the only product prototype.
 
-Important assets generally explore 2–3 candidates, then rank them.
+Keep:
+- exact handle and base geometry
+- screw on the top surface of the handle near each end
+- visible natural wood grain
+- black anti-slip pads
 
-QA failures become targeted repair instructions.
+Create a premium clean ecommerce studio shot on white,
+three-quarter camera angle, soft side light, realistic contact shadow,
+product large and clear in frame.
 
-Only failed assets are rerun.
+No text, no extra accessories, no redesign.
+```
 
-## Stable locks
+See `references/visual-director-playbook.md` for more patterns.
 
-Use:
-- PRODUCT IDENTITY LOCK
-- CAMPAIGN STYLE LOCK
-- PLATFORM COMMERCE STYLE LOCK
-- REAL-WORLD SCALE LOCK when activated
+## Six-grid / infographic
 
-Keep them stable across the set.
+The same main skill plans:
+- six visual jobs;
+- short copy;
+- image order;
+- hierarchy.
 
-Change shot-specific instructions per asset.
+Use the environment's available native layout/design capability for final assembly.
 
-## Chinese ecommerce graphics
+Exact text/layout does not require a Python implementation.
 
-Use one-screen-one-job.
+## QA
 
-Short copy + explicit zones + thumbnail review generally work better than dense poster-style layouts.
+Check only what matters:
+1. same SKU;
+2. critical visible details;
+3. factual sizes/copy;
+4. believable use/contact.
 
-Move exact final text to deterministic typography when the image model is unreliable.
+When one detail fails, repair that detail only.
 
-## Machine-readable examples
+## Design principle
 
-- task input
-- variant matrix
-- buyer decision map
-- asset derivation map
-- output profile
-- execution state
-- candidate selection
-- delivery manifest
-
-## Research sources
-
-See the repository-level \`ECOMMERCE_VISUAL_RESEARCH.md\`.
+**Minimal guardrails + strong visual examples > a large orchestration framework for this use case.**
