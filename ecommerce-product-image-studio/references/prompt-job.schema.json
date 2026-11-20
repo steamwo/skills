@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ecommerce Prompt Job",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "asset_id",
+    "fidelity_mode",
+    "reference_ids",
+    "buyer_question",
+    "asset_role",
+    "shot"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "asset_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fidelity_mode": {
+      "enum": [
+        "REFERENCE_GENERATE",
+        "REFERENCE_EDIT",
+        "SOURCE_PRODUCT_PIXEL",
+        "STRICT_PIXEL_COMPOSITE",
+        "VERIFIED_CAD_3D",
+        "CONCEPT_ONLY"
+      ]
+    },
+    "reference_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "buyer_question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "asset_role": {
+      "type": "string",
+      "minLength": 1
+    },
+    "shot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "camera",
+        "lighting",
+        "composition"
+      ],
+      "properties": {
+        "camera": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lighting": {
+          "type": "string",
+          "minLength": 1
+        },
+        "composition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "product_occupancy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "person_action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "props": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "preserve": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "hard_negatives": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "repair_sentences": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 3
+    }
+  }
+}
