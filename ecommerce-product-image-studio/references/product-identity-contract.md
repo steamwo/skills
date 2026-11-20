@@ -2,19 +2,21 @@
 
 ## Purpose
 
-Define what counts as factual product evidence and what must remain unchanged across e-commerce assets.
+Define what counts as factual product evidence and what must remain unchanged across ecommerce assets.
+
+Product identity is independent of fidelity route: a reference-rendered product may be valid when it remains the same SKU, while an identity-critical detail may require original source pixels.
 
 ## Evidence states
 
 Use:
-- \`visible_in_reference\`
-- \`user_confirmed\`
-- \`document_verified\`
-- \`estimated\`
-- \`unknown\`
-- \`conflicting\`
+- `visible_in_reference`
+- `user_confirmed`
+- `document_verified`
+- `estimated`
+- `unknown`
+- `conflicting`
 
-An agent MUST NOT promote \`estimated\` or \`unknown\` to a verified state.
+An agent MUST NOT promote `estimated` or `unknown` to a verified state.
 
 ## Identity fields
 
@@ -36,6 +38,8 @@ Track:
 - contact points;
 - supported camera views.
 
+When a relative position/orientation is identity-critical, promote it into a separate `CRITICAL GEOMETRY LOCK`.
+
 ### Material appearance
 
 Track:
@@ -46,7 +50,7 @@ Track:
 - surface gloss / finish appearance;
 - metal / fabric / plastic visible properties.
 
-Appearance is not proof of species, certification, or chemical composition.
+Appearance is not proof of species, certification, chemical composition, or environmental performance.
 
 ### Product facts
 
@@ -61,13 +65,41 @@ Track evidence for:
 - certification;
 - function claims.
 
+## Product Identity Lock
+
+Create a concise stable block from authoritative evidence.
+
+It describes:
+- what visible components exist;
+- proportions/silhouette;
+- visible materials/finish;
+- visible hardware/features;
+- must-not-change details;
+- must-not-appear items.
+
+Reuse it verbatim across candidates until evidence changes.
+
+## Critical Geometry Lock
+
+Read `critical-geometry-lock.md`.
+
+Use it when spatial relations matter, for example:
+- screw location and axis;
+- handle-to-base cradle relationship;
+- hinge direction;
+- port placement;
+- bracket orientation;
+- component separation.
+
+A PRODUCT IDENTITY LOCK answers “what is present”; a CRITICAL GEOMETRY LOCK answers “where/how is it connected”.
+
 ## Real-world scale identity
 
 Verified dimensions are part of product identity when an asset contains a person or another useful scale-bearing reference.
 
 When relevant dimensions are `user_confirmed` or `document_verified`:
 - preserve them as a `REAL-WORLD SCALE LOCK`;
-- calibrate the product against hands, body parts, furniture, architecture, or other scene references as appropriate;
+- calibrate against hands, body parts, furniture, architecture, or other scene references as appropriate;
 - preserve one uniform physical scale across repeated / paired units;
 - do not enlarge the product merely to increase visual prominence;
 - treat perspective as projected appearance, not permission to change physical size.
@@ -76,36 +108,59 @@ Visible proportions without metric evidence can guide qualitative consistency bu
 
 See `real-world-scale-contract.md`.
 
-## Product pixel contract
+## Fidelity-route-specific pixel rules
 
-When the user supplies an authoritative real product photo:
+Do not apply a universal “source RGB only” rule to every ecommerce asset.
 
-\`\`\`text
+### REFERENCE_GENERATE / REFERENCE_EDIT
+
+The model may re-render product pixels when:
+- authoritative current-SKU references are provided;
+- identity lock is active;
+- critical geometry lock is active when needed;
+- resulting identity and geometry pass QA;
+- the output is not used as factual proof for a detail that cannot be verified.
+
+Exact source pixels are not required.
+
+### SOURCE_PRODUCT_PIXEL / STRICT_PIXEL_COMPOSITE
+
+When exact source pixels are selected/required:
+
+```text
 LOCKED PRODUCT BODY = authoritative source RGB
-\`\`\`
+```
 
-Default allowed changes:
+Allowed:
 - alpha extraction;
 - edge cleanup;
 - uniform scaling;
 - translation;
-- limited source-view-consistent rotation.
+- limited source-view-consistent rotation;
+- non-destructive crop.
 
-Default prohibited changes:
-- generative redraw;
-- image-to-image repainting of the product body;
+Prohibited:
+- generative redraw/repaint of locked product region;
 - non-uniform scale;
 - liquify / warp;
 - invented unseen geometry;
 - texture replacement;
 - hardware relocation;
-- component removal / addition.
+- component removal/addition.
 
-## Region classes
+### VERIFIED_CAD_3D
 
-1. \`LOCKED_PRODUCT_REGION\`
-2. \`EDITABLE_REGION\`
-3. \`CONDITIONAL_REGION\`
+Permitted only when the CAD/3D source is verified for the current SKU and the requested view is supported.
+
+### CONCEPT_ONLY
+
+Must not be represented as the actual verified SKU.
+
+## Region classes for source-pixel routes
+
+1. `LOCKED_PRODUCT_REGION`
+2. `EDITABLE_REGION`
+3. `CONDITIONAL_REGION`
 
 The alpha mask is not automatically correct. Mask errors can delete real structure and must be QA-reviewed.
 
@@ -117,15 +172,17 @@ The alpha mask is not automatically correct. Mask errors can delete real structu
 4. same-series products as style/context only;
 5. competitor / web / AI-generated images as non-factual references only.
 
+AI-generated candidates NEVER become higher-priority factual evidence than authoritative source assets.
+
 ## Change control
 
-Any authorized change to a locked region MUST record:
+Any authorized change to an identity-critical region/relation SHOULD record:
 - purpose;
-- authorization;
-- affected region;
-- before / after asset;
+- authorization/evidence;
+- affected region/relation;
+- before/after asset;
 - factual impact;
 - QA result;
 - reviewer.
 
-A generated lookalike is not a compliant product-identity transformation.
+A generated lookalike is not compliant merely because it is visually attractive.
