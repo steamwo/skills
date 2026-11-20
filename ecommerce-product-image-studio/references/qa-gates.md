@@ -1,12 +1,12 @@
 # E-commerce Product Visual QA Gates
 
-Evaluate every semantic master independently, then evaluate final layouts, then evaluate the complete set.
+Evaluate every image independently and then evaluate the complete set.
 
 Do not use one image passing QA to imply the whole set passes.
 
 ## Gate 0 — Task input integrity
 
-- `task-input.json` exists when the orchestrator workflow is used;
+- \`task-input.json\` exists when the orchestrator workflow is used;
 - required task fields are satisfied;
 - select / radio / checkbox values are legal;
 - marketplace / ratio / language / market / style / deliverables came from explicit user intent or an explicit legal auto policy;
@@ -27,49 +27,19 @@ Do not use one image passing QA to imply the whole set passes.
 - geometry matches authoritative references;
 - component count matches;
 - hardware, holes, seams, joints, handles, supports, logos, and edge profiles match;
-- no unsupported hidden structure was invented.
+- no unsupported view or hidden structure was invented.
 
-Identity drift = `FAIL`.
+Identity drift = \`FAIL\`.
 
-## Gate 2A — Critical geometry
+## Gate 3 — Product pixel provenance
 
-When `CRITICAL GEOMETRY LOCK` is active, evaluate every relation separately:
+- product body source is recorded;
+- alpha / mask source is recorded;
+- transformations are recorded;
+- source product RGB is preserved when required;
+- no lookalike generated product silently replaces the SKU.
 
-- subject is correct;
-- relation to anchor/object is correct;
-- location is correct;
-- orientation/axis is correct;
-- must-not conditions are absent;
-- separate parts have not been merged;
-- hardware has not been relocated.
-
-Statuses per relation:
-- `PASS`
-- `FAIL`
-- `NOT_VISIBLE`
-- `NOT_CHECKED`
-
-A visible contradiction on a locked relation = `FAIL`.
-
-Do not average this away with composition/style scores.
-
-## Gate 3 — Product provenance / fidelity route
-
-Record whether the product is:
-- `REFERENCE_RENDERED_PRODUCT`;
-- `SOURCE_PRODUCT_PIXEL`;
-- `VERIFIED_CAD_3D`;
-- `CONCEPT_ONLY`.
-
-For `REFERENCE_RENDERED_PRODUCT`:
-- do NOT fail merely because pixels differ from the authoritative photo;
-- same-SKU identity and critical geometry must pass.
-
-For `SOURCE_PRODUCT_PIXEL`:
-- source pixel provenance and mask quality must pass;
-- transformations must be uniform/non-destructive as required.
-
-For identity-critical factual detail, repeated reference-generation drift SHOULD escalate to source-pixel / verified CAD rather than being accepted as “close enough”.
+If an authoritative photo existed and the production asset is a generated redraw, default to \`FAIL\`.
 
 ## Gate 4 — Dimensions / specifications
 
@@ -82,8 +52,8 @@ For identity-critical factual detail, repeated reference-generation drift SHOULD
 ## Gate 5 — Scale / perspective
 
 - scale calibration is referenced;
-- `REAL-WORLD SCALE LOCK` is present when verified dimensions and scale-bearing context exist;
-- verified dimensions remain plausible relative to selected human / scene scale references;
+- \`REAL-WORLD SCALE LOCK\` is present when verified dimensions and scale-bearing context exist;
+- verified dimensions remain plausible relative to the selected human / scene scale references;
 - contact plane and anchor are coherent;
 - camera / projection assumptions are recorded;
 - product is uniformly scaled;
@@ -92,15 +62,15 @@ For identity-critical factual detail, repeated reference-generation drift SHOULD
 - product occupancy did not override verified physical scale;
 - metric claims match the scale state.
 
-If verified dimensions materially contradict apparent person / scene scale, result = `FAIL`.
+If verified dimensions materially contradict apparent person / scene scale, result = \`FAIL\`, not merely \`REVIEW\`.
 
 ## Gate 6 — Prompt traceability
 
-For generated assets:
+For generated background / person assets:
 - prompt template version is recorded;
 - required placeholders were resolved;
 - missing optional values were omitted rather than guessed;
-- product identity / critical geometry / scale locks are injected when required;
+- fixed “do not generate target product” constraints remain present;
 - unsupported facts were not introduced by prompt writing.
 
 ## Gate 7 — Person interaction
@@ -109,62 +79,44 @@ For generated assets:
 - occlusion order is correct;
 - person does not pass through product;
 - product geometry remains unchanged;
-- when verified dimensions exist, product size relative to hands/body agrees with scale lock;
+- when verified dimensions exist, product size relative to hands / body agrees with the \`REAL-WORLD SCALE LOCK\`;
 - no unverified load / safety / ergonomic claim is implied.
 
 ## Gate 8 — Material / compositing
 
 - texture / grain / color remain credible and source-aligned;
-- identity-critical material proof is source-backed;
 - mask preserves holes / thin structures;
 - no obvious fringe;
-- shadows are physically coherent;
-- source-product RGB is not covered or repainted when source pixels are required.
+- shadows are independent and physically coherent;
+- product RGB is not covered by generated shadow paint.
 
 ## Gate 9 — Copy / graphics
 
-Read the approved copy deck.
-
-- every final text block maps to approved `copy_id`;
-- Chinese copy is exact;
-- numbers / units / punctuation are exact;
-- source facts exist;
-- user wording is not strengthened into unsupported environmental/safety/performance claims;
+- Chinese copy is correct;
+- numbers / units / punctuation are correct;
+- claims have evidence;
+- packaging / certification / compatibility claims are verified;
 - typography is readable.
 
-Model-invented final copy = `FAIL`.
-
-## Gate 10 — Semantic master → layout provenance
-
-For multi-panel/detail graphics:
-- every cell points to an `APPROVED` semantic master;
-- every copy block points to approved copy;
-- layout uses contain/crop, not non-uniform warp;
-- final layout did not create a new unreviewed product rendering;
-- a failed cell can be replaced independently.
-
-A one-shot AI collage that bypasses master QA = `FAIL` for factual ecommerce delivery.
-
-## Gate 11 — Cross-image consistency
+## Gate 10 — Cross-image consistency
 
 - same SKU / variant;
 - same structure;
 - same verified dimensions;
 - same product appearance;
-- critical geometry remains consistent;
 - no contradictory claims;
 - no variant mixing.
 
-## Gate 12 — Delivery completeness
+## Gate 11 — Delivery completeness
 
-Read `delivery-manifest.json`.
+Read \`delivery-manifest.json\`.
 
 - planned, blocked, expected, produced, QA-completed, and delivered counts reconcile;
 - every final asset has a delivery reference;
-- no `FAIL` asset is silently counted as approved delivery;
+- no \`FAIL\` asset is silently counted as approved delivery;
 - the run is not called complete when only a subset of artifacts was surfaced.
 
-## Gate 13 — Marketplace export
+## Gate 12 — Marketplace export
 
 - marketplace / category / slot is known when platform export is requested;
 - rule source is recorded;
@@ -173,22 +125,18 @@ Read `delivery-manifest.json`.
 
 ## Result states
 
-- `PASS`: evidence-backed, no blocking issue found.
-- `REVIEW`: uncertainty remains.
-- `FAIL`: confirmed identity / geometry / factual / scale / prompt / layout / delivery / compliance error.
-- `NOT_CHECKED`: insufficient evidence or check not performed.
+- \`PASS\`: evidence-backed, no blocking issue found.
+- \`REVIEW\`: uncertainty remains.
+- \`FAIL\`: confirmed identity / factual / scale / prompt / delivery / compliance error.
+- \`NOT_CHECKED\`: insufficient evidence or check not performed.
 
 ## Critical separation
 
 Always report separately:
-- `visual_plausibility`;
-- `product_identity`;
-- `critical_geometry`;
-- `product_pixel_provenance`;
-- `metric_grounding`;
-- `copy_truth`;
-- `layout_provenance`;
-- `input_source_integrity`;
-- `delivery_completeness`.
+- \`visual_plausibility\`
+- \`product_pixel_provenance\`
+- \`metric_grounding\`
+- \`input_source_integrity\`
+- \`delivery_completeness\`
 
-A beautiful generated product can pass visual plausibility and still fail product identity or critical geometry.
+A beautiful generated product can pass visual plausibility and still fail product identity.
