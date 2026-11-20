@@ -1,32 +1,49 @@
 ---
 name: ecommerce-product-image-studio
-description: Orchestrate a conversion-first ecommerce visual production system from real SKU references using product identity locks, platform commerce style profiles, reference-image generation, commercial scene routing, candidate ranking/repair, SKU variants, responsive derivatives, QA, and accountable delivery.
+description: Orchestrate a conversion-first ecommerce visual production system from real SKU references using identity and critical-geometry locks, approved semantic masters, evidence-bound copy, deterministic layout, platform style profiles, candidate repair, SKU variants, QA, and accountable delivery.
 ---
 
 # Ecommerce Product Image Studio
 
 ## Objective
 
-Produce a **commercially strong, platform-aware, same-SKU image set**.
+Produce a **commercially strong, platform-aware, same-SKU image set** while remaining reliable on weaker models.
 
 Priority order:
 1. same-SKU identity;
-2. truthful product facts;
-3. buyer-decision / conversion job;
-4. platform commerce style fit;
-5. natural commercial photography;
-6. variant correctness;
-7. campaign consistency;
-8. efficient reuse / derivatives;
-9. official platform compliance.
+2. critical geometry / construction truth;
+3. truthful product facts and copy;
+4. buyer-decision / conversion job;
+5. platform commerce style fit;
+6. natural commercial photography;
+7. variant correctness;
+8. campaign consistency;
+9. efficient reuse / derivatives;
+10. official platform compliance.
 
-Exact source pixels are not the default objective for every asset.
+Exact source pixels are not the default objective for every asset, but identity-critical detail proof may require source pixels.
+
+## Execution model
+
+Treat this skill as a **gated state machine**, not a long free-form prompt.
+
+Each stage produces a small durable artifact. A downstream stage MUST NOT silently invent missing upstream facts.
+
+For weak-model execution:
+- prefer structured records over prose memory;
+- keep stable locks verbatim;
+- generate one visual job at a time;
+- approve semantic masters before layout;
+- separate copy generation from image generation;
+- repair the smallest failed asset/region;
+- never let a final collage become the first place product geometry is evaluated.
 
 ## Required contracts
 
 Read:
 - task input / intake;
 - product identity;
+- critical geometry lock;
 - real-world scale contract;
 - reference generation contract;
 - platform commerce style contract + profiles;
@@ -34,9 +51,25 @@ Read:
 - buyer decision framework;
 - variant matrix;
 - campaign / brand visual system;
+- semantic master contract;
+- evidence-bound copy guard;
+- deterministic grid layout contract;
 - candidate repair loop;
 - output profile / detail module;
+- QA gates;
 - execution state / delivery gate.
+
+## Stage 0 — Execution preflight
+
+Verify:
+- authoritative references are readable;
+- required generation/edit/layout tools exist;
+- output destination works;
+- requested platform/profile facts are known when needed.
+
+Write `execution-preflight.json`.
+
+Blocked capability = downgrade explicitly or mark affected assets `BLOCKED`. Do not silently switch fidelity routes.
 
 ## Stage 1 — Intake / evidence
 
@@ -46,13 +79,39 @@ Separate:
 - platform selection;
 - verified claims / dimensions.
 
+Write `task-input.json` and evidence records.
+
 ## Stage 2 — Product identity lock
 
-Study all authoritative product photos.
+Study all authoritative current-SKU photos.
 
-Create one concise \`PRODUCT IDENTITY LOCK\` and reuse it verbatim across the set.
+Create one concise `PRODUCT IDENTITY LOCK` and reuse it verbatim across the set.
 
-## Stage 3 — Variant / dimension model
+The lock describes:
+- components;
+- silhouette;
+- proportions;
+- visible material appearance;
+- hardware/features;
+- must-not-change details.
+
+## Stage 3 — Critical geometry lock
+
+Read `references/critical-geometry-lock.md`.
+
+Activate when joints, fasteners, holes, ports, cradles, supports, interfaces, component orientation, or other spatial relationships are identity-critical.
+
+Create one concise `CRITICAL GEOMETRY LOCK` from evidence.
+
+This lock describes **relationships**, for example:
+- screw on top surface of handle;
+- screw axis vertical to floor;
+- handle rests in base cradle;
+- screw must not move to end-grain face.
+
+A visible violation of a locked relation is `FAIL`, even if the image is attractive.
+
+## Stage 4 — Variant / dimension model
 
 Build variant matrix and dimension records where needed.
 
@@ -60,17 +119,11 @@ When verified physical dimensions exist for a scale-bearing scene, create a `REA
 
 Unknown facts stay unknown.
 
-## Stage 4 — Platform commerce style
+## Stage 5 — Platform + campaign style locks
 
-If platform is specified, load its heuristic style profile.
+If platform is specified, load its heuristic style profile and create `PLATFORM COMMERCE STYLE LOCK`.
 
-Create \`PLATFORM COMMERCE STYLE LOCK\`.
-
-Do not confuse this with official compliance rules.
-
-## Stage 5 — Campaign style lock
-
-Create one stable campaign block:
+Create one stable `CAMPAIGN STYLE LOCK`:
 - palette;
 - light family;
 - background family;
@@ -80,83 +133,137 @@ Create one stable campaign block:
 - prop density;
 - hard avoids.
 
-Use selective injection by asset type.
+These locks guide style; they do not authorize product changes or unsupported claims.
 
 ## Stage 6 — Buyer-decision / asset plan
 
-Plan the set by purchase questions and platform conversion mix.
+Plan by purchase questions, not image count.
 
 Each asset gets one dominant job.
 
-## Stage 7 — Fidelity route per asset
+Before adding decorative variants, cover high-impact unanswered questions such as:
+- recognition;
+- material / construction;
+- usage;
+- fit / scale;
+- variant choice;
+- dimensions;
+- included items;
+- risk reduction.
+
+## Stage 7 — Semantic master plan
+
+Read `references/semantic-master-contract.md`.
+
+Plan independently QA-able visual masters such as:
+- hero;
+- size / variant visual;
+- material crop;
+- joint / hardware detail;
+- contact / anti-slip detail;
+- lifestyle/person-use scene.
+
+Default rule: **no final marketing text inside generated semantic masters**.
+
+For a six-grid/detail board, define the six jobs first. Do not ask an image model to invent the final six-panel board in one pass.
+
+## Stage 8 — Fidelity route per master
 
 Choose:
 
-\`\`\`text
-REFERENCE_GENERATE   ← default for most hero / scene / in-use / detail photography
+```text
+REFERENCE_GENERATE   ← default for many hero / scene / in-use assets
 REFERENCE_EDIT
-STRICT_PIXEL_COMPOSITE
+SOURCE_PRODUCT_PIXEL / STRICT_PIXEL_COMPOSITE
 VERIFIED_CAD_3D
 CONCEPT_ONLY
-\`\`\`
+```
 
-Do not default to segmentation.
+Use stricter routes for:
+- logos / packaging text;
+- exact labels;
+- precision interfaces;
+- identity-critical joint/hardware detail that repeatedly drifts;
+- material proof where generated texture would become false evidence.
 
-Use strict-pixel only when exact source details require it.
+Do not default to segmentation for every asset.
 
-## Stage 8 — Commercial shot / scene router
+## Stage 9 — Render prompt
 
-For each generative asset, define:
-- story;
-- camera;
-- lighting;
-- product occupancy;
-- props;
-- person action;
-- platform style;
-- scale reference where relevant;
-- `REAL-WORLD SCALE LOCK` when verified dimensions and scale-bearing context exist.
+For generative masters, inject stable blocks in this order:
 
-Product occupancy is a composition target. It MUST NOT override verified real-world physical scale.
+```text
+PRODUCT IDENTITY LOCK
+CRITICAL GEOMETRY LOCK (when activated)
+REAL-WORLD SCALE LOCK (when activated)
+CAMPAIGN STYLE LOCK
+PLATFORM COMMERCE STYLE LOCK
+ASSET JOB / BUYER QUESTION
+SHOT / SCENE
+HARD NEGATIVES
+```
 
-## Stage 9 — Generate candidates
+Weak-model rule: do not paraphrase stable locks between candidates.
+
+## Stage 10 — Generate candidates
 
 For important hero / lifestyle / person assets, generate 2–3 candidates when budget allows.
 
-Keep:
-- product identity block stable;
-- campaign/platform style stable.
+Keep identity, critical geometry, scale, campaign and platform locks stable.
 
-Vary:
+Vary one creative axis at a time:
 - camera;
 - scene;
 - action;
-- light
+- light;
+- placement.
 
-one axis at a time.
+## Stage 11 — Semantic master QA / repair
 
-## Stage 10 — Candidate QA / repair
+Run identity, critical-geometry, facts, scale, interaction and material QA **before layout**.
 
-Rank candidates on commercial and factual dimensions.
-
-Reject hard identity / claim / anatomy / verified-scale failures.
+Reject hard failures.
 
 For a failed asset:
-- output targeted repair sentences;
-- append them to that asset prompt;
-- regenerate only that asset.
+- identify the exact failed relation/region;
+- output 1–3 targeted repair sentences;
+- regenerate only that asset;
+- preserve all approved geometry.
 
-Do not restart the whole set.
+After bounded retries, escalate fidelity mode rather than endlessly redrawing the same detail.
 
-## Stage 11 — Detail modules / text
+Only `APPROVED` masters may enter final information layout.
 
-Use one-screen-one-job.
+## Stage 12 — Copy guard
 
-Short Chinese copy can be generated when the model is reliable; exact / repeated copy should be rendered deterministically if necessary.
+Read `references/copy-guard-contract.md`.
 
-For gallery images, test thumbnail readability.
+Create an approved copy deck from evidence-backed facts.
 
-## Stage 12 — Derivatives
+The copy model MUST NOT:
+- invent new product outcomes;
+- strengthen user wording into safety/environmental/certification claims;
+- change verified dimensions;
+- add load capacity, medical, ergonomic, posture, performance or chemical claims without evidence.
+
+Exact/repeated Chinese, numbers and units should be rendered deterministically.
+
+## Stage 13 — Deterministic layout
+
+Read `references/deterministic-grid-layout-contract.md`.
+
+Compose approved masters + approved copy using deterministic layout tooling.
+
+For a six-grid / multi-panel board:
+- map each cell to one approved master;
+- map every text block to approved copy IDs;
+- use crop/contain only; never warp product geometry;
+- repair a failed cell independently;
+- do not regenerate the whole board to fix one panel.
+
+`scripts/render_infographic_grid.py` is a baseline deterministic renderer.
+
+## Stage 14 — Derivatives
 
 Reuse approved semantic masters across:
 - platform;
@@ -166,28 +273,54 @@ Reuse approved semantic masters across:
 
 when dependencies remain valid.
 
-## Stage 13 — Platform compliance
+A different profile may require a redesigned layout rather than mechanical resizing.
+
+## Stage 15 — Platform compliance
 
 Verify current official marketplace rules separately from style heuristics.
 
-## Stage 14 — Delivery
+A design preset is not automatically a verified compliance profile.
 
-Deliver accepted assets, prompts / manifests where useful, QA and repair history.
+## Stage 16 — Delivery
 
-A complete task means the requested final derivatives are actually accessible to the user.
+Deliver:
+- accepted assets;
+- approved locks;
+- copy deck;
+- prompts/manifests where useful;
+- QA and repair history;
+- final derivatives.
+
+A complete task means requested final derivatives are actually accessible and every delivered asset is QA-accounted.
+
+## Weak-model invariants
+
+When execution quality is uncertain, enforce these invariants:
+
+1. facts come from evidence tables, not prose improvisation;
+2. critical geometry is represented as explicit subject–relation–object rules;
+3. semantic masters contain one visual job;
+4. final text comes from approved copy deck;
+5. final multi-panel layouts are deterministic;
+6. a hard identity/geometry/fact failure cannot be averaged away;
+7. retries modify only failed instructions/regions;
+8. layout never creates a new unreviewed product rendering.
 
 ## Failure conditions
 
-\`FAIL\` when:
+`FAIL` when:
 - product is recognisably another SKU;
+- a critical geometry relation is contradicted;
 - scene is physically implausible;
-- required text is wrong;
-- claim or dimension is invented;
+- required text differs from approved exact copy;
+- a claim or dimension is invented;
 - verified product dimensions contradict apparent person / scene scale;
 - wrong variant appears;
-- person/product interaction is broken.
+- person/product interaction is broken;
+- final layout uses an unapproved semantic master;
+- a factual detail board contains AI-invented construction presented as proof.
 
-\`REVIEW\` when:
+`REVIEW` when:
 - scene is commercially weak;
 - platform style fit is weak;
 - scale is only visually approximate;
@@ -195,4 +328,6 @@ A complete task means the requested final derivatives are actually accessible to
 
 ## Core principle
 
-A natural reference-rendered scene with the correct product is often better ecommerce output than a technically perfect cutout pasted into a weak artificial background.
+Use image generation for **commercial photography**, structured locks for **product truth**, evidence-bound copy for **claims**, and deterministic tools for **final information layout**.
+
+Do not force one model call to solve all four jobs at once.
